@@ -373,30 +373,214 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiDetallePedidoDetallePedido
+export interface ApiDetallesPedidoDetallesPedido
   extends Struct.CollectionTypeSchema {
-  collectionName: 'detalle_pedidos';
+  collectionName: 'detalles_pedidos';
   info: {
-    displayName: 'detalle_pedido';
-    pluralName: 'detalle-pedidos';
-    singularName: 'detalle-pedido';
+    displayName: 'Detalles_Pedido';
+    pluralName: 'detalles-pedidos';
+    singularName: 'detalles-pedido';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    cantidad: Schema.Attribute.Integer;
+    catidad: Schema.Attribute.Integer & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
-      'api::detalle-pedido.detalle-pedido'
+      'api::detalles-pedido.detalles-pedido'
     > &
       Schema.Attribute.Private;
+    pedido: Schema.Attribute.Relation<'manyToOne', 'api::pedido.pedido'>;
+    producto: Schema.Attribute.Relation<'manyToOne', 'api::producto.producto'>;
     publishedAt: Schema.Attribute.DateTime;
-    subtotal: Schema.Attribute.Decimal;
+    subtotal: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiInventarioInventario extends Struct.CollectionTypeSchema {
+  collectionName: 'inventarios';
+  info: {
+    displayName: 'Inventario';
+    pluralName: 'inventarios';
+    singularName: 'inventario';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    cantidad_actual: Schema.Attribute.Integer & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::inventario.inventario'
+    > &
+      Schema.Attribute.Private;
+    productos: Schema.Attribute.Relation<'oneToMany', 'api::producto.producto'>;
+    publishedAt: Schema.Attribute.DateTime;
+    ultima_actualizacion: Schema.Attribute.DateTime;
+    unidad_medida: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiNotificacionNotificacion
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'notificacions';
+  info: {
+    displayName: 'Notificacion';
+    pluralName: 'notificacions';
+    singularName: 'notificacion';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    fecha_envio: Schema.Attribute.DateTime;
+    leido: Schema.Attribute.Boolean & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::notificacion.notificacion'
+    > &
+      Schema.Attribute.Private;
+    mensaje: Schema.Attribute.RichText & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    users_permissions_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
+export interface ApiPedidoPedido extends Struct.CollectionTypeSchema {
+  collectionName: 'pedidos';
+  info: {
+    displayName: 'Pedido';
+    pluralName: 'pedidos';
+    singularName: 'pedido';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    detalles_pedidos: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::detalles-pedido.detalles-pedido'
+    >;
+    estado: Schema.Attribute.Enumeration<
+      ['pendiente, ', 'aceptado, ', 'entregado,', 'cancelado']
+    > &
+      Schema.Attribute.Required;
+    fecha_entrega: Schema.Attribute.DateTime;
+    fecha_pedido: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::pedido.pedido'
+    > &
+      Schema.Attribute.Private;
+    notas: Schema.Attribute.RichText;
+    publishedAt: Schema.Attribute.DateTime;
+    total: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    users_permissions_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    venta: Schema.Attribute.Relation<'oneToOne', 'api::venta.venta'>;
+  };
+}
+
+export interface ApiProductoProducto extends Struct.CollectionTypeSchema {
+  collectionName: 'productos';
+  info: {
+    displayName: 'Producto';
+    pluralName: 'productos';
+    singularName: 'producto';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    categoria: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    descripcion: Schema.Attribute.RichText;
+    detalles_pedidos: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::detalles-pedido.detalles-pedido'
+    >;
+    imagen_url: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    inventario: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::inventario.inventario'
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::producto.producto'
+    > &
+      Schema.Attribute.Private;
+    nombre: Schema.Attribute.String & Schema.Attribute.Required;
+    precio: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    stock: Schema.Attribute.Integer & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiVentaVenta extends Struct.CollectionTypeSchema {
+  collectionName: 'ventas';
+  info: {
+    displayName: 'Venta';
+    pluralName: 'ventas';
+    singularName: 'venta';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    fecha_venta: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    ganancias_estimadas: Schema.Attribute.Decimal;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::venta.venta'> &
+      Schema.Attribute.Private;
+    pedido: Schema.Attribute.Relation<'oneToOne', 'api::pedido.pedido'>;
+    publishedAt: Schema.Attribute.DateTime;
+    total: Schema.Attribute.Decimal & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -858,7 +1042,6 @@ export interface PluginUsersPermissionsUser
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -878,11 +1061,16 @@ export interface PluginUsersPermissionsUser
       'plugin::users-permissions.user'
     > &
       Schema.Attribute.Private;
+    notificacions: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::notificacion.notificacion'
+    >;
     password: Schema.Attribute.Password &
       Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    pedidos: Schema.Attribute.Relation<'oneToMany', 'api::pedido.pedido'>;
     provider: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
@@ -912,7 +1100,12 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
-      'api::detalle-pedido.detalle-pedido': ApiDetallePedidoDetallePedido;
+      'api::detalles-pedido.detalles-pedido': ApiDetallesPedidoDetallesPedido;
+      'api::inventario.inventario': ApiInventarioInventario;
+      'api::notificacion.notificacion': ApiNotificacionNotificacion;
+      'api::pedido.pedido': ApiPedidoPedido;
+      'api::producto.producto': ApiProductoProducto;
+      'api::venta.venta': ApiVentaVenta;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

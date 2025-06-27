@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "inventarios",
+  "info": {
+    "singularName": "inventario",
+    "pluralName": "inventarios",
+    "displayName": "Inventario"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "cantidad_actual": {
+      "type": "integer",
+      "required": true
+    },
+    "unidad_medida": {
+      "type": "string",
+      "required": true
+    },
+    "ultima_actualizacion": {
+      "type": "datetime"
+    },
+    "productos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::producto.producto",
+      "mappedBy": "inventario"
+    }
+  }
+}
