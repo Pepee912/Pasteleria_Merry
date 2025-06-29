@@ -10,7 +10,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
@@ -20,7 +20,13 @@ const routes: Routes = [
   {
     path: 'login',
     loadChildren: () => import('./Pages/login/login.module').then(m => m.LoginPageModule)
+  },
+  {
+    path: 'productos',
+    loadChildren: () => import('./Pages/productos/productos.module').then( m => m.ProductosPageModule)
   }
+
+
 ];
 
 @NgModule({

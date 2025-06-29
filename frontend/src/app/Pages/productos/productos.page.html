@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-title class="titulo-header">Nuestros Productos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding fondo-productos">
+
+  <div class="grid-productos">
+    <div class="tarjeta-producto" *ngFor="let producto of productos">
+      <img class="img-producto" [src]="'http://localhost:1337' + producto.imagen_url[0]?.url" />
+
+      <div class="info-producto">
+        <h3>{{ producto.nombre }}</h3>
+        <p class="precio">${{ producto.precio }}</p>
+      </div>
+    </div>
+  </div>
+
+</ion-content>
