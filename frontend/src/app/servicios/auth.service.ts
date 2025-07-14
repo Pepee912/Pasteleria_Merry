@@ -32,17 +32,17 @@ export class AuthService {
     }
   }
 
-async getPerfil(token: string): Promise<any> {
-  try {
-    const response = await axios.get('http://localhost:1337/api/users/me?populate=role', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return response.data;
-  } catch (error: any) {
-    throw error.response?.data?.error?.message || 'Error al obtener el perfil';
+  async getPerfil(token: string): Promise<any> {
+    try {
+      const response = await axios.get('http://localhost:1337/api/users/me?populate=role', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data?.error?.message || 'Error al obtener el perfil';
+    }
   }
-}
 
 }

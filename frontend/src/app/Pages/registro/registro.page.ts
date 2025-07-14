@@ -10,11 +10,11 @@ import { NavController } from '@ionic/angular';
 })
 export class RegistroPage {
 
-nombre = '';
-email = '';
-password = '';
+  nombre = '';
+  email = '';
+  password = '';
 
-  constructor(private auth: AuthService, private navCtrl: NavController) {}
+  constructor(private auth: AuthService, private navCtrl: NavController) { }
 
   async onSubmit() {
     try {

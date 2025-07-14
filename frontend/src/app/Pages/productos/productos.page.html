@@ -9,7 +9,7 @@
   <div class="grid-productos">
     <div class="tarjeta-producto" *ngFor="let producto of productos">
       
-      <img *ngIf="producto.imagenUrl" class="img-producto" [src]="producto.imagenUrl" />
+      <img *ngIf="producto.imagenUrl" class="img-producto" [src]="producto.imagenUrl" alt="{{producto.nombre}}" />
 
       <div class="info-producto">
         <h3>{{ producto.nombre }}</h3>
@@ -17,5 +17,5 @@
       </div>
     </div>
   </div>
-  
+
 </ion-content>

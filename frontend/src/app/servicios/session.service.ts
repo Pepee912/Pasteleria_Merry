@@ -19,20 +19,19 @@ export class SessionService {
     localStorage.removeItem(this.tokenKey);
   }
 
-guardarUsuario(usuario: any) {
-  localStorage.setItem('user', JSON.stringify(usuario));
-}
+  guardarUsuario(usuario: any) {
+    localStorage.setItem('user', JSON.stringify(usuario));
+  }
 
-obtenerUsuario(): any | null {
-  const u = localStorage.getItem('user');
-  return u ? JSON.parse(u) : null;
-}
+  obtenerUsuario(): any | null {
+    const u = localStorage.getItem('user');
+    return u ? JSON.parse(u) : null;
+  }
 
-obtenerRol(): string | null {
-  const u = this.obtenerUsuario();
-  return u?.role?.name || null;
-}
-
+  obtenerRol(): string | null {
+    const u = this.obtenerUsuario();
+    return u?.role?.name || null;
+  }
 
   estaAutenticado(): boolean {
     return !!this.obtenerToken();
