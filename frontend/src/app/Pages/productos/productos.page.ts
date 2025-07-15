@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NavController } from '@ionic/angular';
 import { ApiService } from 'src/app/servicios/api.service';
 
 @Component({
@@ -10,7 +11,7 @@ import { ApiService } from 'src/app/servicios/api.service';
 export class ProductosPage implements OnInit {
   productos: any[] = [];
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private navCtrl: NavController) {}
 
   async ngOnInit() {
     try {
@@ -22,6 +23,13 @@ export class ProductosPage implements OnInit {
       console.error('Error al cargar productos:', err);
       alert('Error al cargar productos: ' + err);
     }
+  }
+
+  registrar() {
+    this.navCtrl.navigateForward('/registro'); 
+  }
+  login() {
+    this.navCtrl.navigateForward('/login'); 
   }
 
 }

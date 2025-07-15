@@ -50,6 +50,12 @@
       "relation": "oneToMany",
       "target": "api::detalles-pedido.detalles-pedido",
       "mappedBy": "producto"
+    },
+    "producto": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::categoria.categoria",
+      "inversedBy": "categorias"
     }
   }
 }

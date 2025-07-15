@@ -4,14 +4,14 @@ import { AuthGuard } from './guards/auth.guard'; // el AuthGuard
 
 const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'productos',
+    pathMatch: 'full'
+  },
+  {
     path: 'home',
     loadChildren: () => import('./home/home.module').then(m => m.HomePageModule),
     canActivate: [AuthGuard] // protegemos la ruta ruta
-  },
-  {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full'
   },
   {
     path: 'registro',
@@ -23,7 +23,8 @@ const routes: Routes = [
   },
   {
     path: 'productos',
-    loadChildren: () => import('./Pages/productos/productos.module').then( m => m.ProductosPageModule)
+    loadChildren: () => import('./Pages/productos/productos.module').then( m => m.ProductosPageModule),
+    canActivate: [AuthGuard]
   }
 
 
