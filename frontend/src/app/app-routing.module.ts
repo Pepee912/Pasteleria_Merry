@@ -26,8 +26,6 @@ const routes: Routes = [
     loadChildren: () => import('./Pages/productos/productos.module').then( m => m.ProductosPageModule),
     canActivate: [AuthGuard]
   }
-
-
 ];
 
 @NgModule({
