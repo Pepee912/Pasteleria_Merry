@@ -2,7 +2,7 @@
   <ion-toolbar color="light">
     <ion-title class="titulo-header">Nuestros Productos</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="login()">Iniciar Sección</ion-button>
+      <ion-button (click)="login()">Iniciar Seción</ion-button>
       <ion-button (click)="registrar()">Registro</ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -11,13 +11,7 @@
 <ion-content class="ion-padding fondo-productos">
   <div class="grid-productos">
     <div class="tarjeta-producto" *ngFor="let producto of productos">
-<<<<<<< HEAD
-      <img class="img-producto" [src]="'http://localhost:1337' + producto.imagen_url[0]?.url" />
-=======
-      
-      <img *ngIf="producto.imagenUrl" class="img-producto" [src]="producto.imagenUrl" alt="{{producto.nombre}}" />
-
->>>>>>> 9f337be0566e760ef9d5100ce4b98f5ded553ad6
+      <img class="img-producto" [src]="producto.imagenUrl" *ngIf="producto.imagenUrl" />
       <div class="info-producto">
         <h3>{{ producto.nombre }}</h3>
         <p class="precio">${{ producto.precio }}</p>
