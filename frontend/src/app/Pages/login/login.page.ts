@@ -32,7 +32,7 @@ async onLogin() {
     const rol = this.session.obtenerRol(); // Y ya guardados ahora sí leerá el rol 
     alert('Bienvenido, tu rol es: ' + rol);
 
-    this.navCtrl.navigateRoot('/home');
+    this.navCtrl.navigateRoot('/productos');
   } catch (err) {
     alert('Error: ' + err);
   }

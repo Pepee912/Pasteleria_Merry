@@ -9,8 +9,8 @@
     <form (ngSubmit)="onSubmit()" class="formulario-pasteleria">
       <ion-item class="input-pasteleria">
         <ion-label position="floating">Nombre</ion-label>
-        <ion-input [(ngModel)]="nombre" name="nombre" required></ion-input>
-      </ion-item>
+        <ion-input [(ngModel)]="nombre" name="nombre" required maxlength="50" pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$"></ion-input>
+     </ion-item>
 
       <ion-item class="input-pasteleria">
         <ion-label position="floating">Correo electrónico</ion-label>
