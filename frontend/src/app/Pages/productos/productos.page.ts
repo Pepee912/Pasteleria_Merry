@@ -29,7 +29,6 @@ export class ProductosPage implements OnInit {
       alert('Error al cargar productos: ' + err);
     }
   }
-<<<<<<< HEAD
 
   registrar() {
     this.navCtrl.navigateForward('/registro'); 
@@ -38,7 +37,5 @@ export class ProductosPage implements OnInit {
     this.navCtrl.navigateForward('/login'); 
   }
 
-=======
->>>>>>> 9f337be0566e760ef9d5100ce4b98f5ded553ad6
 }
 
