@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-title class="titulo-header">Nuestros Productos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="login()">Iniciar Seción</ion-button>
+      <ion-button (click)="registrar()">Registro</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding fondo-productos">
+  <div class="grid-productos">
+    <div class="tarjeta-producto" *ngFor="let producto of productos">
+      <img class="img-producto" [src]="producto.imagenUrl" *ngIf="producto.imagenUrl" />
+      <div class="info-producto">
+        <h3>{{ producto.nombre }}</h3>
+        <p class="precio">${{ producto.precio }}</p>
+      </div>
+    </div>
+  </div>
+</ion-content>
