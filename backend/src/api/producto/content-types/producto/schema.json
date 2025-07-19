@@ -29,9 +29,6 @@
         "audios"
       ]
     },
-    "categoria": {
-      "type": "string"
-    },
     "stock": {
       "type": "integer",
       "required": true
@@ -51,11 +48,11 @@
       "target": "api::detalles-pedido.detalles-pedido",
       "mappedBy": "producto"
     },
-    "producto": {
+    "categoria": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::categoria.categoria",
-      "inversedBy": "categorias"
+      "inversedBy": "productos"
     }
   }
 }

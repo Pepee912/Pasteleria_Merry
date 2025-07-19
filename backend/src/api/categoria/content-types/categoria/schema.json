@@ -11,15 +11,15 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "categorias": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::producto.producto",
-      "mappedBy": "producto"
-    },
     "nombre": {
       "type": "string",
       "required": true
+    },
+    "productos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::producto.producto",
+      "mappedBy": "categoria"
     }
   }
 }
