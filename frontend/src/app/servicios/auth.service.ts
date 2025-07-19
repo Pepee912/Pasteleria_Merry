@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import axios from 'axios';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:1337/api/auth/local'; // Cambia si estás en producción
+  private apiUrl = `${environment.apiUrl}/auth/local`; 
 
   async register(nombre: string, email: string, password: string): Promise<any> {
     try {
@@ -34,7 +35,7 @@ export class AuthService {
 
   async getPerfil(token: string): Promise<any> {
     try {
-      const response = await axios.get('http://localhost:1337/api/users/me?populate=role', {
+      const response = await axios.get(`${environment.apiUrl}/users/me?populate=role`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -44,5 +45,4 @@ export class AuthService {
       throw error.response?.data?.error?.message || 'Error al obtener el perfil';
     }
   }
-
 }
