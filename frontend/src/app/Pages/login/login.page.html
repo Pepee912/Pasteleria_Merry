@@ -1,23 +1,29 @@
-<ion-header>
-  <ion-toolbar color="light">
-    <ion-title class="titulo-pasteleria">Iniciar Sesión</ion-title>
+<ion-header class="header-login">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/" class="btn-back"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Iniciar sesión</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="fondo-pasteleria ion-padding">
-  <div class="contenedor-formulario">
-    <form (ngSubmit)="onLogin()" class="formulario-pasteleria">
-      <ion-item class="input-pasteleria">
-        <ion-label position="floating">Correo electrónico</ion-label>
-        <ion-input [(ngModel)]="email" name="email" type="email" required></ion-input>
-      </ion-item>
+<ion-content class="ion-padding login-page">
+  <div class="login-container">
+    <img src="assets/logo.png" alt="Pastelería Merry" class="logo" />
 
-      <ion-item class="input-pasteleria">
-        <ion-label position="floating">Contraseña</ion-label>
-        <ion-input [(ngModel)]="password" name="password" type="password" required></ion-input>
-      </ion-item>
+    <h1 class="titulo">¡Bienvenido!</h1>
+    <p class="subtitulo">Accede a tu cuenta para comenzar</p>
 
-      <ion-button expand="full" type="submit" class="boton-pasteleria ion-margin-top">Iniciar Sesión</ion-button>
-    </form>
+    <ion-item class="input-item">
+      <ion-label position="floating">Correo electrónico</ion-label>
+      <ion-input [(ngModel)]="email" type="email"></ion-input>
+    </ion-item>
+
+    <ion-item class="input-item">
+      <ion-label position="floating">Contraseña</ion-label>
+      <ion-input [(ngModel)]="password" type="password"></ion-input>
+    </ion-item>
+
+    <ion-button expand="block" class="btn-login" (click)="onLogin()">Ingresar</ion-button>
   </div>
 </ion-content>

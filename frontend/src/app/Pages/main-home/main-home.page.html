@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Pastelería Merry</ion-title>
+
+    <!-- Si NO hay sesión, muestra Login y Registro -->
+    <ion-buttons slot="end" *ngIf="mostrarBotones">
+      <ion-button (click)="login()">Iniciar sesión</ion-button>
+      <ion-button (click)="registro()">Registrarse</ion-button>
+    </ion-buttons>
+
+    <!-- Si HAY sesión, muestra Cerrar sesión -->
+    <ion-buttons slot="end" *ngIf="!mostrarBotones">
+      <ion-button (click)="logout()">Cerrar sesión</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="usuario">
+    <h2>¡Hola {{ usuario.username }}!</h2>
+    <p>Tu rol es: <strong>{{ rol }}</strong></p>
+  </div>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" *ngFor="let prod of productos">
+        <ion-card>
+          <img [src]="prod.imagenUrl || 'assets/default.jpg'" />
+          <ion-card-header>
+            <ion-card-title>{{ prod.nombre }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p [innerHTML]="prod.descripcion"></p>
+            <strong>${{ prod.precio }}</strong>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

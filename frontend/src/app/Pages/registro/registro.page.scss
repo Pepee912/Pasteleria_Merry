@@ -1,44 +1,81 @@
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat&display=swap');
+.header-registro {
+  ion-toolbar {
+    --background: transparent;
+    --color: #b76e79;
+    box-shadow: none;
+  }
 
-.fondo-pasteleria {
-  --background: #fff0f5; // fondo pastel rosado
+  ion-title {
+    font-family: 'Comic Sans MS', 'Montserrat', cursive;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+
+  .btn-back {
+    color: #b76e79;
+    font-size: 1.4rem;
+    --color: #b76e79;
+  }
 }
 
-.titulo-pasteleria {
-  font-family: 'Pacifico', cursive;
-  font-size: 1.8rem;
-  text-align: center;
-  color: #b76e79;
-  margin-top: 10px;
-}
+.registro-page {
+  --background: #fff0f5;
 
-.contenedor-formulario {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding-top: 20px;
-}
+  align-items: center;
 
-.formulario-pasteleria {
-  width: 100%;
-  max-width: 360px;
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
-}
+  .registro-container {
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
 
-.input-pasteleria {
-  border-radius: 12px;
-  margin-bottom: 16px;
-  --highlight-color-focused: #d97a9c;
-  --border-color: #f3dfe2;
-}
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+    box-sizing: border-box;
+  }
 
-.boton-pasteleria {
-  --background: #d97a9c;
-  --background-hover: #c7668b;
-  --border-radius: 12px;
-  font-weight: bold;
+  .titulo {
+    font-size: 1.8rem;
+    color: #b76e79;
+    font-family: 'Comic Sans MS', 'Montserrat', cursive;
+    margin-bottom: 5px;
+  }
+
+  .subtitulo {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 30px;
+  }
+
+  .input-item {
+    --background: #fff;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    --padding-start: 16px;
+    width: 100%;
+
+    ion-input {
+      color: #333 !important;
+    }
+
+    ion-label {
+      color: #b76e79 !important;
+    }
+  }
+
+  .btn-registrar {
+    --background: #f9a8d4;
+    --background-hover: #f472b6;
+    --border-radius: 20px;
+    margin-top: 20px;
+    font-weight: bold;
+    width: 100%;
+  }
 }

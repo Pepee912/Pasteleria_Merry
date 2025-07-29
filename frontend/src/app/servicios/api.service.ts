@@ -14,11 +14,15 @@ export class ApiService {
 
   async getProductos(): Promise<any[]> {
     const token = this.session.obtenerToken();
+
+    const headers: any = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     try {
       const response = await axios.get(`${this.baseUrl}/productos?populate=*`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers
       });
       return response.data.data;
     } catch (error: any) {
@@ -77,4 +81,6 @@ export class ApiService {
       throw error.response?.data?.error?.message || 'Error al eliminar producto';
     }
   }
+
+  
 }
