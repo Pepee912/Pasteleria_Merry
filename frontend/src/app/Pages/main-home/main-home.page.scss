@@ -76,16 +76,16 @@ ion-content {
     justify-content: space-between;
     flex-grow: 1;
 
-    min-height: 130px; // <- NUEVO: altura mínima del contenido
+    min-height: 100px; 
 
     .descripcion {
         flex-grow: 1;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 3; // máx. 3 líneas
+        -webkit-line-clamp: 3; 
         -webkit-box-orient: vertical;
-        min-height: 60px; // <- NUEVO: asegura espacio incluso si es 1 sola línea
+        min-height: 50px; 
     }
 
     strong {
@@ -100,7 +100,7 @@ ion-content {
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 3; /* número de líneas */
+        -webkit-line-clamp: 3; 
         -webkit-box-orient: vertical;
       }
     }
@@ -116,14 +116,6 @@ ion-content {
   margin-top: 40px;
   padding: 20px;
   color: #b76e79;
-
-  .empty-img {
-    width: 120px;
-    height: auto;
-    margin-bottom: 15px;
-    opacity: 0.8;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  }
 
   p {
     font-size: 1rem;

@@ -22,14 +22,13 @@
   </div>
 
   <div class="empty-state" *ngIf="productos.length === 0">
-    <img src="assets/empty-box.png" alt="Sin productos" class="empty-img" />
     <p>No hay productos disponibles por el momento.</p>
   </div>
 
   <ion-grid>
     <ion-row>
       <ion-col size="12" size-sm="6" size-md="4" *ngFor="let prod of productos">
-        <ion-card class="product-card">
+        <ion-card class="product-card" (click)="verDetalle(prod.documentId)">
           <img [src]="prod.imagenUrl || 'assets/default.jpg'" />
           <ion-card-header>
             <ion-card-title>{{ prod.nombre }}</ion-card-title>

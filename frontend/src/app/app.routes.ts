@@ -32,8 +32,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/productos/editar-producto/editar-producto.page').then( m => m.EditarProductoPage)
   },
   {
-    path: 'detalle-producto',
-    loadComponent: () => import('./pages/productos/detalle-producto/detalle-producto.page').then( m => m.DetalleProductoPage)
+    path: 'productos/detalle-producto/:id',
+    loadComponent: () => import('./pages/productos/detalle-producto/detalle-producto.page').then(m => m.DetalleProductoPage)
   },
   {
     path: 'ver-categorias',

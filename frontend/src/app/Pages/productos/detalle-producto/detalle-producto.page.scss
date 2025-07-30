@@ -1,0 +1,85 @@
+:host {
+  --ion-background-color: #fff0f5;
+}
+
+ion-header {
+  ion-toolbar {
+    --background: #fff;
+    --color: #b76e79;
+    border-bottom: 1px solid #f9a8d4;
+
+    ion-title {
+      font-family: 'Comic Sans MS', 'Montserrat', cursive;
+      font-weight: bold;
+    }
+
+    ion-back-button {
+      --color: #b76e79;
+    }
+  }
+}
+
+ion-content {
+  background: #fff0f5;
+
+  .detalle-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(183, 110, 121, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+    margin-top: 20px;
+    margin-inline: 10px;
+
+    img {
+      width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      background-color: #fff0f5;
+      padding: 10px;
+      border-radius: 16px 16px 0 0;
+    }
+
+    ion-card-header {
+      padding: 10px;
+
+      ion-card-title {
+        font-size: 1.5rem;
+        text-align: center;
+        color: #b76e79;
+        font-family: 'Comic Sans MS', 'Montserrat', cursive;
+      }
+    }
+
+    ion-card-content {
+      padding: 15px;
+      font-size: 1rem;
+      color: #444;
+
+      .descripcion {
+        margin-top: 10px;
+        text-align: justify;
+        color: #555;
+      }
+
+      .precio,
+      .stock {
+        margin-top: 15px;
+        color: #b76e79;
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+    }
+  }
+
+  .cargando-container {
+    text-align: center;
+    margin-top: 40px;
+    color: #b76e79;
+
+    p {
+      font-style: italic;
+      margin-top: 10px;
+    }
+  }
+}

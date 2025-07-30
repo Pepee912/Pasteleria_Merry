@@ -65,4 +65,11 @@ export class MainHomePage implements OnInit {
     this.router.navigate(['/']);
     setTimeout(() => location.reload(), 100); 
   }
+
+  verDetalle(documentId: string) {
+    this.router.navigate(['/productos/detalle-producto', documentId]);
+  }
+
+
+
 }
