@@ -1,0 +1,134 @@
+:host {
+  --ion-background-color: #fff0f5;
+}
+
+ion-header {
+  ion-toolbar {
+    --background: #fff;
+    --color: #b76e79;
+    border-bottom: 1px solid #f9a8d4;
+
+    ion-title {
+      font-family: 'Comic Sans MS', 'Montserrat', cursive;
+      font-weight: bold;
+    }
+
+    ion-button {
+      --color: #b76e79;
+      font-weight: bold;
+    }
+  }
+}
+
+ion-content {
+  background: #fff0f5;
+
+  h2 {
+    color: #b76e79;
+    font-family: 'Comic Sans MS', 'Montserrat', cursive;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    text-align: center;
+    color: #555;
+    margin-bottom: 1rem;
+  }
+
+  .product-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(183, 110, 121, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+
+    img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-bottom: 1px solid #f9a8d4;
+    }
+
+    ion-card-header {
+      padding: 10px;
+
+      ion-card-title {
+        font-size: 1.1rem;
+        color: #b76e79;
+        font-family: 'Comic Sans MS', 'Montserrat', cursive;
+      }
+    }
+
+    ion-card-content {
+    padding: 10px;
+    font-size: 0.95rem;
+    color: #444;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+
+    min-height: 130px; // <- NUEVO: altura mínima del contenido
+
+    .descripcion {
+        flex-grow: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; // máx. 3 líneas
+        -webkit-box-orient: vertical;
+        min-height: 60px; // <- NUEVO: asegura espacio incluso si es 1 sola línea
+    }
+
+    strong {
+        display: block;
+        margin-top: 10px;
+        color: #b76e79;
+        font-weight: bold;
+    }
+
+      .descripcion {
+        max-height: 50px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* número de líneas */
+        -webkit-box-orient: vertical;
+      }
+    }
+  }
+
+  ion-grid {
+    padding: 0 10px;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  margin-top: 40px;
+  padding: 20px;
+  color: #b76e79;
+
+  .empty-img {
+    width: 120px;
+    height: auto;
+    margin-bottom: 15px;
+    opacity: 0.8;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  p {
+    font-size: 1rem;
+    font-style: italic;
+    color: #b76e79;
+  }
+}
+

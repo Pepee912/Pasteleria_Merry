@@ -21,20 +21,26 @@
     <p>Tu rol es: <strong>{{ rol }}</strong></p>
   </div>
 
+  <div class="empty-state" *ngIf="productos.length === 0">
+    <img src="assets/empty-box.png" alt="Sin productos" class="empty-img" />
+    <p>No hay productos disponibles por el momento.</p>
+  </div>
+
   <ion-grid>
     <ion-row>
-      <ion-col size="6" *ngFor="let prod of productos">
-        <ion-card>
+      <ion-col size="12" size-sm="6" size-md="4" *ngFor="let prod of productos">
+        <ion-card class="product-card">
           <img [src]="prod.imagenUrl || 'assets/default.jpg'" />
           <ion-card-header>
             <ion-card-title>{{ prod.nombre }}</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <p [innerHTML]="prod.descripcion"></p>
+            <p class="descripcion" [innerHTML]="prod.descripcion"></p>
             <strong>${{ prod.precio }}</strong>
           </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
   </ion-grid>
+
 </ion-content>
