@@ -25,16 +25,23 @@
     <p>No hay productos disponibles por el momento.</p>
   </div>
 
+  <ion-item>
+    <ion-label>Categoría</ion-label>
+    <ion-select [(ngModel)]="categoriaSeleccionada" (ionChange)="filtrarPorCategoria()" interface="popover" placeholder="Todas">
+      <ion-select-option [value]="null">Todas</ion-select-option>
+      <ion-select-option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
   <ion-grid>
     <ion-row>
-      <ion-col size="12" size-sm="6" size-md="4" *ngFor="let prod of productos">
+      <ion-col size="12" size-sm="6" size-md="4" *ngFor="let prod of productosFiltrados">
         <ion-card class="product-card" (click)="verDetalle(prod.documentId)">
           <img [src]="prod.imagenUrl || 'assets/default.jpg'" />
           <ion-card-header>
             <ion-card-title>{{ prod.nombre }}</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <p class="descripcion" [innerHTML]="prod.descripcion"></p>
             <strong>${{ prod.precio }}</strong>
           </ion-card-content>
         </ion-card>

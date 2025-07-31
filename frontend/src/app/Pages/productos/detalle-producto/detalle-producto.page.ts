@@ -24,7 +24,7 @@ async ngOnInit() {
   if (documentId) {
     try {
       const producto = await this.api.getProductoByDocumentId(documentId);
-      console.log('Producto recibido:', producto); 
+      //console.log('Producto recibido:', producto); 
       this.producto = producto;
     } catch (error) {
       console.error('Error al cargar producto:', error);

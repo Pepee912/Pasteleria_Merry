@@ -37,7 +37,7 @@ export class ApiService {
       const response = await axios.get(url);
       const productoRaw = response.data.data[0];
 
-      console.log('Producto bruto desde la API:', productoRaw);
+      //console.log('Producto bruto desde la API:', productoRaw);
 
       if (!productoRaw) throw new Error('Producto no encontrado');
 
@@ -52,7 +52,7 @@ export class ApiService {
           : null
       };
 
-      console.log('Producto recibido:', producto);
+      //console.log('Producto recibido:', producto);
       return producto;
     } catch (error) {
       console.error('Error en getProductoByDocumentId:', error);
@@ -102,5 +102,15 @@ export class ApiService {
     }
   }
 
-  
+  async getCategorias(): Promise<any[]> {
+    try {
+      const response = await axios.get(`${this.baseUrl}/categorias`);
+      console.log('Categorías desde la API:', response.data.data);
+      return response.data.data;
+    } catch (error: any) {
+      console.error('Error al obtener categorías:', error);
+      throw 'No se pudieron cargar las categorías';
+    }
+  }
+
 }

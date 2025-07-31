@@ -4,13 +4,14 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from 'src/app/servicios/api.service';
 import { SessionService } from 'src/app/servicios/session.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-main-home',
   standalone: true,
   templateUrl: './main-home.page.html',
   styleUrls: ['./main-home.page.scss'],
-  imports: [CommonModule, IonicModule]
+  imports: [CommonModule, IonicModule, FormsModule]
 })
 export class MainHomePage implements OnInit {
   productos: any[] = [];
@@ -41,12 +42,36 @@ export class MainHomePage implements OnInit {
       const data = await this.api.getProductos();
       this.productos = data.map(p => ({
         ...p,
-        imagenUrl: p.imagen_url?.[0]?.url ? this.BASE_URL + p.imagen_url[0].url : null
+        imagenUrl: p.imagen_url?.[0]?.url ? this.BASE_URL + p.imagen_url[0].url : null,
+        categoria: p.categoria
       }));
+      this.productosFiltrados = [...this.productos];
+
+      this.categorias = await this.api.getCategorias();
+      //console.log('Categorías cargadas:', this.categorias);
     } catch (error) {
       alert(error);
     }
   }
+
+  filtrarPorCategoria() {
+    if (!this.categoriaSeleccionada) {
+      this.productosFiltrados = [...this.productos];
+      //console.log('Sin filtro: mostrando todos los productos');
+      return;
+    }
+
+    const categoriaId = parseInt(this.categoriaSeleccionada + '', 10);
+    this.productosFiltrados = this.productos.filter(p => {
+      const idCategoria = p.categoria?.id;
+      //console.log(`Producto: ${p.nombre}, idCategoria: ${idCategoria}`);
+      return idCategoria === categoriaId;
+    });
+
+    //console.log('Productos filtrados por categoría:', categoriaId, this.productosFiltrados);
+  }
+
+
 
   login() {
     this.router.navigate(['/login']);

@@ -36,6 +36,10 @@ ion-content {
     margin-bottom: 1rem;
   }
 
+  .card-col {
+    display: flex;
+  }
+
   .product-card {
     background: #fff;
     border-radius: 16px;
@@ -44,6 +48,7 @@ ion-content {
     transition: transform 0.2s ease-in-out;
     display: flex;
     flex-direction: column;
+    flex-grow: 1; // que se estire dentro de la columna
 
     &:hover {
       transform: scale(1.02);
@@ -67,41 +72,32 @@ ion-content {
     }
 
     ion-card-content {
-    padding: 10px;
-    font-size: 0.95rem;
-    color: #444;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex-grow: 1;
-
-    min-height: 100px; 
-
-    .descripcion {
-        flex-grow: 1;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 3; 
-        -webkit-box-orient: vertical;
-        min-height: 50px; 
-    }
-
-    strong {
-        display: block;
-        margin-top: 10px;
-        color: #b76e79;
-        font-weight: bold;
-    }
+      padding: 10px;
+      font-size: 0.95rem;
+      color: #444;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-grow: 1;
 
       .descripcion {
-        max-height: 50px;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 3; 
+        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        max-height: 4.2em;
+        white-space: normal;
+        margin-bottom: 10px;
+      }
+
+      strong {
+        display: block;
+        color: #b76e79;
+        font-weight: bold;
+        margin-top: auto;
       }
     }
   }
@@ -123,4 +119,3 @@ ion-content {
     color: #b76e79;
   }
 }
-
