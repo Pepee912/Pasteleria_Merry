@@ -1,44 +1,53 @@
 <ion-header>
   <ion-toolbar>
+
+    <!-- Menú hamburguesa solo si hay sesión -->
+    <ion-buttons slot="start" *ngIf="!mostrarBotones">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
     <ion-title>Pastelería Merry</ion-title>
 
-    <!-- Si NO hay sesión, muestra Login y Registro -->
+    <!-- Botones de sesión -->
     <ion-buttons slot="end" *ngIf="mostrarBotones">
       <ion-button (click)="login()">Iniciar sesión</ion-button>
       <ion-button (click)="registro()">Registrarse</ion-button>
     </ion-buttons>
 
-    <!-- Si HAY sesión, muestra Cerrar sesión -->
     <ion-buttons slot="end" *ngIf="!mostrarBotones">
       <ion-button (click)="logout()">Cerrar sesión</ion-button>
-      <ion-button (click)="categoria()">Categoria</ion-button>
     </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
+
 <ion-content class="ion-padding">
+
+  <!-- Filtro por categoría -->
+  <div class="categoria-filtro">
+    <ion-select [(ngModel)]="categoriaSeleccionada" (ionChange)="filtrarPorCategoria()" interface="popover" placeholder="Categoría">
+      <ion-select-option [value]="null">Todas</ion-select-option>
+      <ion-select-option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</ion-select-option>
+    </ion-select>
+  </div>
+  
+  <!-- 
   <div *ngIf="usuario">
     <h2>¡Hola {{ usuario.username }}!</h2>
     <p>Tu rol es: <strong>{{ rol }}</strong></p>
   </div>
+  -->
 
   <div class="empty-state" *ngIf="productos.length === 0">
     <p>No hay productos disponibles por el momento.</p>
   </div>
 
-  <ion-item>
-    <ion-label>Categoría</ion-label>
-    <ion-select [(ngModel)]="categoriaSeleccionada" (ionChange)="filtrarPorCategoria()" interface="popover" placeholder="Todas">
-      <ion-select-option [value]="null">Todas</ion-select-option>
-      <ion-select-option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</ion-select-option>
-    </ion-select>
-  </ion-item>
-
   <ion-grid>
     <ion-row>
       <ion-col size="12" size-sm="6" size-md="4" *ngFor="let prod of productosFiltrados">
         <ion-card class="product-card" (click)="verDetalle(prod.documentId)">
-          <img [src]="prod.imagenUrl || 'assets/default.jpg'" />
+          <img [src]="prod.imagenUrl || 'assets/logo.png'" />
           <ion-card-header>
             <ion-card-title>{{ prod.nombre }}</ion-card-title>
           </ion-card-header>

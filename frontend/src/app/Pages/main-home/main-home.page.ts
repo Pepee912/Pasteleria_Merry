@@ -99,5 +99,4 @@ export class MainHomePage implements OnInit {
   }
 
 
-
 }
