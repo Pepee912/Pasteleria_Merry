@@ -54,6 +54,9 @@ export class MainHomePage implements OnInit {
 
   registro() {
     this.router.navigate(['/registro']);
+  } 
+  categoria() {
+    this.router.navigate(['/ver-categorias']);
   }
 
   logout() {

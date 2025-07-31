@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { CategoriasService } from '../../../servicios/categorias.service';
+// import { IonicModule } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
@@ -8,13 +11,15 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/stan
   templateUrl: './crear-categoria.page.html',
   styleUrls: ['./crear-categoria.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule ], schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class CrearCategoriaPage implements OnInit {
+export class CrearCategoriaPage {
+  nombre = '';
 
-  constructor() { }
+  constructor(private categoriasService: CategoriasService, private navCtrl: NavController) {}
 
-  ngOnInit() {
+  async crear() {
+    await this.categoriasService.crearCategoria({ nombre: this.nombre });
+    this.navCtrl.navigateBack('/ver-categorias');
   }
-
 }
