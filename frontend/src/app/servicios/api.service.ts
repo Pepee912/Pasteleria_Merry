@@ -30,14 +30,34 @@ export class ApiService {
     }
   }
 
-  async getProductosById(id: string) {
-    const token = this.session.obtenerToken();
-    const res = await axios.get(`${this.baseUrl}/productos/${id}?populate=*`, {
-      headers: {
-        Authorization: `bearer ${token}`,
-      },
-    });
-    return res.data;
+  async getProductoByDocumentId(documentId: string): Promise<any> {
+    const url = `${this.baseUrl}/productos?filters[documentId][$eq]=${documentId}&populate=*`;
+
+    try {
+      const response = await axios.get(url);
+      const productoRaw = response.data.data[0];
+
+      //console.log('Producto bruto desde la API:', productoRaw);
+
+      if (!productoRaw) throw new Error('Producto no encontrado');
+
+      const producto = {
+        id: productoRaw.id,
+        nombre: productoRaw.nombre,
+        descripcion: productoRaw.descripcion,
+        precio: productoRaw.precio,
+        stock: productoRaw.stock,
+        imagenUrl: productoRaw.imagen_url?.[0]?.url
+          ? `${this.baseUrl.replace('/api', '')}${productoRaw.imagen_url[0].url}`
+          : null
+      };
+
+      //console.log('Producto recibido:', producto);
+      return producto;
+    } catch (error) {
+      console.error('Error en getProductoByDocumentId:', error);
+      throw 'Error al cargar producto';
+    }
   }
 
   async createProducto(data: any): Promise<any> {
@@ -82,5 +102,15 @@ export class ApiService {
     }
   }
 
-  
+  async getCategorias(): Promise<any[]> {
+    try {
+      const response = await axios.get(`${this.baseUrl}/categorias`);
+      console.log('Categorías desde la API:', response.data.data);
+      return response.data.data;
+    } catch (error: any) {
+      console.error('Error al obtener categorías:', error);
+      throw 'No se pudieron cargar las categorías';
+    }
+  }
+
 }
