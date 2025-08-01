@@ -6,9 +6,6 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonTextarea, Ion
 import { ApiService } from 'src/app/servicios/api.service';
 import { SessionService } from 'src/app/servicios/session.service';
 
-
-
-
 @Component({
   selector: 'app-crear-producto',
   templateUrl: './crear-producto.page.html',
@@ -30,6 +27,7 @@ import { SessionService } from 'src/app/servicios/session.service';
     IonSelectOption
   ]
 })
+
 export class CrearProductoPage implements OnInit {
   nombre = '';
   descripcion = '';
@@ -50,7 +48,6 @@ export class CrearProductoPage implements OnInit {
 
   imagen: File | null = null;
 
-  // Al seleccionar la imagen
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -82,7 +79,7 @@ export class CrearProductoPage implements OnInit {
         });
 
         const uploadData = await response.json();
-        imagenId = uploadData[0].id; // ID de la imagen subida
+        imagenId = uploadData[0].id; 
       } catch (error) {
         alert('Error al subir imagen');
         console.error(error);

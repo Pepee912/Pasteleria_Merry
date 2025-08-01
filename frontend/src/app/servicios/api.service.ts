@@ -37,7 +37,7 @@ export class ApiService {
       const response = await axios.get(url);
       const productoRaw = response.data.data[0];
 
-      //console.log('Producto bruto desde la API:', productoRaw);
+      console.log('Respuesta completa de producto por documentId:', response.data.data[0]);
 
       if (!productoRaw) throw new Error('Producto no encontrado');
 
@@ -49,8 +49,10 @@ export class ApiService {
         stock: productoRaw.stock,
         imagenUrl: productoRaw.imagen_url?.[0]?.url
           ? `${this.baseUrl.replace('/api', '')}${productoRaw.imagen_url[0].url}`
-          : null
+          : null,
+        categoria: productoRaw.categoria // simplemente así
       };
+
 
       //console.log('Producto recibido:', producto);
       return producto;
@@ -74,16 +76,21 @@ export class ApiService {
     }
   }
 
-  async updateProducto(id: string, data: any): Promise<any> {
+  async updateProductoByDocumentId(documentId: string, data: any): Promise<any> {
     const token = this.session.obtenerToken();
+
     try {
-      const response = await axios.put(`${this.baseUrl}/productos/${id}`, { data }, {
+      const putUrl = `${this.baseUrl}/productos/${documentId}`;
+      const response = await axios.put(putUrl, { data }, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
+
       return response.data;
+
     } catch (error: any) {
+      console.error('Error al actualizar producto:', error);
       throw error.response?.data?.error?.message || 'Error al actualizar producto';
     }
   }

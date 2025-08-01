@@ -41,9 +41,9 @@ export class VerProductoPage implements OnInit {
     this.router.navigate(['/crear-producto']);
   }
 
-  irAEditarProducto(productoId: number) {
+  irAEditarProducto(documentId: string) {
     this.router.navigate(['/editar-producto'], {
-      queryParams: { id: productoId }
+      queryParams: { documentId }
     });
   }
 

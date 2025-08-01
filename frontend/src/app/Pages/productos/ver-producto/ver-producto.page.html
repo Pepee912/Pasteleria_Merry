@@ -21,9 +21,11 @@
           </ion-card-header>
           <ion-card-content>
             <p>{{ prod.descripcion?.substring(0, 80) }}...</p>
-            <ion-button size="small" color="warning" (click)="irAEditarProducto(prod.id)">
+            
+            <ion-button size="small" color="warning" (click)="irAEditarProducto(prod.documentId)">
               Editar
             </ion-button>
+
             <ion-button size="small" color="danger" (click)="eliminarProducto(prod.documentId)">
               Eliminar
             </ion-button>
