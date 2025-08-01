@@ -51,7 +51,7 @@ export class VerProductoPage implements OnInit {
     const confirmar = confirm('¿Estás seguro de eliminar este producto?');
     if (!confirmar) return;
 
-    console.log('Intentando eliminar producto con documentId:', documentId);
+    //console.log('Intentando eliminar producto con documentId:', documentId);
 
     try {
       await this.api.deleteProductoByDocumentId(documentId);

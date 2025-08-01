@@ -97,7 +97,7 @@ export class ApiService {
           Authorization: `Bearer ${token}`
         }
       });
-      console.log('Producto eliminado con documentId:', documentId);
+      //console.log('Producto eliminado con documentId:', documentId);
       return response.data;
     } catch (error: any) {
       console.error('Error al eliminar producto por documentId:', error.response?.data);
