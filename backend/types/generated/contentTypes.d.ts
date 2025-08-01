@@ -552,7 +552,7 @@ export interface ApiProductoProducto extends Struct.CollectionTypeSchema {
     singularName: 'producto';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     categoria: Schema.Attribute.Relation<

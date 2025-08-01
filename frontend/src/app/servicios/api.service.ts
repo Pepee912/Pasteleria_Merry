@@ -88,16 +88,19 @@ export class ApiService {
     }
   }
 
-  async deleteProducto(id: string): Promise<any> {
+  async deleteProductoByDocumentId(documentId: string): Promise<any> {
     const token = this.session.obtenerToken();
     try {
-      const response = await axios.delete(`${this.baseUrl}/productos/${id}`, {
+      const url = `${this.baseUrl}/productos/${documentId}`; 
+      const response = await axios.delete(url, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
+      console.log('Producto eliminado con documentId:', documentId);
       return response.data;
     } catch (error: any) {
+      console.error('Error al eliminar producto por documentId:', error.response?.data);
       throw error.response?.data?.error?.message || 'Error al eliminar producto';
     }
   }
