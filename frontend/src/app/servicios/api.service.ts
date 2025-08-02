@@ -37,7 +37,7 @@ export class ApiService {
       const response = await axios.get(url);
       const productoRaw = response.data.data[0];
 
-      console.log('Respuesta completa de producto por documentId:', response.data.data[0]);
+      //console.log('Respuesta completa de producto por documentId:', response.data.data[0]);
 
       if (!productoRaw) throw new Error('Producto no encontrado');
 

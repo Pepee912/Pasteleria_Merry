@@ -1,31 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonTextarea, IonButton, IonItem, IonLabel, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
 import { ApiService } from 'src/app/servicios/api.service';
 import { SessionService } from 'src/app/servicios/session.service';
+import { Router, RouterModule} from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-crear-producto',
   templateUrl: './crear-producto.page.html',
   styleUrls: ['./crear-producto.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonContent,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonInput,
-    IonTextarea,
-    IonButton,
-    IonItem,
-    IonLabel,
-    IonSelect,
-    IonSelectOption
-  ]
+  imports: [CommonModule, IonicModule, RouterModule, FormsModule]
 })
 
 export class CrearProductoPage implements OnInit {

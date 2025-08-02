@@ -1,43 +1,55 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Crear Producto</ion-title>
+
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/ver-producto"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Crear Producto</ion-title> 
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-item>
-    <ion-label position="floating">Nombre</ion-label>
-    <ion-input [(ngModel)]="nombre"></ion-input>
-  </ion-item>
+  <div class="form-wrapper">
+    <div class="form-card">
 
-  <ion-item>
-    <ion-label position="floating">Descripción</ion-label>
-    <ion-textarea [(ngModel)]="descripcion"></ion-textarea>
-  </ion-item>
+    <ion-item>
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input [(ngModel)]="nombre"></ion-input>
+    </ion-item>
 
-  <ion-item>
-    <ion-label>Imagen</ion-label>
-    <input type="file" (change)="onFileSelected($event)" accept="image/*" />
-  </ion-item>
+    <ion-item>
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-textarea [(ngModel)]="descripcion"></ion-textarea>
+    </ion-item>
 
-  <ion-item>
-    <ion-label position="floating">Precio</ion-label>
-    <ion-input type="number" [(ngModel)]="precio"></ion-input>
-  </ion-item>
+    <ion-item>
+      <ion-label>Imagen</ion-label>
+      <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+    </ion-item>
 
-  <ion-item>
-    <ion-label position="floating">Stock</ion-label>
-    <ion-input type="number" [(ngModel)]="stock"></ion-input>
-  </ion-item>
+    <ion-item>
+      <ion-label position="floating">Precio</ion-label>
+      <ion-input type="number" [(ngModel)]="precio"></ion-input>
+    </ion-item>
 
-  <ion-item>
-    <ion-label>Categoría</ion-label>
-    <ion-select [(ngModel)]="categoriaId" placeholder="Selecciona categoría">
-      <ion-select-option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</ion-select-option>
-    </ion-select>
-  </ion-item>
+    <ion-item>
+      <ion-label position="floating">Stock</ion-label>
+      <ion-input type="number" [(ngModel)]="stock"></ion-input>
+    </ion-item>
 
-  <ion-button expand="block" color="success" (click)="crearProducto()">
-    Crear Producto
-  </ion-button>
+    <ion-item>
+      <ion-label>Categoría</ion-label>
+      <ion-select [(ngModel)]="categoriaId" placeholder="Selecciona categoría">
+        <ion-select-option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-button expand="block" class="pastel-button" (click)="crearProducto()">
+      Crear Producto
+    </ion-button>
+    
+    </div>
+  </div>
 </ion-content>

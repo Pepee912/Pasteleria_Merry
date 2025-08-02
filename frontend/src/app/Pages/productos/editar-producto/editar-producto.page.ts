@@ -1,28 +1,18 @@
 // editar-producto.page.ts
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule} from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from 'src/app/servicios/api.service';
 import { SessionService } from 'src/app/servicios/session.service';
-import {
-  IonContent, IonHeader, IonTitle, IonToolbar,
-  IonInput, IonTextarea, IonButton, IonItem,
-  IonLabel, IonSelect, IonSelectOption
-} from '@ionic/angular/standalone';
-import { IonBackButton } from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-editar-producto',
   standalone: true,
   templateUrl: './editar-producto.page.html',
   styleUrls: ['./editar-producto.page.scss'],
-  imports: [
-    CommonModule, FormsModule,
-    IonContent, IonHeader, IonToolbar, IonTitle,
-    IonInput, IonTextarea, IonButton, IonItem,
-    IonLabel, IonSelect, IonSelectOption
-  ]
+  imports: [CommonModule, IonicModule, RouterModule, FormsModule]
 })
 export class EditarProductoPage implements OnInit {
   documentId = '';

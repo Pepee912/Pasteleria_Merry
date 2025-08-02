@@ -1,18 +1,121 @@
-ion-card {
-  img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-bottom: 1px solid #ddd;
-  }
+:host {
+  --ion-background-color: #fff0f5;
+}
 
-  ion-card-content {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+ion-header {
+  ion-toolbar {
+    --background: #fff;
+    --color: #b76e79;
+    border-bottom: 1px solid #f9a8d4;
 
-  ion-button {
-    margin-right: 6px;
+    ion-title {
+      font-family: 'Comic Sans MS', 'Montserrat', cursive;
+      font-weight: bold;
+    }
+
+    ion-button {
+      --color: #b76e79;
+      font-weight: bold;
+    }
   }
 }
+
+ion-content {
+  background: #fff0f5;
+
+  ion-grid {
+    padding: 0 10px;
+  }
+
+  .pastel-crear {
+    --background: #f9a8d4;
+    --color: white;
+    --background-hover: #f472b6;
+    --background-activated: #ec4899;
+    --border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(183, 110, 121, 0.2);
+    transition: background 0.3s ease;
+
+    ion-icon {
+      margin-right: 4px;
+    }
+  }
+
+  ion-card.product-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(183, 110, 121, 0.1);
+    transition: transform 0.2s ease-in-out;
+    overflow: hidden;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+
+    img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-bottom: 1px solid #f9a8d4;
+    }
+
+    ion-card-header {
+      padding: 10px;
+
+      ion-card-title {
+        font-size: 1.1rem;
+        color: #b76e79;
+        font-family: 'Comic Sans MS', 'Montserrat', cursive;
+      }
+
+      ion-card-subtitle {
+        color: #555;
+        font-size: 0.9rem;
+        font-weight: bold;
+      }
+
+      p {
+        margin: 4px 0;
+        font-size: 0.85rem;
+        color: #444;
+      }
+    }
+
+    .card-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px;
+    }
+
+    .descripcion {
+      flex-grow: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      margin-bottom: 10px;
+      color: #444;
+    }
+
+    .botones {
+      display: flex;
+      gap: 8px;
+
+      ion-button {
+        flex: 1;
+        --border-radius: 12px;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
