@@ -21,7 +21,7 @@ import { IonBackButton } from '@ionic/angular';
     CommonModule, FormsModule,
     IonContent, IonHeader, IonToolbar, IonTitle,
     IonInput, IonTextarea, IonButton, IonItem,
-    IonLabel, IonSelect, IonSelectOption, IonBackButton
+    IonLabel, IonSelect, IonSelectOption
   ]
 })
 export class EditarProductoPage implements OnInit {
