@@ -1,27 +1,30 @@
 <ion-header>
   <ion-toolbar>
-
-    <!-- Botón de regreso -->
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
 
     <ion-title>Gestión de Productos</ion-title>
 
-    <!-- Botón de crear -->
     <ion-buttons slot="end">
-      <ion-button class="pastel-crear" (click)="irACrearProducto()">
-        Crear
-      </ion-button>
+      <ion-button class="pastel-crear" (click)="irACrearProducto()">Crear</ion-button>
     </ion-buttons>
-
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
+
+  <!-- Filtro por categoría -->
+  <div class="categoria-filtro">
+    <ion-select [(ngModel)]="categoriaSeleccionada" (ionChange)="filtrarPorCategoria()" interface="popover" placeholder="Filtrar por categoría">
+      <ion-select-option [value]="null">Todas</ion-select-option>
+      <ion-select-option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</ion-select-option>
+    </ion-select>
+  </div>
+
   <ion-grid>
     <ion-row>
-      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let prod of productos">
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let prod of productosFiltrados">
         <ion-card class="product-card">
           <img [src]="prod.imagenUrl" alt="Imagen producto" />
           <ion-card-header>

@@ -381,7 +381,7 @@ export interface ApiCategoriaCategoria extends Struct.CollectionTypeSchema {
     singularName: 'categoria';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
@@ -411,7 +411,7 @@ export interface ApiDetallesPedidoDetallesPedido
     singularName: 'detalles-pedido';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     catidad: Schema.Attribute.Integer & Schema.Attribute.Required;
@@ -442,7 +442,7 @@ export interface ApiInventarioInventario extends Struct.CollectionTypeSchema {
     singularName: 'inventario';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     cantidad_actual: Schema.Attribute.Integer & Schema.Attribute.Required;
@@ -474,7 +474,7 @@ export interface ApiNotificacionNotificacion
     singularName: 'notificacion';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
@@ -508,7 +508,7 @@ export interface ApiPedidoPedido extends Struct.CollectionTypeSchema {
     singularName: 'pedido';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
@@ -599,7 +599,7 @@ export interface ApiVentaVenta extends Struct.CollectionTypeSchema {
     singularName: 'venta';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
