@@ -12,6 +12,8 @@ export class ApiService {
 
   constructor(private session: SessionService) { }
 
+  // PRODUCTOS
+
   async getProductos(): Promise<any[]> {
     const token = this.session.obtenerToken();
 
@@ -36,7 +38,6 @@ export class ApiService {
     try {
       const response = await axios.get(url);
       const productoRaw = response.data.data[0];
-
       //console.log('Respuesta completa de producto por documentId:', response.data.data[0]);
 
       if (!productoRaw) throw new Error('Producto no encontrado');
@@ -111,6 +112,32 @@ export class ApiService {
       throw error.response?.data?.error?.message || 'Error al eliminar producto';
     }
   }
+
+  // CATEGORIAS
+
+  async createCategoria(data: any): Promise<any> {
+    const token = this.session.obtenerToken();
+    try {
+      const response = await axios.post(`${this.baseUrl}/categorias`, { data }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data?.error?.message || 'Error al crear categoría';
+    }
+  }
+
+  async getCategoriaByDocumentId(documentId: string): Promise<any> {
+    try {
+      const response = await axios.get(`${this.baseUrl}/categorias?filters[documentId][$eq]=${documentId}`);
+      return response.data.data[0];
+    } catch (error: any) {
+      throw error.response?.data?.error?.message || 'Error al obtener categoría';
+    }
+  }
+
 
   async getCategorias(): Promise<any[]> {
     try {

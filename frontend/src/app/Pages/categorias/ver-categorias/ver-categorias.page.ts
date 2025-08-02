@@ -1,35 +1,38 @@
-import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CategoriasService } from '../../..//servicios/categorias.service';
-import { NavController } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import {IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonicModule } from '@ionic/angular';
+import { Router, RouterModule } from '@angular/router';
+import { ApiService } from 'src/app/servicios/api.service';
 
 @Component({
   selector: 'app-ver-categorias',
-  templateUrl: './ver-categorias.page.html',
-  styleUrls: ['./ver-categorias.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule ], schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [CommonModule, IonicModule, RouterModule],
+  templateUrl: './ver-categorias.page.html',
+  styleUrls: ['./ver-categorias.page.scss']
 })
 export class VerCategoriasPage implements OnInit {
   categorias: any[] = [];
 
-  constructor(
-    private categoriasService: CategoriasService,
-    private navCtrl: NavController
-  ) {}
+  constructor(private api: ApiService, private router: Router) {}
 
   async ngOnInit() {
-    this.categorias = await this.categoriasService.obtenerCategorias();
+    try {
+      this.categorias = await this.api.getCategorias();
+    } catch (error) {
+      alert('Error al obtener categorías');
+    }
   }
 
-  editar(id: string) {
-    this.navCtrl.navigateForward(`/editar-categoria/${id}`);
+  irACrearCategoria() {
+    this.router.navigate(['/crear-categoria']);
   }
 
-  async eliminar(id: string) {
-    await this.categoriasService.eliminarCategoria(id);
-    this.categorias = await this.categoriasService.obtenerCategorias();
+  editarCategoria(id: string) {
+    alert('Botón editar (estático por ahora)');
+  }
+
+  eliminarCategoria(id: string) {
+    alert('Botón eliminar (estático por ahora)');
   }
 }
