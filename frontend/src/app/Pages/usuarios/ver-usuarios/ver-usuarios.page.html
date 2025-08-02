@@ -1,13 +1,43 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>ver_usuarios</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gestión de Usuarios</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="pastel-crear" (click)="irACrearUsuario()">Crear</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">ver_usuarios</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+
+  <!-- Filtro de búsqueda -->
+  <div class="busqueda-usuario">
+    <ion-icon name="search-outline" class="icono-busqueda"></ion-icon>
+    <ion-input [(ngModel)]="terminoBusqueda" (ionInput)="filtrarUsuarios()" placeholder="Buscar usuario (Nombre o Correo)"></ion-input>
+  </div>
+
+  <!-- Tabla de usuarios -->
+  <ion-grid>
+    <ion-row class="encabezado">
+      <ion-col size="4"><strong>Nombre</strong></ion-col>
+      <ion-col size="4"><strong>Email / Rol</strong></ion-col>
+      <ion-col size="4"><strong>Acciones</strong></ion-col>
+    </ion-row>
+
+    <ion-row *ngFor="let u of usuariosFiltrados" class="fila-usuario">
+      <ion-col size="4">{{ u.username }}</ion-col>
+      <ion-col size="4">{{ u.email }}<br><small><strong>Rol:</strong> {{ u.role?.name }}</small></ion-col>
+      <ion-col size="4" class="acciones">
+        <div class="botones-derecha">
+          <ion-button size="small" color="warning" (click)="irAEditar(u.id)">Editar</ion-button>
+          <ion-button size="small" color="medium" (click)="bloquearUsuario(u.id, u.blocked)">
+            {{ u.blocked ? 'Desbloquear' : 'Bloquear' }}
+          </ion-button>
+          <ion-button size="small" color="danger" (click)="eliminarUsuario(u.id)">Eliminar</ion-button>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

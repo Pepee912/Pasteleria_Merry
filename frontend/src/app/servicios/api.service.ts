@@ -179,4 +179,111 @@ export class ApiService {
     }
   }
 
+  // USUARIOS
+
+  async getUsuarios(): Promise<any[]> {
+    const token = this.session.obtenerToken();
+
+    try {
+      const response = await axios.get(`${this.baseUrl}/users?populate=*`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      //console.log('Respuesta completa usuarios:', response.data);
+      return response.data; 
+    } catch (error: any) {
+      console.error('Error en getUsuarios:', error.response?.data || error);
+      throw error.response?.data?.error?.message || 'Error al obtener usuarios';
+    }
+  }
+
+  async getRoles(): Promise<any[]> {
+    const token = this.session.obtenerToken();
+
+    try {
+      const response = await axios.get(`${this.baseUrl}/users-permissions/roles`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      return response.data.roles;
+    } catch (error: any) {
+      console.error('Error en getRoles:', error.response?.data || error);
+      throw error.response?.data?.error?.message || 'Error al obtener roles';
+    }
+  }
+
+  async crearUsuario(data: any): Promise<any> {
+    const token = this.session.obtenerToken();
+
+    try {
+      const response = await axios.post(`${this.baseUrl}/users`, {
+        ...data,
+        confirmed: true 
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      return response.data;
+    } catch (error: any) {
+      console.error('Error en crearUsuario:', error.response?.data || error);
+      throw error.response?.data?.error?.message || 'Error al crear usuario';
+    }
+  }
+
+  async updateUsuario(id: number, data: any): Promise<any> {
+    const token = this.session.obtenerToken();
+
+    try {
+      const response = await axios.put(`${this.baseUrl.replace('/api', '')}/api/users/${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      return response.data;
+    } catch (error: any) {
+      console.error('Error al actualizar usuario:', error.response?.data || error);
+      throw error.response?.data?.error?.message || 'Error al actualizar usuario';
+    }
+  }
+
+  async eliminarUsuario(id: number): Promise<any> {
+    const token = this.session.obtenerToken();
+
+    try {
+      const response = await axios.delete(`${this.baseUrl}/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error: any) {
+      console.error('Error en eliminarUsuario:', error.response?.data || error);
+      throw error.response?.data?.error?.message || 'Error al eliminar usuario';
+    }
+  }
+
+  async actualizarUsuario(id: number, data: any): Promise<any> {
+    const token = this.session.obtenerToken();
+
+    try {
+      const response = await axios.put(`${this.baseUrl}/users/${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error: any) {
+      console.error('Error en actualizarUsuario:', error.response?.data || error);
+      throw error.response?.data?.error?.message || 'Error al actualizar usuario';
+    }
+  }
+
 }
