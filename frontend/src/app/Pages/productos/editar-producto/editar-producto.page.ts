@@ -35,7 +35,8 @@ export class EditarProductoPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.documentId = this.route.snapshot.queryParamMap.get('documentId') || '';
+    //this.documentId = this.route.snapshot.queryParamMap.get('documentId') || '';
+    this.documentId = this.route.snapshot.paramMap.get('id') || '';
     if (!this.documentId) return alert('Falta documentId');
 
     this.categorias = await this.api.getCategorias();

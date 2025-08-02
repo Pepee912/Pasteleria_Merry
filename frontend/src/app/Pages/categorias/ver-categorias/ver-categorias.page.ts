@@ -28,11 +28,21 @@ export class VerCategoriasPage implements OnInit {
     this.router.navigate(['/crear-categoria']);
   }
 
-  editarCategoria(id: string) {
-    alert('Botón editar (estático por ahora)');
+  editarCategoria(documentId: string) {
+    this.router.navigate(['/editar-categoria', documentId]);
   }
 
-  eliminarCategoria(id: string) {
-    alert('Botón eliminar (estático por ahora)');
+  async eliminarCategoria(documentId: string) {
+    const confirmar = confirm('¿Deseas eliminar esta categoría?, si tiene algún producto relacionado este quedará sin categoría');
+    if (!confirmar) return;
+
+    try {
+      await this.api.deleteCategoriaByDocumentId(documentId);
+      this.categorias = this.categorias.filter(cat => cat.documentId !== documentId);
+      alert('Categoría eliminada correctamente');
+    } catch (error) {
+      alert('Error al eliminar categoría: ' + error);
+    }
   }
+
 }

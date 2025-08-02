@@ -8,12 +8,18 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-item>
-    <ion-label position="floating">Nombre de la categoría</ion-label>
-    <ion-input [(ngModel)]="nombre"></ion-input>
-  </ion-item>
+  <div class="form-wrapper">
+    <div class="form-card">
 
-  <ion-button expand="block" class="pastel-button" (click)="crearCategoria()">
-    Crear Categoría
-  </ion-button>
+      <ion-item>
+        <ion-label position="floating">Nombre de la categoría</ion-label>
+        <ion-input [(ngModel)]="nombre"></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" class="pastel-button" (click)="crearCategoria()">
+        Crear Categoría
+      </ion-button>
+
+    </div>
+  </div>
 </ion-content>

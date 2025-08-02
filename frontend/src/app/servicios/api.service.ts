@@ -115,6 +115,26 @@ export class ApiService {
 
   // CATEGORIAS
 
+  async getCategorias(): Promise<any[]> {
+    try {
+      const response = await axios.get(`${this.baseUrl}/categorias`);
+      //console.log('Categorías desde la API:', response.data.data);
+      return response.data.data;
+    } catch (error: any) {
+      console.error('Error al obtener categorías:', error);
+      throw 'No se pudieron cargar las categorías';
+    }
+  }
+
+  async getCategoriaByDocumentId(documentId: string): Promise<any> {
+    try {
+      const response = await axios.get(`${this.baseUrl}/categorias?filters[documentId][$eq]=${documentId}`);
+      return response.data.data[0];
+    } catch (error: any) {
+      throw error.response?.data?.error?.message || 'Error al obtener categoría';
+    }
+  }
+
   async createCategoria(data: any): Promise<any> {
     const token = this.session.obtenerToken();
     try {
@@ -129,24 +149,33 @@ export class ApiService {
     }
   }
 
-  async getCategoriaByDocumentId(documentId: string): Promise<any> {
+  async updateCategoriaByDocumentId(documentId: string, data: any): Promise<any> {
+    const token = this.session.obtenerToken();
+
     try {
-      const response = await axios.get(`${this.baseUrl}/categorias?filters[documentId][$eq]=${documentId}`);
-      return response.data.data[0];
+      const response = await axios.put(`${this.baseUrl}/categorias/${documentId}`, { data }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
     } catch (error: any) {
-      throw error.response?.data?.error?.message || 'Error al obtener categoría';
+      console.error('Error al actualizar categoría:', error);
+      throw error.response?.data?.error?.message || 'Error al actualizar categoría';
     }
   }
 
-
-  async getCategorias(): Promise<any[]> {
+  async deleteCategoriaByDocumentId(documentId: string): Promise<any> {
+    const token = this.session.obtenerToken();
     try {
-      const response = await axios.get(`${this.baseUrl}/categorias`);
-      console.log('Categorías desde la API:', response.data.data);
-      return response.data.data;
+      const response = await axios.delete(`${this.baseUrl}/categorias/${documentId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
     } catch (error: any) {
-      console.error('Error al obtener categorías:', error);
-      throw 'No se pudieron cargar las categorías';
+      throw error.response?.data?.error?.message || 'Error al eliminar categoría';
     }
   }
 

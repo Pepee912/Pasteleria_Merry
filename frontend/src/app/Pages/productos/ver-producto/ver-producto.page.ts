@@ -65,9 +65,11 @@ export class VerProductoPage implements OnInit {
   }
 
   irAEditarProducto(documentId: string) {
-    this.router.navigate(['/editar-producto'], {
-      queryParams: { documentId }
-    });
+    this.router.navigate(['/editar-producto', documentId]);
+    
+    //this.router.navigate(['/editar-producto'], {
+    //  queryParams: { documentId }
+    //});
   }
 
   async eliminarProducto(documentId: string) {

@@ -1,0 +1,83 @@
+:host {
+  --ion-background-color: #fff0f5;
+}
+
+ion-header {
+  ion-toolbar {
+    --background: #fff;
+    --color: #b76e79;
+    border-bottom: 1px solid #f9a8d4;
+
+    ion-title {
+      font-family: 'Comic Sans MS', 'Montserrat', cursive;
+      font-weight: bold;
+    }
+
+    ion-button {
+      --color: #b76e79;
+      font-weight: bold;
+    }
+  }
+}
+
+ion-content {
+  background: #fff0f5;
+
+  ion-grid {
+    padding: 0 10px;
+  }
+
+  .pastel-crear {
+    --background: #f9a8d4;
+    --color: white;
+    --background-hover: #f472b6;
+    --background-activated: #ec4899;
+    --border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(183, 110, 121, 0.2);
+    transition: background 0.3s ease;
+  }
+
+  ion-card.categoria-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(183, 110, 121, 0.1);
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+
+    ion-card-header {
+        padding: 16px 12px;
+
+        ion-card-title {
+        font-size: 1.4rem;
+        color: #b76e79;
+        font-family: 'Comic Sans MS', 'Montserrat', cursive;
+        font-weight: bold;
+        text-align: center;
+        letter-spacing: 0.5px;
+        }
+    }
+
+    .card-content {
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .botones {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+
+      ion-button {
+        flex: 1;
+        --border-radius: 12px;
+        font-weight: bold;
+      }
+    }
+  }
+}

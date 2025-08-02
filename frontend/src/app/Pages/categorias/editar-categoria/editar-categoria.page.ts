@@ -1,37 +1,58 @@
-import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { CategoriasService } from '../../../servicios/categorias.service';
-// import { IonicModule } from '@ionic/angular';
-import { NavController } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonicModule } from '@ionic/angular';
+import { ApiService } from 'src/app/servicios/api.service';
 
 @Component({
   selector: 'app-editar-categoria',
-  templateUrl: './editar-categoria.page.html',
-  styleUrls: ['./editar-categoria.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule], schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [CommonModule, IonicModule, RouterModule, FormsModule],
+  templateUrl: './editar-categoria.page.html',
+  styleUrls: ['./editar-categoria.page.scss']
 })
 export class EditarCategoriaPage implements OnInit {
-  id = '';
-  nombre = '';
+  documentId: string = '';
+  nombre: string = '';
 
   constructor(
     private route: ActivatedRoute,
-    private categoriasService: CategoriasService,
-    private navCtrl: NavController
+    private api: ApiService,
+    private router: Router
   ) {}
 
   async ngOnInit() {
-    this.id = this.route.snapshot.paramMap.get('id')!;
-    const cat = await this.categoriasService.obtenerCategoria(this.id);
-    this.nombre = cat.attributes.nombre;
+    this.documentId = this.route.snapshot.paramMap.get('id') || '';
+    if (!this.documentId) {
+      alert('ID no válido');
+      this.router.navigate(['/ver-categorias']);
+      return;
+    }
+
+    try {
+      const categoria = await this.api.getCategoriaByDocumentId(this.documentId);
+      //console.log('Categoría recibida:', categoria);
+
+      this.nombre = categoria?.nombre || '';
+    } catch (error) {
+      alert('Error al cargar categoría: ' + error);
+    }
   }
 
-  async actualizar() {
-    await this.categoriasService.actualizarCategoria(this.id, { nombre: this.nombre });
-    this.navCtrl.navigateBack('/ver-categorias');
+  async actualizarCategoria() {
+    if (!this.nombre.trim()) {
+      alert('El nombre no puede estar vacío');
+      return;
+    }
+
+    try {
+      await this.api.updateCategoriaByDocumentId(this.documentId, { nombre: this.nombre });
+      alert('Categoría actualizada correctamente');
+      //this.router.navigate(['/ver-categorias']);
+      window.location.href = '/ver-categorias';
+    } catch (error) {
+      alert('Error al actualizar categoría: ' + error);
+    }
   }
 }

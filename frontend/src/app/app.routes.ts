@@ -31,8 +31,8 @@ export const routes: Routes = [
     data: { roles: ['Admin', 'Asistente'] }
   },
   {
-    path: 'editar-producto',
-    loadComponent: () => import('./pages/productos/editar-producto/editar-producto.page').then( m => m.EditarProductoPage)
+    path: 'editar-producto/:id',
+    loadComponent: () => import('./pages/productos/editar-producto/editar-producto.page').then(m => m.EditarProductoPage)
   },
   {
     path: 'productos/detalle-producto/:id',

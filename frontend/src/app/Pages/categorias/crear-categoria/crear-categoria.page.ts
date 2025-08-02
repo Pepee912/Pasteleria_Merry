@@ -26,7 +26,8 @@ export class CrearCategoriaPage {
     try {
       await this.api.createCategoria({ nombre: this.nombre });
       alert('Categoría creada exitosamente');
-      this.router.navigate(['/ver-categorias']);
+      //this.router.navigate(['/ver-categorias']);
+      window.location.href = '/ver-categorias';
     } catch (error) {
       alert('Error al crear categoría: ' + error);
     }
