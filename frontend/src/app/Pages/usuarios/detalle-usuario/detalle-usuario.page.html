@@ -1,13 +1,31 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>detalle_usuario</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mi Perfil</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">detalle_usuario</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding perfil-page">
+  <div class="perfil-container">
+    <div class="avatar">
+      {{ obtenerIniciales(usuario?.username) }}
+    </div>
+
+    <h2 class="nombre">{{ usuario?.username }}</h2>
+    <p class="rol">{{ usuario?.role?.name }}</p>
+
+    <div class="info-group">
+      <span>{{ usuario?.email }}</span>
+    </div>
+
+    <div class="info-group">
+      <span>Confirmado: {{ usuario?.confirmed ? 'Sí' : 'No' }}</span>
+    </div>
+
+    <div class="info-group">
+      <span>Bloqueado: {{ usuario?.blocked ? 'Sí' : 'No' }}</span>
+    </div>
+  </div>
 </ion-content>
