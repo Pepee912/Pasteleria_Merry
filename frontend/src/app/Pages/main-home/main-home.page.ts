@@ -15,14 +15,14 @@ import { FormsModule } from '@angular/forms';
 })
 export class MainHomePage implements OnInit {
   productos: any[] = [];
+  productosFiltrados: any[] = [];
+  categorias: any[] = [];
+  categoriaSeleccionada: string | null = null;
+
   BASE_URL = 'http://localhost:1337';
   mostrarBotones = true;
   usuario: any = null;
   rol: string | null = null;
-
-  categorias: any[] = [];
-  categoriaSeleccionada: string | null = null;
-  productosFiltrados: any[] = [];
 
   constructor(
     private api: ApiService,
@@ -30,14 +30,24 @@ export class MainHomePage implements OnInit {
     private session: SessionService
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
+    this.verificarSesion(); // Esto puede ejecutarse una vez
+  }
+
+  ionViewWillEnter() {
+    this.cargarDatos(); // Esto se ejecuta cada vez que entras a esta vista
+  }
+
+  verificarSesion() {
     this.mostrarBotones = !this.session.estaAutenticado();
 
     if (!this.mostrarBotones) {
       this.usuario = this.session.obtenerUsuario();
       this.rol = this.session.obtenerRol();
     }
+  }
 
+  async cargarDatos() {
     try {
       const data = await this.api.getProductos();
       this.productos = data.map(p => ({
@@ -48,7 +58,6 @@ export class MainHomePage implements OnInit {
       this.productosFiltrados = [...this.productos];
 
       this.categorias = await this.api.getCategorias();
-      //console.log('Categorías cargadas:', this.categorias);
     } catch (error) {
       alert(error);
     }
@@ -57,21 +66,12 @@ export class MainHomePage implements OnInit {
   filtrarPorCategoria() {
     if (!this.categoriaSeleccionada) {
       this.productosFiltrados = [...this.productos];
-      //console.log('Sin filtro: mostrando todos los productos');
       return;
     }
 
     const categoriaId = parseInt(this.categoriaSeleccionada + '', 10);
-    this.productosFiltrados = this.productos.filter(p => {
-      const idCategoria = p.categoria?.id;
-      //console.log(`Producto: ${p.nombre}, idCategoria: ${idCategoria}`);
-      return idCategoria === categoriaId;
-    });
-
-    //console.log('Productos filtrados por categoría:', categoriaId, this.productosFiltrados);
+    this.productosFiltrados = this.productos.filter(p => p.categoria?.id === categoriaId);
   }
-
-
 
   login() {
     this.router.navigate(['/login']);
@@ -79,7 +79,8 @@ export class MainHomePage implements OnInit {
 
   registro() {
     this.router.navigate(['/registro']);
-  } 
+  }
+
   categoria() {
     this.router.navigate(['/ver-categorias']);
   }
@@ -97,6 +98,4 @@ export class MainHomePage implements OnInit {
   verDetalle(documentId: string) {
     this.router.navigate(['/productos/detalle-producto', documentId]);
   }
-
-
 }
