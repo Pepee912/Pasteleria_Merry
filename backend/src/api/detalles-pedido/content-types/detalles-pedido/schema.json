@@ -11,7 +11,7 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "catidad": {
+    "cantidad": {
       "type": "integer",
       "required": true
     },

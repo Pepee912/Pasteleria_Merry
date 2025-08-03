@@ -46,12 +46,6 @@
       "relation": "oneToMany",
       "target": "api::detalles-pedido.detalles-pedido",
       "mappedBy": "pedido"
-    },
-    "venta": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::venta.venta",
-      "mappedBy": "pedido"
     }
   }
 }

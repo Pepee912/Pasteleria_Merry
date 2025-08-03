@@ -47,7 +47,7 @@ export class ApiService {
         nombre: productoRaw.nombre,
         descripcion: productoRaw.descripcion,
         precio: productoRaw.precio,
-        stock: productoRaw.stock,
+        //stock: productoRaw.stock,
         imagenUrl: productoRaw.imagen_url?.[0]?.url
           ? `${this.baseUrl.replace('/api', '')}${productoRaw.imagen_url[0].url}`
           : null,
@@ -285,5 +285,23 @@ export class ApiService {
       throw error.response?.data?.error?.message || 'Error al actualizar usuario';
     }
   }
+
+  // INVENTARIO
+
+  async createInventario(data: any): Promise<any> {
+    const token = this.session.obtenerToken();
+    try {
+      const response = await axios.post(`${this.baseUrl}/inventarios`, { data }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error: any) {
+      console.error('Error al crear inventario:', error);
+      throw error.response?.data?.error?.message || 'Error al crear inventario';
+    }
+  }
+
 
 }
