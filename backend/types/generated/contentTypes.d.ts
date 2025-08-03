@@ -567,10 +567,7 @@ export interface ApiProductoProducto extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::detalles-pedido.detalles-pedido'
     >;
-    imagen_url: Schema.Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios',
-      true
-    >;
+    imagen_url: Schema.Attribute.Media<'images' | 'files', true>;
     inventario: Schema.Attribute.Relation<
       'manyToOne',
       'api::inventario.inventario'

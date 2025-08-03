@@ -24,9 +24,7 @@
       "multiple": true,
       "allowedTypes": [
         "images",
-        "files",
-        "videos",
-        "audios"
+        "files"
       ]
     },
     "stock": {
