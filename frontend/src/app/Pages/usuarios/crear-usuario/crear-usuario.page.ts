@@ -43,12 +43,6 @@ export class CrearUsuarioPage implements OnInit {
       return;
     }
 
-    // Validación: Nombre completo (al menos un espacio)
-    if (!this.username.includes(' ')) {
-      alert('Ingresa el nombre completo (nombre y apellidos).');
-      return;
-    }
-
     // Validación: Email básico
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(this.email)) {
@@ -72,7 +66,8 @@ export class CrearUsuarioPage implements OnInit {
       });
 
       alert('Usuario creado correctamente');
-      this.router.navigate(['/ver-usuarios']);
+      //this.router.navigate(['/ver-usuarios']);
+      window.location.href = '/ver-usuarios';
     } catch (error: any) {
       console.error('Error al crear usuario:', error);
 

@@ -48,7 +48,7 @@ ion-content {
     transition: transform 0.2s ease-in-out;
     display: flex;
     flex-direction: column;
-    flex-grow: 1; // que se estire dentro de la columna
+    flex-grow: 1;
 
     &:hover {
       transform: scale(1.02);
@@ -120,47 +120,67 @@ ion-content {
   }
 }
 
-.categoria-filtro {
+/* FILTRO + BOTÓN */
+.barra-pedido-filtro {
   display: flex;
+  justify-content: flex-end; // Filtro siempre a la derecha
   align-items: center;
-  justify-content: flex-end;
-  margin: 10px 0 20px 0;
-  padding-right: 12px;
-  gap: 8px;
+  margin: 10px 10px 20px 10px;
+  gap: 12px;
 
-  ion-icon.icono-busqueda {
-    font-size: 20px;
-    color: #b76e79;
+  .crear-pedido-btn {
+    order: 1;
+    --background: #b76e79;
+    --color: white;
+    --border-radius: 20px;
+    --box-shadow: 0 4px 10px rgba(183, 110, 121, 0.2);
+    font-weight: bold;
+    padding: 0 20px;
+    height: 42px;
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+      transform: scale(1.03);
+    }
   }
 
-  ion-select {
+  .categoria-select {
+    order: 2;
     --padding-start: 10px;
     --border-radius: 12px;
     --background: #fff;
-    --color: #b76e79;
     --placeholder-color: #b76e79;
-    --placeholder-opacity: 0.6;
+    --placeholder-opacity: 0.8;
     --border-color: #f9a8d4;
-    --highlight-color-focused: #f9a8d4; 
-    --highlight-color-invalid: #f9a8d4; 
-    --icon-color: #b76e79; 
+    --highlight-color-focused: #f9a8d4;
+    --highlight-color-invalid: #f9a8d4;
+    --icon-color: #b76e79;
     border: 1px solid #f9a8d4;
     min-width: 160px;
     max-width: 220px;
     box-shadow: 0 2px 6px rgba(183, 110, 121, 0.1);
     font-weight: bold;
-    color: #b76e79;
+  }
 
-    .select-text {
-      color: #b76e79 !important;
-    }
+  ion-select::part(text) {
+    color: #b76e79;
+    font-weight: bold;
+    font-family: 'Comic Sans MS', 'Montserrat', cursive;
   }
 
 }
 
 @media (max-width: 600px) {
-  .categoria-filtro {
-    justify-content: center;
-    padding-right: 0;
+  .barra-pedido-filtro {
+    flex-direction: column;
+    align-items: stretch;
+
+    .crear-pedido-btn {
+      align-self: flex-start;
+    }
+
+    .categoria-select {
+      align-self: flex-end;
+    }
   }
 }

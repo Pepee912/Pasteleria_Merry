@@ -24,14 +24,24 @@
 
 <ion-content class="ion-padding">
 
-  <!-- Filtro por categoría -->
-  <div class="categoria-filtro">
-    <ion-select [(ngModel)]="categoriaSeleccionada" (ionChange)="filtrarPorCategoria()" interface="popover" placeholder="Categoría">
+  <!-- Filtro por categoría + Botón Crear Pedido -->
+  <div class="barra-pedido-filtro">
+    <ion-button class="crear-pedido-btn" (click)="crearPedido()" *ngIf="usuario && (rol === 'Admin' || rol === 'Cliente')">
+      Realizar pedido
+    </ion-button>
+
+    <ion-select
+      class="categoria-select"
+      [(ngModel)]="categoriaSeleccionada"
+      (ionChange)="filtrarPorCategoria()"
+      interface="popover"
+      placeholder="Categoría"
+    >
       <ion-select-option [value]="null">Todas</ion-select-option>
       <ion-select-option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</ion-select-option>
     </ion-select>
   </div>
-  
+
   <!-- 
   <div *ngIf="usuario">
     <h2>¡Hola {{ usuario.username }}!</h2>
@@ -41,6 +51,10 @@
 
   <div class="empty-state" *ngIf="productos.length === 0">
     <p>No hay productos disponibles por el momento.</p>
+  </div>
+
+  <div class="empty-state" *ngIf="categoriaSeleccionada && productosFiltrados.length === 0">
+    <p>No hay productos disponibles para esta categoría.</p>
   </div>
 
   <ion-grid>
