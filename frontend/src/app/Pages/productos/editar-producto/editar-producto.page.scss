@@ -73,6 +73,22 @@ ion-content {
 
   input[type="file"] {
     padding: 10px;
+    color: #b76e79 !important; 
+    background-color: #fff !important; 
+    font-weight: bold;
+
+    &::file-selector-button {
+      color: #fff;
+      background-color: #b76e79;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    &::file-selector-button:hover {
+      background-color: #e88ca0;
+    }
   }
 
   .preview-img {
