@@ -71,7 +71,8 @@ export class ActualizarInventarioPage implements OnInit {
       if (!response.ok) throw new Error('Error al actualizar inventario');
 
       alert('Inventario actualizado correctamente');
-      this.router.navigate(['/ver-inventario']);
+      //this.router.navigate(['/ver-inventario']);
+      window.location.href = '/ver-inventario';
     } catch (error) {
       console.error(error);
       alert('No se pudo actualizar el inventario');
