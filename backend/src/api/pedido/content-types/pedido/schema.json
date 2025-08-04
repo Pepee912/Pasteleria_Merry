@@ -15,9 +15,9 @@
       "type": "enumeration",
       "required": true,
       "enum": [
-        "pendiente, ",
-        "aceptado, ",
-        "entregado,",
+        "pendiente",
+        "aceptado",
+        "entregado",
         "cancelado"
       ]
     },

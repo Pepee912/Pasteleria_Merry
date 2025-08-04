@@ -520,7 +520,7 @@ export interface ApiPedidoPedido extends Struct.CollectionTypeSchema {
       'api::detalles-pedido.detalles-pedido'
     >;
     estado: Schema.Attribute.Enumeration<
-      ['pendiente, ', 'aceptado, ', 'entregado,', 'cancelado']
+      ['pendiente', 'aceptado', 'entregado', 'cancelado']
     > &
       Schema.Attribute.Required;
     fecha_entrega: Schema.Attribute.DateTime;
