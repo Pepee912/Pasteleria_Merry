@@ -1,13 +1,36 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>ver_ventas</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Historial de Ventas</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">ver_ventas</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+
+  <!-- Filtro por fecha -->
+  <div class="filtro-fecha">
+    <ion-item>
+      <ion-label position="floating">Filtrar por fecha</ion-label>
+      <ion-input [(ngModel)]="fechaFiltro" type="date" (ionChange)="filtrarVentas()"></ion-input>
+    </ion-item>
+  </div>
+
+  <!-- Tabla -->
+  <ion-grid>
+    <ion-row class="encabezado">
+      <ion-col size="4"><strong>Fecha</strong></ion-col>
+      <ion-col size="4"><strong>Total</strong></ion-col>
+      <ion-col size="4"><strong>Acciones</strong></ion-col>
+    </ion-row>
+
+    <ion-row *ngFor="let venta of ventasFiltradas">
+      <ion-col size="4">{{ venta.fecha_venta | date: 'shortDate' }}</ion-col>
+      <ion-col size="4">${{ venta.total }}</ion-col>
+      <ion-col size="4">
+        <ion-button size="small" color="primary" (click)="irADetalle(venta)">Ver detalles</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

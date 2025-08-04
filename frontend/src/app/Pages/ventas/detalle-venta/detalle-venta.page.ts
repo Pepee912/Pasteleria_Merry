@@ -1,20 +1,30 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { ApiService } from 'src/app/servicios/api.service';
+import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-detalle-venta',
+  standalone: true,
   templateUrl: './detalle-venta.page.html',
   styleUrls: ['./detalle-venta.page.scss'],
-  standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [CommonModule, IonicModule, RouterModule]
 })
 export class DetalleVentaPage implements OnInit {
+  venta: any = null;
 
-  constructor() { }
+  constructor(private route: ActivatedRoute, private api: ApiService) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    const documentId = this.route.snapshot.queryParamMap.get('id');
+    if (!documentId) return;
+
+    try {
+      this.venta = await this.api.getVentaByDocumentId(documentId);
+    } catch (error) {
+      alert('No se pudo cargar la venta: ' + error);
+    }
   }
-
 }

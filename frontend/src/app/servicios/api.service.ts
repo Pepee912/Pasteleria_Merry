@@ -326,5 +326,38 @@ export class ApiService {
     return response.data.data[0];
   }
 
+  // VENTAS -----------------------------------------------------------------------------------------------
+
+  async getVentas(): Promise<any[]> {
+    const token = this.session.obtenerToken();
+    try {
+      const response = await axios.get(`${this.baseUrl}/ventas?populate=pedido`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data.data;
+    } catch (error: any) {
+      console.error('Error al obtener ventas:', error);
+      throw 'Error al cargar ventas';
+    }
+  }
+
+  async getVentaByDocumentId(documentId: string): Promise<any> {
+    const token = this.session.obtenerToken();
+
+    const url = `${this.baseUrl}/ventas?filters[documentId][$eq]=${documentId}&populate[pedido][populate][detalles_pedidos][populate]=producto`;
+
+    try {
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      return response.data.data[0];
+    } catch (error: any) {
+      console.error('Error al obtener detalle de venta:', error);
+      throw 'No se pudo obtener el detalle de la venta';
+    }
+  }
 
 }
