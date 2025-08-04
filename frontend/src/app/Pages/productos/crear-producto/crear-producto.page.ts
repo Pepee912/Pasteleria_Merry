@@ -88,7 +88,7 @@ export class CrearProductoPage implements OnInit {
       // 3. Crear inventario asociado
       const nuevoInventario = {
         cantidad_actual: 0,
-        unidad_medida: 'pz',
+        unidad_medida: 'piezas',
         estado: 'disponible',
         producto: productoId
       };
