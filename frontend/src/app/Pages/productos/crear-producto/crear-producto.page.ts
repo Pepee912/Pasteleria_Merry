@@ -18,7 +18,6 @@ export class CrearProductoPage implements OnInit {
   nombre = '';
   descripcion = '';
   precio: number | null = null;
-  stock: number | null = null;
   categoriaId: number | null = null;
   categorias: any[] = [];
 
@@ -42,8 +41,8 @@ export class CrearProductoPage implements OnInit {
   }
 
   async crearProducto() {
-    if (!this.nombre || !this.precio || !this.stock || !this.categoriaId) {
-      alert('Por favor, completa todos los campos');
+    if (!this.nombre || !this.precio || !this.categoriaId) {
+      alert('Por favor, completa todos los campos requeridos');
       return;
     }
 
@@ -65,7 +64,7 @@ export class CrearProductoPage implements OnInit {
         });
 
         const uploadData = await response.json();
-        imagenId = uploadData[0].id; 
+        imagenId = uploadData[0].id;
       } catch (error) {
         alert('Error al subir imagen');
         console.error(error);
@@ -73,23 +72,35 @@ export class CrearProductoPage implements OnInit {
       }
     }
 
-    // 2. Crear producto con relación a la imagen
+    // 2. Crear el producto
     const nuevoProducto = {
       nombre: this.nombre,
       descripcion: this.descripcion,
       precio: this.precio,
-      stock: this.stock,
       categoria: this.categoriaId,
       imagen_url: imagenId ? [imagenId] : []
     };
 
     try {
-      await this.api.createProducto(nuevoProducto);
-      alert('Producto creado exitosamente');
+      const respuesta = await this.api.createProducto(nuevoProducto);
+      const productoId = respuesta.data.id;
+
+      // 3. Crear inventario asociado
+      const nuevoInventario = {
+        cantidad_actual: 0,
+        unidad_medida: 'pz',
+        estado: 'disponible',
+        producto: productoId
+      };
+
+      await this.api.createInventario(nuevoInventario);
+
+      alert('Producto e inventario creados exitosamente');
       window.location.href = '/ver-producto';
     } catch (error) {
-      alert('Error al crear producto: ' + error);
+      alert('Error al crear producto e inventario: ' + error);
     }
   }
+
 
 }

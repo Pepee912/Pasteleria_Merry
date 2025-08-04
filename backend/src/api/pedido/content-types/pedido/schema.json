@@ -15,9 +15,9 @@
       "type": "enumeration",
       "required": true,
       "enum": [
-        "pendiente, ",
-        "aceptado, ",
-        "entregado,",
+        "pendiente",
+        "aceptado",
+        "entregado",
         "cancelado"
       ]
     },
@@ -26,7 +26,8 @@
       "required": true
     },
     "fecha_entrega": {
-      "type": "datetime"
+      "type": "datetime",
+      "required": true
     },
     "total": {
       "type": "decimal",
@@ -45,12 +46,6 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::detalles-pedido.detalles-pedido",
-      "mappedBy": "pedido"
-    },
-    "venta": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::venta.venta",
       "mappedBy": "pedido"
     }
   }

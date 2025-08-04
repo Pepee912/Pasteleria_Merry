@@ -44,8 +44,11 @@ export class MainHomePage implements OnInit {
     if (!this.mostrarBotones) {
       this.usuario = this.session.obtenerUsuario();
       this.rol = this.session.obtenerRol();
+      console.log('Usuario:', this.usuario);
+      console.log('Rol obtenido:', this.rol);
     }
   }
+
 
   async cargarDatos() {
     try {
@@ -98,4 +101,9 @@ export class MainHomePage implements OnInit {
   verDetalle(documentId: string) {
     this.router.navigate(['/productos/detalle-producto', documentId]);
   }
+
+  crearPedido() {
+    this.router.navigate(['/crear-pedido']);
+  }
+
 }

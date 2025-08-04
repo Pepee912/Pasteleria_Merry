@@ -27,18 +27,14 @@
         "files"
       ]
     },
-    "stock": {
-      "type": "integer",
-      "required": true
-    },
     "descripcion": {
       "type": "richtext"
     },
     "inventario": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "oneToOne",
       "target": "api::inventario.inventario",
-      "inversedBy": "productos"
+      "mappedBy": "producto"
     },
     "detalles_pedidos": {
       "type": "relation",

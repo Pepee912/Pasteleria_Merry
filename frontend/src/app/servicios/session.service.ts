@@ -26,6 +26,7 @@ export class SessionService {
   obtenerUsuario(): any | null {
     const u = localStorage.getItem('user');
     return u ? JSON.parse(u) : null;
+    
   }
 
   obtenerRol(): string | null {
@@ -36,4 +37,5 @@ export class SessionService {
   estaAutenticado(): boolean {
     return !!this.obtenerToken();
   }
+  
 }

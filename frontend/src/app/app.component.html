@@ -36,11 +36,9 @@
         <ion-label>Ventas</ion-label>
       </ion-item>
 
-      <!-- 
-      <ion-item routerLink="/mis-pedidos" *ngIf="rol === 'Cliente'" class="menu-card">
-        <ion-label>Mis pedidos</ion-label>
+      <ion-item routerLink="/mis-pedidos" *ngIf="rol === 'Admin' || rol === 'Cliente'" class="menu-card">
+        <ion-label>Mis Pedidos</ion-label>
       </ion-item>
-      -->
 
     </ion-list>
   </ion-content>

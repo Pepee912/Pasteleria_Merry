@@ -414,7 +414,7 @@ export interface ApiDetallesPedidoDetallesPedido
     draftAndPublish: false;
   };
   attributes: {
-    catidad: Schema.Attribute.Integer & Schema.Attribute.Required;
+    cantidad: Schema.Attribute.Integer & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -449,13 +449,14 @@ export interface ApiInventarioInventario extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    estado: Schema.Attribute.Enumeration<['disponible', 'agotado', 'inactivo']>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::inventario.inventario'
     > &
       Schema.Attribute.Private;
-    productos: Schema.Attribute.Relation<'oneToMany', 'api::producto.producto'>;
+    producto: Schema.Attribute.Relation<'oneToOne', 'api::producto.producto'>;
     publishedAt: Schema.Attribute.DateTime;
     ultima_actualizacion: Schema.Attribute.DateTime;
     unidad_medida: Schema.Attribute.String & Schema.Attribute.Required;
@@ -519,10 +520,10 @@ export interface ApiPedidoPedido extends Struct.CollectionTypeSchema {
       'api::detalles-pedido.detalles-pedido'
     >;
     estado: Schema.Attribute.Enumeration<
-      ['pendiente, ', 'aceptado, ', 'entregado,', 'cancelado']
+      ['pendiente', 'aceptado', 'entregado', 'cancelado']
     > &
       Schema.Attribute.Required;
-    fecha_entrega: Schema.Attribute.DateTime;
+    fecha_entrega: Schema.Attribute.DateTime & Schema.Attribute.Required;
     fecha_pedido: Schema.Attribute.DateTime & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -540,7 +541,6 @@ export interface ApiPedidoPedido extends Struct.CollectionTypeSchema {
       'manyToOne',
       'plugin::users-permissions.user'
     >;
-    venta: Schema.Attribute.Relation<'oneToOne', 'api::venta.venta'>;
   };
 }
 
@@ -569,7 +569,7 @@ export interface ApiProductoProducto extends Struct.CollectionTypeSchema {
     >;
     imagen_url: Schema.Attribute.Media<'images' | 'files', true>;
     inventario: Schema.Attribute.Relation<
-      'manyToOne',
+      'oneToOne',
       'api::inventario.inventario'
     >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -581,7 +581,6 @@ export interface ApiProductoProducto extends Struct.CollectionTypeSchema {
     nombre: Schema.Attribute.String & Schema.Attribute.Required;
     precio: Schema.Attribute.Decimal & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    stock: Schema.Attribute.Integer & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

@@ -20,7 +20,6 @@ export class EditarProductoPage implements OnInit {
   nombre = '';
   descripcion = '';
   precio: number | null = null;
-  stock: number | null = null;
   categoriaId: number | null = null;
   categorias: any[] = [];
 
@@ -47,7 +46,6 @@ export class EditarProductoPage implements OnInit {
       this.nombre = producto.nombre;
       this.descripcion = producto.descripcion;
       this.precio = producto.precio;
-      this.stock = producto.stock;
       this.categoriaId = producto.categoria?.id ?? null;
       this.imagenUrl = producto.imagenUrl ?? null;
     } catch (err) {
@@ -67,7 +65,6 @@ export class EditarProductoPage implements OnInit {
     //console.log('nombre:', this.nombre);
     //console.log('descripcion:', this.descripcion);
     //console.log('precio:', this.precio);
-    //console.log('stock:', this.stock);
     //console.log('categoriaId:', this.categoriaId);
 
     if (
@@ -75,7 +72,6 @@ export class EditarProductoPage implements OnInit {
       this.nombre.trim() === '' ||
       this.descripcion.trim() === '' ||
       this.precio === null ||
-      this.stock === null ||
       this.categoriaId === null
     ) {
       alert('Todos los campos son obligatorios');
@@ -107,7 +103,6 @@ export class EditarProductoPage implements OnInit {
       nombre: this.nombre,
       descripcion: this.descripcion,
       precio: this.precio,
-      stock: this.stock,
       categoria: this.categoriaId,
       ...(imagenId ? { imagen_url: [imagenId] } : {})
     };

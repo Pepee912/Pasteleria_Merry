@@ -22,11 +22,19 @@
     "ultima_actualizacion": {
       "type": "datetime"
     },
-    "productos": {
+    "producto": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "oneToOne",
       "target": "api::producto.producto",
-      "mappedBy": "inventario"
+      "inversedBy": "inventario"
+    },
+    "estado": {
+      "type": "enumeration",
+      "enum": [
+        "disponible",
+        "agotado",
+        "inactivo"
+      ]
     }
   }
 }

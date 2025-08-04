@@ -1,20 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonicModule } from '@ionic/angular';
+import { PedidosService } from 'src/app/servicios/pedidos.service';
 
 @Component({
   selector: 'app-ver-pedidos',
   templateUrl: './ver-pedidos.page.html',
   styleUrls: ['./ver-pedidos.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule]
 })
 export class VerPedidosPage implements OnInit {
+  pedidos: any[] = [];
 
-  constructor() { }
+  constructor(private pedidoService: PedidosService) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    try {
+      this.pedidos = await this.pedidoService.getPedidos();
+      console.log('Pedidos cargados:', this.pedidos);
+    } catch (error) {
+      console.error('Error al cargar pedidos:', error);
+      alert('Error al cargar los pedidos: ' + error);
+    }
   }
-
 }

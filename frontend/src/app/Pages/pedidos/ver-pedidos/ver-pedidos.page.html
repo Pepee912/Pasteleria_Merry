@@ -1,13 +1,27 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>ver_pedidos</ion-title>
+    <ion-title>Ver Pedidos</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">ver_pedidos</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <ion-card *ngFor="let pedido of pedidos">
+    <ion-card-header>
+      <ion-card-title>Pedido #{{ pedido.id }}</ion-card-title>
+      <ion-card-subtitle>Estado: {{ pedido.estado }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Fecha Pedido:</strong> {{ pedido.fecha_pedido | date:'medium' }}</p>
+      <p *ngIf="pedido.fecha_entrega"><strong>Fecha Entrega:</strong> {{ pedido.fecha_entrega | date:'medium' }}</p>
+      <p *ngIf="!pedido.fecha_entrega"><strong>Fecha Entrega:</strong> No asignada</p>
+      <p><strong>Total:</strong> ${{ pedido.total }}</p>
+      <p><strong>Notas:</strong> {{ pedido.notas || 'Sin notas' }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="pedidos.length === 0">
+    <ion-card-content>
+      <p>No hay pedidos disponibles.</p>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
