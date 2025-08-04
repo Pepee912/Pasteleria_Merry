@@ -31,11 +31,11 @@ export class MainHomePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.verificarSesion(); // Esto puede ejecutarse una vez
+    this.verificarSesion(); 
   }
 
   ionViewWillEnter() {
-    this.cargarDatos(); // Esto se ejecuta cada vez que entras a esta vista
+    this.cargarDatos();
   }
 
   verificarSesion() {
@@ -44,11 +44,8 @@ export class MainHomePage implements OnInit {
     if (!this.mostrarBotones) {
       this.usuario = this.session.obtenerUsuario();
       this.rol = this.session.obtenerRol();
-      console.log('Usuario:', this.usuario);
-      console.log('Rol obtenido:', this.rol);
     }
   }
-
 
   async cargarDatos() {
     try {

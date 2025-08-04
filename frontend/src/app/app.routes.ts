@@ -57,16 +57,12 @@ export const routes: Routes = [
     loadComponent: () => import('./Pages/inventario/ver-inventario/ver-inventario.page').then( m => m.VerInventarioPage)
   },
   {
-    path: 'actualizar-inventario',
-    loadComponent: () => import('./Pages/inventario/actualizar-inventario/actualizar-inventario.page').then( m => m.ActualizarInventarioPage)
+    path: 'actualizar-inventario/:id',
+    loadComponent: () => import('./Pages/inventario/actualizar-inventario/actualizar-inventario.page').then(m => m.ActualizarInventarioPage)
   },
   {
     path: 'ver-pedidos',
     loadComponent: () => import('./Pages/pedidos/ver-pedidos/ver-pedidos.page').then( m => m.VerPedidosPage)
-  },
-  {
-    path: 'detalle-pedido',
-    loadComponent: () => import('./Pages/pedidos/detalle-pedido/detalle-pedido.page').then( m => m.DetallePedidoPage)
   },
   {
     path: 'detalle-pedido',
@@ -107,7 +103,8 @@ export const routes: Routes = [
   {
     path: 'detalle-usuario',
     loadComponent: () => import('./Pages/usuarios/detalle-usuario/detalle-usuario.page').then( m => m.DetalleUsuarioPage)
-  },  {
+  },
+  {
     path: 'mis-pedidos',
     loadComponent: () => import('./Pages/pedidos/mis-pedidos/mis-pedidos.page').then( m => m.MisPedidosPage)
   }

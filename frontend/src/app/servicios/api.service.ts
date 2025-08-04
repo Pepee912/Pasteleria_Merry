@@ -303,5 +303,28 @@ export class ApiService {
     }
   }
 
+  async getInventarios(): Promise<any[]> {
+    const token = this.session.obtenerToken();
+    try {
+      const response = await axios.get(`${this.baseUrl}/inventarios?populate=*`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data.data;
+    } catch (error: any) {
+      console.error('Error al obtener inventarios:', error);
+      throw 'Error al cargar inventarios';
+    }
+  }
+
+  async getInventarioByDocumentId(documentId: string): Promise<any> {
+    const token = this.session.obtenerToken();
+    const response = await axios.get(`${this.baseUrl}/inventarios?filters[documentId][$eq]=${documentId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data.data[0];
+  }
+
 
 }
