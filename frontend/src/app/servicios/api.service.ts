@@ -41,6 +41,7 @@ export class ApiService {
 
     if (!productoRaw) throw new Error('Producto no encontrado');
 
+<<<<<<< HEAD
     const producto = {
       id: productoRaw.id,
       documentId: productoRaw.documentId,
@@ -53,6 +54,18 @@ export class ApiService {
         : null,
       categoria: productoRaw.categoria
     };
+=======
+      const producto = {
+        id: productoRaw.id,
+        nombre: productoRaw.nombre,
+        descripcion: productoRaw.descripcion,
+        precio: productoRaw.precio,
+        imagenUrl: productoRaw.imagen_url?.[0]?.url
+          ? `${this.baseUrl.replace('/api', '')}${productoRaw.imagen_url[0].url}`
+          : null,
+        categoria: productoRaw.categoria // simplemente así
+      };
+>>>>>>> 43958803a21bd487bf523e20dd09204c15307049
 
     return producto;
   } catch (error) {
@@ -284,45 +297,6 @@ export class ApiService {
     }
   }
 
-  // INVENTARIO-----------------------------------------------------------------------------------------------
-
-  async createInventario(data: any): Promise<any> {
-    const token = this.session.obtenerToken();
-    try {
-      const response = await axios.post(`${this.baseUrl}/inventarios`, { data }, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return response.data;
-    } catch (error: any) {
-      console.error('Error al crear inventario:', error);
-      throw error.response?.data?.error?.message || 'Error al crear inventario';
-    }
-  }
-
-  async getInventarios(): Promise<any[]> {
-    const token = this.session.obtenerToken();
-    try {
-      const response = await axios.get(`${this.baseUrl}/inventarios?populate=*`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return response.data.data;
-    } catch (error: any) {
-      console.error('Error al obtener inventarios:', error);
-      throw 'Error al cargar inventarios';
-    }
-  }
-
-  async getInventarioByDocumentId(documentId: string): Promise<any> {
-    const token = this.session.obtenerToken();
-    const response = await axios.get(`${this.baseUrl}/inventarios?filters[documentId][$eq]=${documentId}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return response.data.data[0];
-  }
 
   // VENTAS -----------------------------------------------------------------------------------------------
 

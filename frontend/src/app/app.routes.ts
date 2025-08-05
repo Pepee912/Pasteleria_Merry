@@ -53,14 +53,6 @@ export const routes: Routes = [
     loadComponent: () => import('./Pages/categorias/editar-categoria/editar-categoria.page').then( m => m.EditarCategoriaPage)
   },
   {
-    path: 'ver-inventario',
-    loadComponent: () => import('./Pages/inventario/ver-inventario/ver-inventario.page').then( m => m.VerInventarioPage)
-  },
-  {
-    path: 'actualizar-inventario/:id',
-    loadComponent: () => import('./Pages/inventario/actualizar-inventario/actualizar-inventario.page').then(m => m.ActualizarInventarioPage)
-  },
-  {
     path: 'ver-pedidos',
     loadComponent: () => import('./Pages/pedidos/ver-pedidos/ver-pedidos.page').then( m => m.VerPedidosPage)
   },

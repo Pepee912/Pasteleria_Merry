@@ -30,12 +30,6 @@
     "descripcion": {
       "type": "richtext"
     },
-    "inventario": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::inventario.inventario",
-      "mappedBy": "producto"
-    },
     "detalles_pedidos": {
       "type": "relation",
       "relation": "oneToMany",
