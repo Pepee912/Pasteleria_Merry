@@ -47,7 +47,6 @@ export class ApiService {
         nombre: productoRaw.nombre,
         descripcion: productoRaw.descripcion,
         precio: productoRaw.precio,
-        //stock: productoRaw.stock,
         imagenUrl: productoRaw.imagen_url?.[0]?.url
           ? `${this.baseUrl.replace('/api', '')}${productoRaw.imagen_url[0].url}`
           : null,
@@ -286,45 +285,6 @@ export class ApiService {
     }
   }
 
-  // INVENTARIO-----------------------------------------------------------------------------------------------
-
-  async createInventario(data: any): Promise<any> {
-    const token = this.session.obtenerToken();
-    try {
-      const response = await axios.post(`${this.baseUrl}/inventarios`, { data }, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return response.data;
-    } catch (error: any) {
-      console.error('Error al crear inventario:', error);
-      throw error.response?.data?.error?.message || 'Error al crear inventario';
-    }
-  }
-
-  async getInventarios(): Promise<any[]> {
-    const token = this.session.obtenerToken();
-    try {
-      const response = await axios.get(`${this.baseUrl}/inventarios?populate=*`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return response.data.data;
-    } catch (error: any) {
-      console.error('Error al obtener inventarios:', error);
-      throw 'Error al cargar inventarios';
-    }
-  }
-
-  async getInventarioByDocumentId(documentId: string): Promise<any> {
-    const token = this.session.obtenerToken();
-    const response = await axios.get(`${this.baseUrl}/inventarios?filters[documentId][$eq]=${documentId}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return response.data.data[0];
-  }
 
   // VENTAS -----------------------------------------------------------------------------------------------
 

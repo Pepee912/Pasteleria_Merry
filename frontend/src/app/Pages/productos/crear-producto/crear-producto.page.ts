@@ -85,17 +85,8 @@ export class CrearProductoPage implements OnInit {
       const respuesta = await this.api.createProducto(nuevoProducto);
       const productoId = respuesta.data.id;
 
-      // 3. Crear inventario asociado
-      const nuevoInventario = {
-        cantidad_actual: 0,
-        unidad_medida: 'piezas',
-        estado: 'disponible',
-        producto: productoId
-      };
+      alert('Producto creado exitosamente');
 
-      await this.api.createInventario(nuevoInventario);
-
-      alert('Producto e inventario creados exitosamente');
       window.location.href = '/ver-producto';
     } catch (error) {
       alert('Error al crear producto e inventario: ' + error);

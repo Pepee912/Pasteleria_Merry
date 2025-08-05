@@ -434,38 +434,6 @@ export interface ApiDetallesPedidoDetallesPedido
   };
 }
 
-export interface ApiInventarioInventario extends Struct.CollectionTypeSchema {
-  collectionName: 'inventarios';
-  info: {
-    displayName: 'Inventario';
-    pluralName: 'inventarios';
-    singularName: 'inventario';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    cantidad_actual: Schema.Attribute.Integer & Schema.Attribute.Required;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    estado: Schema.Attribute.Enumeration<['disponible', 'agotado', 'inactivo']>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::inventario.inventario'
-    > &
-      Schema.Attribute.Private;
-    producto: Schema.Attribute.Relation<'oneToOne', 'api::producto.producto'>;
-    publishedAt: Schema.Attribute.DateTime;
-    ultima_actualizacion: Schema.Attribute.DateTime;
-    unidad_medida: Schema.Attribute.String & Schema.Attribute.Required;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiNotificacionNotificacion
   extends Struct.CollectionTypeSchema {
   collectionName: 'notificacions';
@@ -568,10 +536,6 @@ export interface ApiProductoProducto extends Struct.CollectionTypeSchema {
       'api::detalles-pedido.detalles-pedido'
     >;
     imagen_url: Schema.Attribute.Media<'images' | 'files', true>;
-    inventario: Schema.Attribute.Relation<
-      'oneToOne',
-      'api::inventario.inventario'
-    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1130,7 +1094,6 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::categoria.categoria': ApiCategoriaCategoria;
       'api::detalles-pedido.detalles-pedido': ApiDetallesPedidoDetallesPedido;
-      'api::inventario.inventario': ApiInventarioInventario;
       'api::notificacion.notificacion': ApiNotificacionNotificacion;
       'api::pedido.pedido': ApiPedidoPedido;
       'api::producto.producto': ApiProductoProducto;
