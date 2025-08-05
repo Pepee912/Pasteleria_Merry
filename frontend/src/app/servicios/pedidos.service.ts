@@ -7,11 +7,10 @@ import { SessionService } from 'src/app/servicios/session.service';
   providedIn: 'root'
 })
 export class PedidosService {
-private baseUrl = environment.apiUrl;
+  private baseUrl = environment.apiUrl;
 
   constructor(private session: SessionService) {}
 
-  // GET all pedidos
   async getPedidos(): Promise<any[]> {
     const token = this.session.obtenerToken();
     const headers: any = {};
@@ -20,18 +19,15 @@ private baseUrl = environment.apiUrl;
     }
 
     try {
-      const response = await axios.get(`${this.baseUrl}/pedidos?populate=*`, {
-        headers
-      });
+      const response = await axios.get(`${this.baseUrl}/pedidos?populate=*`, { headers });
       return response.data.data;
     } catch (error: any) {
       throw error.response?.data?.error?.message || 'Error al obtener pedidos';
     }
   }
 
-  // GET pedido by documentId
   async getPedidoByDocumentId(documentId: string): Promise<any> {
-    const url = `${this.baseUrl}/pedidos?filters[documentId][$eq]=${documentId}&populate=*`;
+    const url = `${this.baseUrl}/pedidos?filters[documentId][$eq]=${encodeURIComponent(documentId)}&populate=*`;
 
     try {
       const response = await axios.get(url);
@@ -51,30 +47,26 @@ private baseUrl = environment.apiUrl;
       };
 
       return pedido;
-    } catch (error) {
-      console.error('Error en getPedidoByDocumentId:', error);
+    } catch (error: any) {
+      console.error('Error en getPedidoByDocumentId:', error.response?.data || error.message);
       throw 'Error al cargar pedido';
     }
   }
 
-  // CREATE pedido
   async createPedido(data: any): Promise<any> {
     const token = this.session.obtenerToken();
-    console.log('Payload enviado:', data); // Agrega esta línea para depurar
+    console.log('Payload enviado:', data);
     try {
       const response = await axios.post(`${this.baseUrl}/pedidos`, { data }, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
       return response.data;
     } catch (error: any) {
-      console.error('Detalles del error:', error.response?.data);
+      console.error('Detalles del error:', error.response?.data || error.message);
       throw error.response?.data?.error?.message || 'Error al crear pedido';
     }
   }
 
-  // UPDATE pedido by documentId
   async updatePedidoByDocumentId(documentId: string, data: any): Promise<any> {
     const token = this.session.obtenerToken();
     const pedido = await this.getPedidoByDocumentId(documentId);
@@ -83,19 +75,16 @@ private baseUrl = environment.apiUrl;
     try {
       const putUrl = `${this.baseUrl}/pedidos/${pedido.id}`;
       const response = await axios.put(putUrl, { data }, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
 
       return response.data;
     } catch (error: any) {
-      console.error('Error al actualizar pedido:', error);
+      console.error('Error al actualizar pedido:', error.response?.data || error.message);
       throw error.response?.data?.error?.message || 'Error al actualizar pedido';
     }
   }
 
-  // DELETE pedido by documentId
   async deletePedidoByDocumentId(documentId: string): Promise<any> {
     const token = this.session.obtenerToken();
     const pedido = await this.getPedidoByDocumentId(documentId);
@@ -104,14 +93,25 @@ private baseUrl = environment.apiUrl;
     try {
       const url = `${this.baseUrl}/pedidos/${pedido.id}`;
       const response = await axios.delete(url, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
       return response.data;
     } catch (error: any) {
-      console.error('Error al eliminar pedido por documentId:', error.response?.data);
+      console.error('Error al eliminar pedido por documentId:', error.response?.data || error.message);
       throw error.response?.data?.error?.message || 'Error al eliminar pedido';
+    }
+  }
+
+  async createDetallePedido(data: any): Promise<any> {
+    const token = this.session.obtenerToken();
+    try {
+      const response = await axios.post(`${this.baseUrl}/detalles-pedidos`, { data }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data;
+    } catch (error: any) {
+      console.error('Error al crear detalle del pedido:', error.response?.data || error.message);
+      throw error.response?.data?.error?.message || 'Error al crear detalle del pedido';
     }
   }
 }

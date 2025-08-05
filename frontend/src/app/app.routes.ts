@@ -65,7 +65,7 @@ export const routes: Routes = [
     loadComponent: () => import('./Pages/pedidos/ver-pedidos/ver-pedidos.page').then( m => m.VerPedidosPage)
   },
   {
-    path: 'detalle-pedido',
+    path: 'detalle-pedido/:id',
     loadComponent: () => import('./Pages/pedidos/detalle-pedido/detalle-pedido.page').then( m => m.DetallePedidoPage)
   },
   {
