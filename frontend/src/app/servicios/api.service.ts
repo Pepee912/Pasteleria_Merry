@@ -41,31 +41,18 @@ export class ApiService {
 
     if (!productoRaw) throw new Error('Producto no encontrado');
 
-<<<<<<< HEAD
     const producto = {
       id: productoRaw.id,
       documentId: productoRaw.documentId,
       nombre: productoRaw.nombre,
       descripcion: productoRaw.descripcion,
       precio: productoRaw.precio,
-      stock: productoRaw.stock || 0,
+      //stock: productoRaw.stock || 0,
       imagenUrl: productoRaw.imagen_url?.[0]?.url
         ? `${this.baseUrl.replace('/api', '')}${productoRaw.imagen_url[0].url}`
         : null,
       categoria: productoRaw.categoria
     };
-=======
-      const producto = {
-        id: productoRaw.id,
-        nombre: productoRaw.nombre,
-        descripcion: productoRaw.descripcion,
-        precio: productoRaw.precio,
-        imagenUrl: productoRaw.imagen_url?.[0]?.url
-          ? `${this.baseUrl.replace('/api', '')}${productoRaw.imagen_url[0].url}`
-          : null,
-        categoria: productoRaw.categoria 
-      };
->>>>>>> 43958803a21bd487bf523e20dd09204c15307049
 
     return producto;
   } catch (error) {
@@ -364,7 +351,7 @@ export class ApiService {
     }
   }
 
-  
+
   async cancelarPedidoByDocumentId(documentId: string): Promise<any> {
     const token = this.session.obtenerToken();
 
