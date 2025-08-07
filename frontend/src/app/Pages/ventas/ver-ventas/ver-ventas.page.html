@@ -9,14 +9,28 @@
 
 <ion-content class="ion-padding ver-ventas-content">
 
-  <!-- Filtro por fecha -->
-  <div class="filtro-fecha">
-    <ion-icon name="calendar-outline" class="icono-fecha"></ion-icon>
-    <ion-input
-      [(ngModel)]="fechaFiltro"
-      placeholder="Buscar por fecha (ej. 2025-08)"
-      (ionInput)="filtrarVentas()">
-    </ion-input>
+  <!-- Filtros combinados -->
+  <div class="filtros-combinados">
+    <!-- Filtro por fecha -->
+    <div class="filtro-fecha">
+      <ion-icon name="calendar-outline" class="icono-fecha"></ion-icon>
+      <ion-input
+        [(ngModel)]="fechaFiltro"
+        placeholder="Buscar por fecha (ej. 2025-08)"
+        (ionInput)="filtrarVentas()">
+      </ion-input>
+    </div>
+
+    <!-- Filtro por estado -->
+    <div class="filtro-estado">
+      <ion-select [(ngModel)]="estadoFiltro" (ionChange)="filtrarVentas()" interface="popover" placeholder="Estado">
+        <ion-select-option value="">Todos</ion-select-option>
+        <ion-select-option value="pendiente">Pendiente</ion-select-option>
+        <ion-select-option value="aceptado">Aceptado</ion-select-option>
+        <ion-select-option value="entregado">Entregado</ion-select-option>
+        <ion-select-option value="cancelado">Cancelado</ion-select-option>
+      </ion-select>
+    </div>
   </div>
 
   <!-- Lista de ventas -->
@@ -26,6 +40,12 @@
         <p><strong>📅 Fecha:</strong> {{ venta.fecha_venta | date: 'fullDate' }}</p>
         <p><strong>👤 Cliente:</strong> {{ venta.pedido?.users_permissions_user?.username || 'Desconocido' }}</p>
         <p><strong>💰 Total:</strong> ${{ venta.total }}</p>
+        <p><strong>📦 Estado:</strong>
+          <span [ngClass]="venta.pedido.estado">
+            {{ venta.pedido.estado | titlecase }}
+          </span>
+        </p>
+
       </div>
       <div class="venta-acciones">
         <ion-button size="small" (click)="irADetalle(venta)">

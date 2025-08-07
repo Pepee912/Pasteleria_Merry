@@ -19,6 +19,7 @@ export class VerVentasPage implements OnInit {
   ventas: any[] = [];
   ventasFiltradas: any[] = [];
   fechaFiltro: string = '';
+  estadoFiltro: string = '';
 
   constructor(private api: ApiService, private router: Router) {
     addIcons({
@@ -36,15 +37,17 @@ export class VerVentasPage implements OnInit {
   }
 
   filtrarVentas() {
-    const filtro = this.fechaFiltro?.toLowerCase() || '';
-    if (!filtro) {
-      this.ventasFiltradas = [...this.ventas];
-      return;
-    }
+    const fecha = this.fechaFiltro?.toLowerCase() || '';
+    const estado = this.estadoFiltro?.toLowerCase() || '';
 
     this.ventasFiltradas = this.ventas.filter(venta => {
       const fechaVenta = new Date(venta.fecha_venta).toISOString().split('T')[0];
-      return fechaVenta.includes(filtro);
+      const estadoPedido = venta.pedido?.estado?.toLowerCase() || '';
+
+      const coincideFecha = fecha ? fechaVenta.includes(fecha) : true;
+      const coincideEstado = estado ? estadoPedido === estado : true;
+
+      return coincideFecha && coincideEstado;
     });
   }
 
