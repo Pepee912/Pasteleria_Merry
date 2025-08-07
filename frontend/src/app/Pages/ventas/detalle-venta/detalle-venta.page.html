@@ -8,7 +8,19 @@
 </ion-header>
 
 <ion-content class="ion-padding" *ngIf="venta">
-  
+
+  <!-- Información del cliente -->
+  <ion-card *ngIf="venta?.pedido?.users_permissions_user">
+    <ion-card-header>
+      <ion-card-title>Información del Cliente</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Nombre:</strong> {{ venta.pedido.users_permissions_user.username }}</p>
+      <p><strong>Email:</strong> {{ venta.pedido.users_permissions_user.email }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Productos vendidos -->
   <ion-card *ngIf="venta?.pedido?.detalles_pedidos?.length">
     <ion-card-header>
       <ion-card-title>Productos vendidos</ion-card-title>

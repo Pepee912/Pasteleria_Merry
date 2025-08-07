@@ -11,26 +11,30 @@
 
   <!-- Filtro por fecha -->
   <div class="filtro-fecha">
-    <ion-item>
-      <ion-label position="floating">Filtrar por fecha</ion-label>
-      <ion-input [(ngModel)]="fechaFiltro" type="date" (ionChange)="filtrarVentas()"></ion-input>
-    </ion-item>
+    <ion-input
+      [(ngModel)]="fechaFiltro"
+      placeholder="Buscar por fecha (ej. 2025-08)"
+      (ionInput)="filtrarVentas()">
+    </ion-input>
   </div>
 
-  <!-- Tabla -->
+  <!-- Tabla de ventas -->
   <ion-grid>
     <ion-row class="encabezado">
-      <ion-col size="4"><strong>Fecha</strong></ion-col>
-      <ion-col size="4"><strong>Total</strong></ion-col>
-      <ion-col size="4"><strong>Acciones</strong></ion-col>
+      <ion-col size="3"><strong>Fecha</strong></ion-col>
+      <ion-col size="3"><strong>Total</strong></ion-col>
+      <ion-col size="3"><strong>Cliente</strong></ion-col>
+      <ion-col size="3"><strong>Acciones</strong></ion-col>
     </ion-row>
 
-    <ion-row *ngFor="let venta of ventasFiltradas">
-      <ion-col size="4">{{ venta.fecha_venta | date: 'shortDate' }}</ion-col>
-      <ion-col size="4">${{ venta.total }}</ion-col>
-      <ion-col size="4">
+    <ion-row *ngFor="let venta of ventasFiltradas" class="fila-venta">
+      <ion-col size="3">{{ venta.fecha_venta | date: 'shortDate' }}</ion-col>
+      <ion-col size="3">${{ venta.total }}</ion-col>
+      <ion-col size="3">{{ venta.pedido?.users_permissions_user?.username || 'Desconocido' }}</ion-col>
+      <ion-col size="3" class="acciones">
         <ion-button size="small" color="primary" (click)="irADetalle(venta)">Ver detalles</ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
+
 </ion-content>

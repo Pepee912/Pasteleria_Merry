@@ -1,23 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/servicios/api.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
+
+import { calendarOutline } from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 
 @Component({
   selector: 'app-ver-ventas',
   standalone: true,
   templateUrl: './ver-ventas.page.html',
   styleUrls: ['./ver-ventas.page.scss'],
-  imports: [CommonModule, IonicModule, FormsModule]
+  imports: [CommonModule, IonicModule, FormsModule, RouterModule]
 })
 export class VerVentasPage implements OnInit {
   ventas: any[] = [];
   ventasFiltradas: any[] = [];
   fechaFiltro: string = '';
 
-  constructor(private api: ApiService, private router: Router) {}
+  constructor(private api: ApiService, private router: Router) {
+    addIcons({
+      'calendar-outline': calendarOutline
+    });
+  }
 
   async ngOnInit() {
     try {
@@ -29,14 +36,15 @@ export class VerVentasPage implements OnInit {
   }
 
   filtrarVentas() {
-    if (!this.fechaFiltro) {
+    const filtro = this.fechaFiltro?.toLowerCase() || '';
+    if (!filtro) {
       this.ventasFiltradas = [...this.ventas];
       return;
     }
 
     this.ventasFiltradas = this.ventas.filter(venta => {
       const fechaVenta = new Date(venta.fecha_venta).toISOString().split('T')[0];
-      return fechaVenta === this.fechaFiltro;
+      return fechaVenta.includes(filtro);
     });
   }
 

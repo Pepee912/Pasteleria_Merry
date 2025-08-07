@@ -290,7 +290,7 @@ export class ApiService {
   async getVentas(): Promise<any[]> {
     const token = this.session.obtenerToken();
     try {
-      const response = await axios.get(`${this.baseUrl}/ventas?populate=pedido`, {
+      const response = await axios.get(`${this.baseUrl}/ventas?populate[pedido][populate]=users_permissions_user`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -305,7 +305,11 @@ export class ApiService {
   async getVentaByDocumentId(documentId: string): Promise<any> {
     const token = this.session.obtenerToken();
 
-    const url = `${this.baseUrl}/ventas?filters[documentId][$eq]=${documentId}&populate[pedido][populate][detalles_pedidos][populate]=producto`;
+    //const url = `${this.baseUrl}/ventas?filters[documentId][$eq]=${documentId}&populate[pedido][populate][detalles_pedidos][populate]=producto`;
+    const url = `${this.baseUrl}/ventas?filters[documentId][$eq]=${documentId}` +
+    `&populate[pedido][populate][detalles_pedidos][populate]=producto` +
+    `&populate[pedido][populate][users_permissions_user][populate]=role`;
+
 
     try {
       const response = await axios.get(url, {
