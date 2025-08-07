@@ -8,38 +8,37 @@
 </ion-header>
 
 <ion-content class="ion-padding pedidos-content">
-  <div *ngIf="pedidos.length > 0; else sinPedidos">
-    <ion-card class="pedido-card" *ngFor="let pedido of pedidos">
-      <ion-card-header>
-        <ion-card-title>
-          Pedido - {{ formatearFecha(pedido.fecha_pedido) }}
-        </ion-card-title>
-        <ion-card-subtitle>
-          <span [ngClass]="pedido.estado">Estado: {{ pedido.estado }}</span>
-        </ion-card-subtitle>
-      </ion-card-header>
 
-      <ion-card-content>
+  <!-- Lista de pedidos -->
+  <div *ngIf="pedidos.length > 0; else sinPedidos">
+    <div class="tarjeta-pedido" *ngFor="let pedido of pedidos">
+      <div class="pedido-info">
+        <h3>🧾 Pedido - {{ formatearFecha(pedido.fecha_pedido) }}</h3>
         <p><strong>Entrega:</strong> {{ formatearFecha(pedido.fecha_entrega) }}</p>
         <p><strong>Total:</strong> ${{ pedido.total }}</p>
+        <p><strong>Estado:</strong> 
+          <span class="estado" [ngClass]="pedido.estado">{{ pedido.estado }}</span>
+        </p>
 
         <ion-note color="warning" *ngIf="pedido.estado === 'aceptado'">
           Tu pedido ha sido aceptado. Por favor, mantente atento a las indicaciones de entrega o recogida.
         </ion-note>
+      </div>
 
-        <div class="acciones-pedido" *ngIf="pedido.estado === 'pendiente'">
-          <ion-button
-            color="danger"
-            fill="outline"
-            size="small"
-            (click)="cancelarPedido(pedido.documentId)">
-            Cancelar
-          </ion-button>
-        </div>
-      </ion-card-content>
-    </ion-card>
+      <!-- Acciones -->
+      <div class="pedido-acciones" *ngIf="pedido.estado === 'pendiente'">
+        <ion-button
+          color="danger"
+          fill="outline"
+          size="small"
+          (click)="cancelarPedido(pedido.documentId)">
+          Cancelar
+        </ion-button>
+      </div>
+    </div>
   </div>
 
+  <!-- Mensaje si no hay pedidos -->
   <ng-template #sinPedidos>
     <div class="mensaje-vacio">
       <ion-text color="medium">
@@ -47,4 +46,5 @@
       </ion-text>
     </div>
   </ng-template>
+
 </ion-content>

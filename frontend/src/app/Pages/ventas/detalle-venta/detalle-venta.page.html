@@ -7,36 +7,36 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" *ngIf="venta">
+<ion-content class="ion-padding detalle-venta-content" *ngIf="venta">
 
-  <!-- Información del cliente -->
-  <ion-card *ngIf="venta?.pedido?.users_permissions_user">
-    <ion-card-header>
-      <ion-card-title>Información del Cliente</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p><strong>Nombre:</strong> {{ venta.pedido.users_permissions_user.username }}</p>
-      <p><strong>Email:</strong> {{ venta.pedido.users_permissions_user.email }}</p>
-    </ion-card-content>
-  </ion-card>
+  <!-- Sección: Cliente -->
+  <section class="seccion">
+    <h2 class="seccion-titulo">👤 Información del Cliente</h2>
+    <div class="seccion-cuerpo">
+      <p><strong>Nombre:</strong> {{ venta.pedido.users_permissions_user?.username }}</p>
+      <p><strong>Email:</strong> {{ venta.pedido.users_permissions_user?.email }}</p>
+    </div>
+  </section>
 
-  <!-- Productos vendidos -->
-  <ion-card *ngIf="venta?.pedido?.detalles_pedidos?.length">
-    <ion-card-header>
-      <ion-card-title>Productos vendidos</ion-card-title>
-    </ion-card-header>
+  <!-- Sección: Productos vendidos -->
+  <section class="seccion">
+    <h2 class="seccion-titulo">🧁 Productos Vendidos</h2>
+    <div class="lista-productos">
+      <div class="producto-item" *ngFor="let detalle of venta.pedido.detalles_pedidos">
+        <h3>{{ detalle.producto?.nombre || 'Producto eliminado' }}</h3>
+        <p>Cantidad: {{ detalle.cantidad }}</p>
+        <p>Subtotal: ${{ detalle.subtotal }}</p>
+      </div>
+    </div>
+  </section>
 
-    <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let detalle of venta.pedido.detalles_pedidos">
-          <ion-label>
-            <h3>{{ detalle.producto?.nombre || 'Producto eliminado' }}</h3>
-            <p>Cantidad: {{ detalle.cantidad }}</p>
-            <p>Subtotal: ${{ detalle.subtotal }}</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+  <!-- Sección: Resumen final -->
+  <section class="seccion resumen">
+    <h2 class="seccion-titulo">📄 Resumen de Venta</h2>
+    <div class="seccion-cuerpo">
+      <p><strong>Fecha de venta:</strong> {{ venta.fecha_venta | date: 'fullDate' }}</p>
+      <p><strong>Total:</strong> ${{ venta.total }}</p>
+    </div>
+  </section>
 
 </ion-content>

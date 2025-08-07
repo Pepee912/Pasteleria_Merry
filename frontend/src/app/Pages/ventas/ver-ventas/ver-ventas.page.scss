@@ -12,22 +12,17 @@ ion-header {
       font-family: 'Comic Sans MS', 'Montserrat', cursive;
       font-weight: bold;
     }
-
-    ion-button {
-      --color: #b76e79;
-      font-weight: bold;
-    }
   }
 }
 
-ion-content {
+.ver-ventas-content {
   background: #fff0f5;
 
   .filtro-fecha {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 20px;
+    margin: 12px 0 24px;
     padding: 0 12px;
 
     ion-icon.icono-fecha {
@@ -41,50 +36,54 @@ ion-content {
       --placeholder-color: #b76e79;
       --border-radius: 12px;
       border: 1px solid #f9a8d4;
-      padding: 8px 12px;
+      padding: 10px 12px;
       box-shadow: 0 2px 6px rgba(183, 110, 121, 0.1);
       font-weight: bold;
       flex: 1;
     }
   }
 
-  ion-grid {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 10px rgba(183, 110, 121, 0.1);
-    overflow: hidden;
+  .lista-ventas {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 
-    .encabezado {
-      background-color: #fce7f3;
-      font-weight: bold;
-      color: #b76e79;
-      padding: 12px 0;
-      text-align: center;
-    }
-
-    .fila-venta {
-      padding: 12px 0;
+    .tarjeta-venta {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(183, 110, 121, 0.1);
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #f3d1dd;
+      flex-wrap: wrap;
 
-      &:last-child {
-        border-bottom: none;
+      .venta-info {
+        flex: 1;
+        min-width: 220px;
+
+        p {
+          margin: 6px 0;
+          font-size: 0.95rem;
+          color: #444;
+
+          strong {
+            color: #b76e79;
+          }
+        }
       }
 
-      ion-col {
-        font-size: 0.95rem;
-        color: #444;
+      .venta-acciones {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
 
-        &.acciones {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-
-          ion-button {
-            --border-radius: 10px;
-            font-weight: bold;
-            margin: 2px 0;
-          }
+        ion-button {
+          --border-radius: 10px;
+          font-weight: bold;
+          --background: #f9a8d4;
+          --color: white;
+          box-shadow: 0 2px 4px rgba(183, 110, 121, 0.2);
         }
       }
     }

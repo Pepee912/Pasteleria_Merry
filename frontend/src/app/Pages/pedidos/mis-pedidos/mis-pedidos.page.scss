@@ -16,38 +16,37 @@ ion-header {
 }
 
 .pedidos-content {
-  background: #fcbcbc;
-  padding: 16px;
+  background: #fff0f5;
 
-  .pedido-card {
-    --background: #fff;
+  .tarjeta-pedido {
+    background: #fff;
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(183, 110, 121, 0.12);
+    padding: 16px;
     margin-bottom: 20px;
-    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(183, 110, 121, 0.12);
 
-    ion-card-header {
-      background: #fbd2d2;
-      padding: 16px 16px 12px 16px;
-      border-bottom: 1px solid #f9a8d4;
-      box-shadow: inset 0 -2px 4px rgba(183, 110, 121, 0.08);
-      border-top-left-radius: 16px;
-      border-top-right-radius: 16px;
+    display: flex;
+    flex-direction: column;
 
-      ion-card-title {
-        font-size: 1.15rem;
+    .pedido-info {
+      h3 {
+        font-size: 1.1rem;
         font-weight: bold;
         color: #b76e79;
-        margin-bottom: 6px;
+        margin-bottom: 10px;
       }
 
-      ion-card-subtitle {
-        span {
+      p {
+        font-size: 0.95rem;
+        margin: 6px 0;
+        color: #444;
+
+        .estado {
           padding: 4px 10px;
-          border-radius: 6px;
-          font-size: 0.85rem;
-          text-transform: capitalize;
+          border-radius: 8px;
           font-weight: bold;
+          text-transform: capitalize;
+          font-size: 0.85rem;
           display: inline-block;
 
           &.pendiente {
@@ -66,16 +65,6 @@ ion-header {
           }
         }
       }
-    }
-
-    ion-card-content {
-      padding: 16px;
-
-      p {
-        font-size: 0.95rem;
-        margin: 6px 0;
-        color: #333;
-      }
 
       ion-note {
         display: block;
@@ -87,16 +76,16 @@ ion-header {
         margin-top: 12px;
         box-shadow: 0 2px 4px rgba(250, 204, 21, 0.1);
       }
+    }
 
-      .acciones-pedido {
-        margin-top: 14px;
-        display: flex;
-        justify-content: flex-end;
+    .pedido-acciones {
+      margin-top: 16px;
+      display: flex;
+      justify-content: flex-end;
 
-        ion-button {
-          --border-radius: 10px;
-          font-weight: bold;
-        }
+      ion-button {
+        --border-radius: 10px;
+        font-weight: bold;
       }
     }
   }
@@ -109,31 +98,6 @@ ion-header {
       font-size: 1rem;
       color: #999;
       font-weight: bold;
-    }
-  }
-}
-
-ion-card-subtitle {
-  span {
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    text-transform: capitalize;
-    font-weight: bold;
-
-    &.pendiente {
-      background-color: #fef3c7;
-      color: #92400e;
-    }
-
-    &.aceptado {
-      background-color: #d1fae5;
-      color: #065f46;
-    }
-
-    &.rechazado {
-      background-color: #fee2e2;
-      color: #991b1b;
     }
   }
 }
