@@ -351,7 +351,6 @@ export class ApiService {
     }
   }
 
-
   async cancelarPedidoByDocumentId(documentId: string): Promise<any> {
     const token = this.session.obtenerToken();
 
