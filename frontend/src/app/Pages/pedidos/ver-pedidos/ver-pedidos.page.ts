@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { PedidosService } from 'src/app/servicios/pedidos.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ver-pedidos',
@@ -13,7 +14,7 @@ import { PedidosService } from 'src/app/servicios/pedidos.service';
 export class VerPedidosPage implements OnInit {
   pedidos: any[] = [];
 
-  constructor(private pedidoService: PedidosService) {}
+  constructor(private pedidoService: PedidosService, private router: Router) {}
 
   async ngOnInit() {
     try {
@@ -23,5 +24,9 @@ export class VerPedidosPage implements OnInit {
       console.error('Error al cargar pedidos:', error);
       alert('Error al cargar los pedidos: ' + error);
     }
+  }
+
+  goToDetalle(pedidoId: string) {
+    this.router.navigate(['/detalle-pedido', pedidoId]);
   }
 }

@@ -32,16 +32,29 @@ export class ApiService {
     }
   }
 
-  async getProductoByDocumentId(documentId: string): Promise<any> {
-    const url = `${this.baseUrl}/productos?filters[documentId][$eq]=${documentId}&populate=*`;
+ async getProductoByDocumentId(documentId: string): Promise<any> {
+  const url = `${this.baseUrl}/productos?filters[documentId][$eq]=${documentId}&populate=*`;
 
-    try {
-      const response = await axios.get(url);
-      const productoRaw = response.data.data[0];
-      //console.log('Respuesta completa de producto por documentId:', response.data.data[0]);
+  try {
+    const response = await axios.get(url);
+    const productoRaw = response.data.data[0];
 
-      if (!productoRaw) throw new Error('Producto no encontrado');
+    if (!productoRaw) throw new Error('Producto no encontrado');
 
+<<<<<<< HEAD
+    const producto = {
+      id: productoRaw.id,
+      documentId: productoRaw.documentId,
+      nombre: productoRaw.nombre,
+      descripcion: productoRaw.descripcion,
+      precio: productoRaw.precio,
+      stock: productoRaw.stock || 0,
+      imagenUrl: productoRaw.imagen_url?.[0]?.url
+        ? `${this.baseUrl.replace('/api', '')}${productoRaw.imagen_url[0].url}`
+        : null,
+      categoria: productoRaw.categoria
+    };
+=======
       const producto = {
         id: productoRaw.id,
         nombre: productoRaw.nombre,
@@ -52,15 +65,14 @@ export class ApiService {
           : null,
         categoria: productoRaw.categoria 
       };
+>>>>>>> 43958803a21bd487bf523e20dd09204c15307049
 
-
-      //console.log('Producto recibido:', producto);
-      return producto;
-    } catch (error) {
-      console.error('Error en getProductoByDocumentId:', error);
-      throw 'Error al cargar producto';
-    }
+    return producto;
+  } catch (error) {
+    console.error('Error en getProductoByDocumentId:', error);
+    throw 'Error al cargar producto';
   }
+}
 
   async createProducto(data: any): Promise<any> {
     const token = this.session.obtenerToken();

@@ -1,13 +1,45 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>detalle_pedido</ion-title>
+    <ion-title>Detalle del Pedido #{{ pedido?.id }}</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/ver-pedidos"></ion-back-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">detalle_pedido</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <ion-card *ngIf="pedido">
+    <ion-card-header>
+      <ion-card-title>Pedido #{{ pedido.id }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Estado:</strong>
+        <ion-select [(ngModel)]="pedido.estado" (ionChange)="actualizarEstado(pedido.estado)">
+          <ion-select-option *ngFor="let estado of estados" [value]="estado">{{ estado }}</ion-select-option>
+        </ion-select>
+      </p>
+      <p><strong>Fecha Pedido:</strong> {{ pedido.fecha_pedido | date:'medium' }}</p>
+      <p *ngIf="pedido.fecha_entrega"><strong>Fecha Entrega:</strong> {{ pedido.fecha_entrega | date:'medium' }}</p>
+      <p *ngIf="!pedido.fecha_entrega"><strong>Fecha Entrega:</strong> No asignada</p>
+      <p><strong>Total:</strong> ${{ pedido.total }}</p>
+      <p><strong>Notas:</strong> {{ pedido.notas || 'Sin notas' }}</p>
+
+      <ion-card-subtitle>Detalles del Pedido</ion-card-subtitle>
+      <ion-list>
+        <ion-item *ngFor="let detalle of pedido.detalles_pedidos">
+          <ion-label>
+            <p><strong>Subtotal:</strong> ${{ detalle.subtotal }}</p>
+            <p><strong>Cantidad:</strong> {{ detalle.cantidad }}</p>
+            <p><strong>Producto:</strong> {{ detalle.producto?.nombre || 'Sin nombre' }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="!pedido">
+    <ion-card-content>
+      <p>Cargando detalles del pedido...</p>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
