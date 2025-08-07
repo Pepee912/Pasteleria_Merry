@@ -50,7 +50,7 @@ export class ApiService {
         imagenUrl: productoRaw.imagen_url?.[0]?.url
           ? `${this.baseUrl.replace('/api', '')}${productoRaw.imagen_url[0].url}`
           : null,
-        categoria: productoRaw.categoria // simplemente así
+        categoria: productoRaw.categoria 
       };
 
 
@@ -319,5 +319,61 @@ export class ApiService {
       throw 'No se pudo obtener el detalle de la venta';
     }
   }
+
+  // PEDIDOS -----------------------------------------------------------------------------------------------
+
+  async getMisPedidos(): Promise<any[]> {
+    const token = this.session.obtenerToken();
+    const userId = this.session.obtenerUsuario()?.id;
+
+    if (!userId) throw 'Usuario no autenticado';
+
+    try {
+      const response = await axios.get(`${this.baseUrl}/pedidos?populate[detalles_pedidos][populate]=producto&populate=users_permissions_user`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const pedidosUsuario = response.data.data
+        .filter((pedido: any) => pedido.users_permissions_user?.id === userId)
+        .sort((a: any, b: any) => {
+          // Ordenar: pendientes primero, y por fecha más reciente
+          if (a.estado === 'pendiente' && b.estado !== 'pendiente') return -1;
+          if (a.estado !== 'pendiente' && b.estado === 'pendiente') return 1;
+
+          return new Date(b.fecha_pedido).getTime() - new Date(a.fecha_pedido).getTime();
+        });
+
+      return pedidosUsuario;
+    } catch (error: any) {
+      console.error('Error al obtener pedidos del usuario:', error);
+      throw 'No se pudieron obtener los pedidos';
+    }
+  }
+
+  
+  async cancelarPedidoByDocumentId(documentId: string): Promise<any> {
+    const token = this.session.obtenerToken();
+
+    try {
+      const url = `${this.baseUrl}/pedidos/${documentId}`;
+      const data = {
+        estado: 'cancelado'
+      };
+
+      const response = await axios.put(url, { data }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      return response.data;
+    } catch (error: any) {
+      console.error('Error al cancelar pedido:', error.response?.data || error);
+      throw error.response?.data?.error?.message || 'Error al cancelar pedido';
+    }
+  }
+
 
 }
