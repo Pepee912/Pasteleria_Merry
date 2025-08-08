@@ -20,6 +20,7 @@ export class CrearPedidoPage implements OnInit {
   categoriaSeleccionada: number | null = null;
   terminoBusqueda: string = '';
   fechaEntrega: string = '';
+  fechaEntregaVisual: string = '';
   notas: string = '';
   hoy: string = new Date().toISOString().split('T')[0]; 
   productosSeleccionados: any[] = [];
@@ -128,6 +129,30 @@ export class CrearPedidoPage implements OnInit {
       alert('Hubo un problema al generar el pedido');
     }
   }
+
+  onFechaEntregaChange(event: any) {
+  this.fechaEntrega = event.detail.value;
+  const fecha = new Date(this.fechaEntrega);
+
+  // Formatear manualmente la fecha y hora
+  const opcionesFecha: Intl.DateTimeFormatOptions = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+
+  const opcionesHora: Intl.DateTimeFormatOptions = {
+    hour: '2-digit',
+    minute: '2-digit'
+  };
+
+  const fechaStr = fecha.toLocaleDateString('es-MX', opcionesFecha);
+  const horaStr = fecha.toLocaleTimeString('es-MX', opcionesHora);
+
+  this.fechaEntregaVisual = `${fechaStr} ${horaStr}`;
+}
+
 
 
 }

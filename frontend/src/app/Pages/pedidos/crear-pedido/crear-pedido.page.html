@@ -64,14 +64,18 @@
   </div>
 
   <ion-item>
-    <ion-label position="floating">Fecha de entrega</ion-label>
+    <ion-label>Fecha y hora de entrega</ion-label>
     <ion-datetime
-      [(ngModel)]="fechaEntrega"
-      presentation="date"
-      [min]="hoy"
-      required
-    ></ion-datetime>
+      presentation="date-time"
+      (ionChange)="onFechaEntregaChange($event)"
+      [value]="fechaEntrega">
+    </ion-datetime>
   </ion-item>
+  <ion-item>
+    <ion-label>Entrega programada:</ion-label>
+    <ion-text>{{ fechaEntregaVisual }}</ion-text>
+  </ion-item>
+
 
   <ion-item>
     <ion-label position="floating">Notas adicionales</ion-label>
