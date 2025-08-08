@@ -12,11 +12,10 @@
   <ion-card>
     <ion-card-header>
       <ion-card-title>Información del Pedido</ion-card-title>
-      <!-- <ion-card-subtitle>{{ pedido.documentId }}</ion-card-subtitle> -->
     </ion-card-header>
     <ion-card-content>
       <p><strong>Cliente:</strong> {{ pedido.users_permissions_user?.username }} ({{ pedido.users_permissions_user?.email }})</p>
-      <p><strong>Estado:</strong> {{ pedido.estado | titlecase }}</p>
+      <p><strong>Estado actual:</strong> {{ pedido.estado | titlecase }}</p>
       <h3>Pedido: {{ pedido.fecha_pedido | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</h3>
       <p>Entrega: {{ pedido.fecha_entrega | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</p>
       <p><strong>Notas:</strong> {{ pedido.notas || 'Sin notas' }}</p>
@@ -41,16 +40,26 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Cambiar estado -->
-  <ion-item>
-    <ion-label>Actualizar Estado</ion-label>
-    <ion-select [(ngModel)]="nuevoEstado" interface="popover">
-      <ion-select-option value="aceptado">Aceptar</ion-select-option>
-      <ion-select-option value="entregado">Entregar</ion-select-option>
-      <ion-select-option value="cancelado">Cancelar</ion-select-option>
-    </ion-select>
-  </ion-item>
+  <!-- Cambiar estado (solo cuando haya transiciones válidas) -->
+  <ng-container *ngIf="transicionesHabilitadas; else sinAcciones">
+    <ion-item>
+      <ion-label>Acción</ion-label>
+      <ion-select [(ngModel)]="nuevoEstado" interface="popover" placeholder="Selecciona una acción">
+        <ion-select-option *ngFor="let op of opcionesEstado" [value]="op.value">
+          {{ op.label }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
 
-  <ion-button expand="block" color="primary" (click)="actualizarEstado()">Guardar Cambios</ion-button>
+    <ion-button expand="block" (click)="actualizarEstado()">Guardar cambios</ion-button>
+  </ng-container>
+
+  <ng-template #sinAcciones>
+    <ion-item lines="none">
+      <ion-label color="medium">
+        No hay acciones disponibles para el estado <strong>{{ pedido.estado }}</strong>.
+      </ion-label>
+    </ion-item>
+  </ng-template>
 
 </ion-content>
