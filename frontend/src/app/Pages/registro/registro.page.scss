@@ -78,4 +78,34 @@
     font-weight: bold;
     width: 100%;
   }
+
+  /* Custom Alert Styles */
+  ion-alert.custom-alert {
+    --backdrop-opacity: 0.7;
+    --width: 350px; /* Larger alert */
+    --max-width: 90%; /* Responsive on smaller screens */
+    --background: #f9e6ff; /* Light purple background */
+    --font-family: 'Comic Sans MS', 'Montserrat', cursive; /* Match app font */
+  }
+
+  .custom-alert .alert-button-group {
+    padding: 8px;
+  }
+
+  button.alert-button.alert-button-confirm {
+    background-color: var(--ion-color-success, #2dd36f);
+    color: var(--ion-color-success-contrast, #ffffff);
+    border-radius: 4px;
+  }
+
+  .md button.alert-button.alert-button-confirm {
+    border-radius: 4px;
+  }
+
+  .ios .custom-alert button.alert-button {
+  border: 0.55px solid rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.2);
+  border-radius: 13px;
+  background-color: #f9a8d4;
+  color: #ffffff;
+}
 }

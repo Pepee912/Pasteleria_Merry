@@ -1,7 +1,6 @@
-// src/app/pages/registro/registro.page.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, NavController } from '@ionic/angular';
+import { IonicModule, NavController, AlertButton, AlertController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/servicios/auth.service';
 
@@ -17,18 +16,40 @@ export class RegistroPage {
   email = '';
   password = '';
 
+  // Define the alert buttons
+  public alertButtons: AlertButton[] = [
+    {
+      text: 'Aceptar',
+      cssClass: 'alert-button-confirm',
+      handler: async () => {
+        try {
+          // Attempt registration when the alert is triggered
+          await this.auth.register(this.nombre, this.email, this.password);
+          // Navigate to login page after clicking "Aceptar"
+          this.navCtrl.navigateRoot('/login');
+          return true; // Allow alert to close
+        } catch (err) {
+          // Show error alert if registration fails
+          const errorAlert = await this.alertCtrl.create({
+            header: 'Error',
+            message: 'Error: ' + err,
+            buttons: ['OK']
+          });
+          await errorAlert.present();
+          return false; // Keep the success alert open
+        }
+      }
+    }
+  ];
+
   constructor(
     private auth: AuthService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private alertCtrl: AlertController
   ) {}
 
-  async onSubmit() {
-    try {
-      await this.auth.register(this.nombre, this.email, this.password);
-      alert('Registro exitoso');
-      this.navCtrl.navigateRoot('/login');
-    } catch (err) {
-      alert('Error: ' + err);
-    }
+  // Handle alert dismissal (optional, for additional logic if needed)
+  onAlertDismiss(event: any) {
+    // No additional logic needed since "Aceptar" handler manages registration and navigation
   }
 }

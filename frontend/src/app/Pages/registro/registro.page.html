@@ -27,6 +27,15 @@
       <ion-input [(ngModel)]="password" type="password"></ion-input>
     </ion-item>
 
-    <ion-button expand="block" class="btn-registrar" (click)="onSubmit()">Registrarse</ion-button>
+    <ion-button expand="block" class="btn-registrar" id="present-alert">Registrarse</ion-button>
+    <ion-alert
+      trigger="present-alert"
+      class="custom-alert"
+      header="Registro Exitoso"
+      subHeader="¡Bienvenido!"
+      message="Tu cuenta ha sido creada con éxito."
+      [buttons]="alertButtons"
+      (didDismiss)="onAlertDismiss($event)"
+    ></ion-alert>
   </div>
 </ion-content>
