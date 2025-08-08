@@ -1,52 +1,66 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PedidosService } from 'src/app/servicios/pedidos.service';
 import { FormsModule } from '@angular/forms';
+import { ApiService } from 'src/app/servicios/api.service';
 
 @Component({
   selector: 'app-detalle-pedido',
+  standalone: true,
   templateUrl: './detalle-pedido.page.html',
   styleUrls: ['./detalle-pedido.page.scss'],
-  standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [CommonModule, IonicModule, FormsModule, RouterModule]
 })
 export class DetallePedidoPage implements OnInit {
-  pedido: any = null;
-  estados = ['pendiente', 'aceptado', 'entregado', 'cancelado'];
+  pedido: any;
+  nuevoEstado: string = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private pedidosService: PedidosService,
-    private router: Router
-  ) {}
+  constructor(private route: ActivatedRoute, private api: ApiService, private router: Router) {}
 
   async ngOnInit() {
-    const pedidoId = this.route.snapshot.paramMap.get('id');
-    if (pedidoId) {
-      try {
-        const pedidos = await this.pedidosService.getPedidos();
-        this.pedido = pedidos.find((p: any) => p.id === pedidoId);
-        console.log('Pedido detallado:', this.pedido);
-      } catch (error) {
-        console.error('Error al cargar el pedido:', error);
-        alert('Error al cargar el pedido: ' + error);
-      }
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      await this.cargarPedido(id);
     }
   }
 
-  async actualizarEstado(nuevoEstado: string) {
-    if (this.pedido && this.pedido.id) {
-      try {
-        const data = { estado: nuevoEstado };
-        await this.pedidosService.updatePedidoByDocumentId(this.pedido.documentId || this.pedido.id, data);
-        this.pedido.estado = nuevoEstado;
-        alert(`Estado actualizado a ${nuevoEstado} exitosamente`);
-      } catch (error) {
-        console.error('Error al actualizar el estado:', error);
-        alert('Error al actualizar el estado: ' + error);
-      }
+  async cargarPedido(documentId: string) {
+    try {
+      const response = await this.api.getPedidoCompleto(documentId);
+      this.pedido = response;
+      this.nuevoEstado = this.pedido.estado;
+    } catch (error) {
+      console.error('Error al cargar pedido:', error);
     }
+  }
+
+  async actualizarEstado() {
+    if (!this.nuevoEstado || this.nuevoEstado === this.pedido.estado) {
+      alert('Selecciona un estado diferente para actualizar.');
+      return;
+    }
+
+    try {
+      await this.api.actualizarEstadoPedido(this.pedido.documentId, this.nuevoEstado);
+
+      if (this.nuevoEstado === 'entregado') {
+        await this.api.registrarVentaDesdePedido(this.pedido.documentId);
+      }
+
+      alert('Estado actualizado correctamente.');
+      //this.router.navigate(['/ver-pedidos']);
+      window.location.href = '/ver-pedidos';
+    } catch (error) {
+      alert('Error al actualizar el estado: ' + error);
+    }
+  }
+
+  formatearFecha(fecha: string): string {
+    return new Date(fecha).toLocaleDateString('es-MX', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   }
 }

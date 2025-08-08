@@ -377,5 +377,109 @@ export class ApiService {
     }
   }
 
+  // CREAR PEDIDOS --------------------------------------------------------------------------
+
+  async generarPedido(pedidoData: any, detalles: any[]): Promise<any> {
+    const token = this.session.obtenerToken();
+
+    try {
+      const pedido = await axios.post(`${this.baseUrl}/pedidos`, { data: pedidoData }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const pedidoId = pedido.data.data.id;
+
+      for (const d of detalles) {
+        await axios.post(`${this.baseUrl}/detalles-pedidos`, {
+          data: {
+            cantidad: d.cantidad,
+            subtotal: d.subtotal,
+            pedido: pedidoId,
+            producto: d.producto
+          }
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
+
+      return pedido.data;
+    } catch (error: any) {
+      console.error('Error al generar pedido:', error);
+      throw error.response?.data?.error?.message || 'No se pudo generar el pedido';
+    }
+  }
+
+  // PANTALLAS DE PEDIDOS ---------------------------------------------------------------------
+
+  async getPedidosAdmin(): Promise<any[]> {
+    const token = this.session.obtenerToken();
+
+    try {
+      const response = await axios.get(`${this.baseUrl}/pedidos?populate=users_permissions_user`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data.data;
+    } catch (error) {
+      console.error('Error al obtener pedidos:', error);
+      throw 'No se pudieron obtener los pedidos';
+    }
+  }
+
+  async getPedidoCompleto(documentId: string): Promise<any> {
+    const token = this.session.obtenerToken();
+    const url = `${this.baseUrl}/pedidos?filters[documentId][$eq]=${documentId}` +
+                `&populate[users_permissions_user]=true` +
+                `&populate[detalles_pedidos][populate]=producto`;
+
+    try {
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data.data[0];
+    } catch (error) {
+      throw 'No se pudo cargar el pedido';
+    }
+  }
+
+  async actualizarEstadoPedido(documentId: string, nuevoEstado: string): Promise<any> {
+    const token = this.session.obtenerToken();
+
+    try {
+      const url = `${this.baseUrl}/pedidos/${documentId}`;
+      return await axios.put(url, {
+        data: { estado: nuevoEstado }
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error: any) {
+      throw error.response?.data?.error?.message || 'No se pudo actualizar el estado';
+    }
+  }
+
+  async registrarVentaDesdePedido(documentId: string): Promise<any> {
+    const token = this.session.obtenerToken();
+
+    try {
+      const pedido = await this.getPedidoCompleto(documentId);
+
+      const ganancias_estimadas = pedido.detalles_pedidos.reduce((sum: number, d: any) => sum + d.subtotal, 0);
+
+      const data = {
+        fecha_venta: new Date().toISOString(),
+        total: pedido.total,
+        ganancias_estimadas,
+        pedido: pedido.id
+      };
+
+      return await axios.post(`${this.baseUrl}/ventas`, { data }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error) {
+      throw 'No se pudo registrar la venta';
+    }
+  }
+
 
 }

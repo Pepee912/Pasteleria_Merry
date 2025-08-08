@@ -1,49 +1,84 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
     <ion-title>Crear Pedido</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
+  <!-- Filtro por nombre -->
   <ion-item>
-    <ion-label position="floating">Estado</ion-label>
-    <ion-select [(ngModel)]="estado" [disabled]="true" (ionChange)="onEstadoChange()">
-      <ion-select-option value="pendiente">Pendiente</ion-select-option>
-    </ion-select>
+    <ion-label position="floating">Buscar producto por nombre</ion-label>
+    <ion-input
+      type="text"
+      [(ngModel)]="terminoBusqueda"
+      (ionInput)="filtrarProductos()"
+      required
+    ></ion-input>
   </ion-item>
+
+  <!-- Lista de productos filtrados (selección) -->
+  <div class="lista-filtrada" *ngIf="productosFiltrados.length > 0">
+    <ion-list>
+      <ion-item *ngFor="let producto of productosFiltrados">
+        <ion-thumbnail slot="start">
+          <img [src]="producto.imagenUrl || 'assets/logo.png'" />
+        </ion-thumbnail>
+
+        <ion-label>
+          <h3>{{ producto.nombre }}</h3>
+          <p>Precio: ${{ producto.precio }}</p>
+        </ion-label>
+
+        <ion-input
+          type="number"
+          placeholder="Cantidad"
+          [(ngModel)]="producto.cantidad"
+          min="0"
+          (ionInput)="actualizarSeleccion(producto)"
+          required
+        ></ion-input>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Productos seleccionados (solo vista, sin edición) -->
+  <div class="lista-seleccionados" *ngIf="productosSeleccionados.length > 0">
+    <h4>Productos Seleccionados</h4>
+    <ion-list>
+      <ion-item *ngFor="let producto of productosSeleccionados">
+        <ion-thumbnail slot="start">
+          <img [src]="producto.imagenUrl || 'assets/logo.png'" />
+        </ion-thumbnail>
+
+        <ion-label>
+          <h3>{{ producto.nombre }}</h3>
+          <p>Precio: ${{ producto.precio }}</p>
+          <p>Cantidad: {{ producto.cantidad }}</p>
+          <p>Subtotal: ${{ producto.precio * producto.cantidad }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+
   <ion-item>
-    <ion-label position="floating">Fecha Pedido</ion-label>
-    <ion-datetime [(ngModel)]="fecha_pedido" displayFormat="YYYY-MM-DD"></ion-datetime>
-  </ion-item>
-  <ion-item>
-    <ion-label position="floating">Fecha Entrega</ion-label>
-    <ion-datetime [(ngModel)]="fecha_entrega" displayFormat="YYYY-MM-DD"></ion-datetime>
-  </ion-item>
-  <ion-item>
-    <ion-label position="floating">Total</ion-label>
-    <ion-input type="number" [(ngModel)]="total" readonly></ion-input>
-  </ion-item>
-  <ion-item>
-    <ion-label position="floating">Notas</ion-label>
-    <ion-textarea [(ngModel)]="notas"></ion-textarea>
+    <ion-label position="floating">Fecha de entrega</ion-label>
+    <ion-datetime
+      [(ngModel)]="fechaEntrega"
+      presentation="date"
+      [min]="hoy"
+      required
+    ></ion-datetime>
   </ion-item>
 
   <ion-item>
-    <ion-label>Agregar Producto</ion-label>
-    <ion-select placeholder="Selecciona un producto" (ionChange)="agregarProducto($event.detail.value)">
-      <ion-select-option *ngFor="let producto of productos" [value]="producto.documentId">
-        {{ producto.nombre }} ({{ producto.precio | currency:'USD' }})
-      </ion-select-option>
-    </ion-select>
+    <ion-label position="floating">Notas adicionales</ion-label>
+    <ion-textarea [(ngModel)]="notas" required></ion-textarea>
   </ion-item>
 
-  <ion-list *ngIf="productosSeleccionados.length > 0">
-    <ion-item *ngFor="let item of productosSeleccionados; let i = index">
-      <ion-label>{{ getProductoNombre(item.productoId) }} ({{ item.cantidad }} x {{ getProductoPrecio(item.productoId) | currency:'USD' }})</ion-label>
-      <ion-input type="number" [(ngModel)]="item.cantidad" (ionChange)="actualizarCantidad(i, item.cantidad)" min="1"></ion-input>
-      <ion-button (click)="eliminarProducto(i)" color="danger">Eliminar</ion-button>
-    </ion-item>
-  </ion-list>
-
-  <ion-button expand="block" (click)="crearPedido()">Crear Pedido</ion-button>
+  <ion-button expand="block" (click)="crearPedido()" [disabled]="!puedeEnviar()">
+    Confirmar Pedido
+  </ion-button>
 </ion-content>

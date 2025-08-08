@@ -1,0 +1,21 @@
+.lista-filtrada {
+  max-height: 250px;
+  overflow-y: auto;
+
+  ion-item {
+    align-items: center;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    --min-height: 70px;
+  }
+
+  ion-input {
+    max-width: 80px;
+    margin-left: 8px;
+  }
+
+  ion-thumbnail img {
+    border-radius: 8px;
+    object-fit: cover;
+  }
+}

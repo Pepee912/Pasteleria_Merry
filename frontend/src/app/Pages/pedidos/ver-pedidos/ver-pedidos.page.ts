@@ -1,32 +1,59 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { PedidosService } from 'src/app/servicios/pedidos.service';
-import { Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+
+import { ApiService } from 'src/app/servicios/api.service';
 
 @Component({
   selector: 'app-ver-pedidos',
+  standalone: true,
   templateUrl: './ver-pedidos.page.html',
   styleUrls: ['./ver-pedidos.page.scss'],
-  standalone: true,
-  imports: [IonicModule, CommonModule]
+  imports: [CommonModule, IonicModule, FormsModule, RouterModule]
 })
 export class VerPedidosPage implements OnInit {
   pedidos: any[] = [];
+  pedidosFiltrados: any[] = [];
 
-  constructor(private pedidoService: PedidosService, private router: Router) {}
+  filtroMes: string = '';
+  filtroEstado: string = '';
+
+  constructor(private api: ApiService, private router: Router) {}
 
   async ngOnInit() {
     try {
-      this.pedidos = await this.pedidoService.getPedidos();
-      console.log('Pedidos cargados:', this.pedidos);
+      const response = await this.api.getPedidosAdmin();
+      this.pedidos = response.sort((a: any, b: any) =>
+        new Date(a.fecha_entrega).getTime() - new Date(b.fecha_entrega).getTime()
+      );
+      this.pedidosFiltrados = [...this.pedidos];
     } catch (error) {
-      console.error('Error al cargar pedidos:', error);
-      alert('Error al cargar los pedidos: ' + error);
+      alert('Error al cargar pedidos');
     }
   }
 
-  goToDetalle(pedidoId: string) {
-    this.router.navigate(['/detalle-pedido', pedidoId]);
+  aplicarFiltros() {
+    const estado = this.filtroEstado.toLowerCase();
+    const mes = this.filtroMes;
+
+    this.pedidosFiltrados = this.pedidos.filter(p => {
+      const coincideEstado = estado ? p.estado === estado : true;
+      const coincideMes = mes ? p.fecha_pedido?.startsWith(mes) : true;
+      return coincideEstado && coincideMes;
+    });
+  }
+
+  verDetalle(documentId: string) {
+    this.router.navigate(['/detalle-pedido', documentId]);
+  }
+
+  formatearFecha(fecha: string): string {
+    return new Date(fecha).toLocaleDateString('es-MX', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   }
 }

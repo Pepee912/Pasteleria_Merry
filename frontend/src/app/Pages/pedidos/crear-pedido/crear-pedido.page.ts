@@ -2,127 +2,132 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { Router, RouterModule } from '@angular/router';
-import { PedidosService } from 'src/app/servicios/pedidos.service';
-import { SessionService } from 'src/app/servicios/session.service';
+import { RouterModule, Router } from '@angular/router';
+
 import { ApiService } from 'src/app/servicios/api.service';
 
 @Component({
   selector: 'app-crear-pedido',
+  standalone: true,
   templateUrl: './crear-pedido.page.html',
   styleUrls: ['./crear-pedido.page.scss'],
-  standalone: true,
-  imports: [CommonModule, IonicModule, RouterModule, FormsModule]
+  imports: [CommonModule, FormsModule, IonicModule, RouterModule]
 })
 export class CrearPedidoPage implements OnInit {
-  estado = 'pendiente'; // Por defecto en pendiente
-  fecha_pedido: string = new Date().toISOString();
-  fecha_entrega: string = '';
-  total: number | null = null;
-  notas = '';
-  productosSeleccionados: { productoId: string; cantidad: number }[] = []; // Lista de productos y cantidades
-  productos: any[] = []; // Lista de productos para el select
+  productos: any[] = [];
+  productosFiltrados: any[] = [];
+  categorias: any[] = [];
+  categoriaSeleccionada: number | null = null;
+  terminoBusqueda: string = '';
+  fechaEntrega: string = '';
+  notas: string = '';
+  hoy: string = new Date().toISOString().split('T')[0]; 
+  productosSeleccionados: any[] = [];
 
-  constructor(
-    private pedidosService: PedidosService,
-    private router: Router,
-    private session: SessionService,
-    private apiService: ApiService
-  ) {}
+  constructor(private api: ApiService, private router: Router) {}
 
   async ngOnInit() {
+    await this.cargarCategorias();
+    await this.cargarProductos();
+  }
+
+  async cargarCategorias() {
     try {
-      this.productos = await this.apiService.getProductos();
-      console.log('Productos cargados:', this.productos);
-      this.calcularTotal(); // Recalcular total al cargar productos
+      this.categorias = await this.api.getCategorias();
     } catch (error) {
-      console.error('Error al cargar productos:', error);
-      alert('Error al cargar los productos: ' + error);
+      console.error('Error al cargar categorías:', error);
     }
   }
 
-  onEstadoChange() {
-    console.log('Estado cambiado a:', this.estado);
-  }
+  async cargarProductos() {
+    try {
+      const data = await this.api.getProductos();
+      this.productos = data.map(p => ({
+        ...p,
+        imagenUrl: p.imagen_url?.[0]?.url
+          ? 'http://localhost:1337' + p.imagen_url[0].url
+          : 'assets/logo.png',
+        cantidad: 0
+      }));
 
-  agregarProducto(productoId: string) {
-    this.productosSeleccionados.push({ productoId, cantidad: 1 });
-    this.calcularTotal(); // Recalcular total al agregar
-  }
-
-  eliminarProducto(index: number) {
-    this.productosSeleccionados.splice(index, 1);
-    this.calcularTotal(); // Recalcular total al eliminar
-  }
-
-  actualizarCantidad(index: number, cantidad: number) {
-    if (cantidad >= 0) {
-      this.productosSeleccionados[index].cantidad = cantidad;
-      this.calcularTotal(); // Recalcular total al actualizar
+      this.productosFiltrados = [...this.productos];
+    } catch (error) {
+      alert('Error al cargar productos: ' + error);
     }
   }
 
-  calcularTotal() {
-    this.total = this.productosSeleccionados.reduce((sum, item) => {
-      const producto = this.productos.find(p => p.documentId === item.productoId);
-      return sum + (producto?.precio || 0) * item.cantidad;
-    }, 0);
-  }
+  filtrarProductos() {
+    const termino = this.terminoBusqueda.toLowerCase().trim();
 
-  getProductoNombre(productoId: string): string {
-    const producto = this.productos.find(p => p.documentId === productoId);
-    return producto ? producto.nombre : 'Producto no encontrado';
-  }
-
-  getProductoPrecio(productoId: string): number {
-    const producto = this.productos.find(p => p.documentId === productoId);
-    return producto ? producto.precio : 0;
-  }
-
-  async crearPedido() {
-    if (!this.productosSeleccionados.length || !this.fecha_pedido) {
-      alert('Por favor, agrega al menos un producto y completa los campos requeridos');
+    if (!termino) {
+      this.productosFiltrados = [];
       return;
     }
 
-    const nuevoPedido = {
-      estado: 'pendiente', // Forzado a pendiente por defecto
-      fecha_pedido: this.fecha_pedido,
-      fecha_entrega: this.fecha_entrega || null,
-      total: this.total,
-      notas: this.notas || '',
-      users_permissions_user: this.session.obtenerUsuario()?.id || null
-    };
+    this.productosFiltrados = this.productos.filter(p =>
+      p.nombre.toLowerCase().includes(termino)
+    );
+  }
 
-    try {
-      const response = await this.pedidosService.createPedido(nuevoPedido);
-      const pedidoId = response.data.id;
+  puedeEnviar(): boolean {
+    return (
+      !!this.fechaEntrega &&
+      this.productosSeleccionados.length > 0
+    );
+  }
 
-      // Crear detalles para cada producto seleccionado
-      for (const item of this.productosSeleccionados) {
-        const nuevoDetalle = {
-          subtotal: this.getProductoPrecio(item.productoId) * item.cantidad,
-          cantidad: item.cantidad,
-          pedido: pedidoId,
-          producto: item.productoId
-        };
-        await this.pedidosService.createDetallePedido(nuevoDetalle);
+  actualizarSeleccion(producto: any) {
+    const index = this.productosSeleccionados.findIndex(p => p.documentId === producto.documentId);
 
-        // Reducir inventario
-        const producto = await this.apiService.getProductoByDocumentId(item.productoId);
-        if (producto) {
-          const nuevoStock = (producto.stock || 0) - item.cantidad;
-          if (nuevoStock < 0) {
-            throw new Error(`Stock insuficiente para el producto ${producto.nombre}`);
-          }
-          await this.apiService.updateProductoByDocumentId(item.productoId, { stock: nuevoStock });
-        }
+    if (producto.cantidad > 0) {
+      if (index === -1) {
+        this.productosSeleccionados.push({
+          ...producto
+        });
+      } else {
+        this.productosSeleccionados[index].cantidad = producto.cantidad;
       }
-
-      alert('Pedido e inventario actualizados exitosamente');
-      this.router.navigate(['/ver-pedidos']);
-    } catch (error) {
-      alert('Error al crear pedido e inventario: ' + error);
+    } else {
+      if (index !== -1) {
+        this.productosSeleccionados.splice(index, 1);
+      }
     }
   }
+
+  async crearPedido() {
+    try {
+      const usuario = this.api['session'].obtenerUsuario();
+
+      // Calcular el total basado en los productos seleccionados
+      const total = this.productosSeleccionados.reduce(
+        (sum, p) => sum + (p.precio * p.cantidad),
+        0
+      );
+
+      const pedidoData = {
+        estado: 'pendiente',
+        fecha_pedido: new Date().toISOString(),
+        fecha_entrega: this.fechaEntrega,
+        total,
+        notas: this.notas,
+        users_permissions_user: usuario.id
+      };
+
+      const detalles = this.productosSeleccionados.map(p => ({
+        cantidad: p.cantidad,
+        subtotal: p.cantidad * p.precio,
+        producto: p.id
+      }));
+
+      await this.api.generarPedido(pedidoData, detalles);
+
+      alert('Pedido creado con éxito.');
+      this.router.navigate(['/']); 
+    } catch (error) {
+      console.error('Error al generar el pedido:', error);
+      alert('Hubo un problema al generar el pedido');
+    }
+  }
+
+
 }

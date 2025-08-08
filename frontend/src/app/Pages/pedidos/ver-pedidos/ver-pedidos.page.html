@@ -1,27 +1,50 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Ver Pedidos</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gestión de Pedidos</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-card *ngFor="let pedido of pedidos" (click)="goToDetalle(pedido.id)">
-    <ion-card-header>
-      <ion-card-title>Pedido #{{ pedido.id }}</ion-card-title>
-      <ion-card-subtitle>Estado: {{ pedido.estado }}</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <p><strong>Fecha Pedido:</strong> {{ pedido.fecha_pedido | date:'medium' }}</p>
-      <p *ngIf="pedido.fecha_entrega"><strong>Fecha Entrega:</strong> {{ pedido.fecha_entrega | date:'medium' }}</p>
-      <p *ngIf="!pedido.fecha_entrega"><strong>Fecha Entrega:</strong> No asignada</p>
-      <p><strong>Total:</strong> ${{ pedido.total }}</p>
-      <p><strong>Notas:</strong> {{ pedido.notas || 'Sin notas' }}</p>
-    </ion-card-content>
-  </ion-card>
+<ion-content class="ion-padding pedidos-content">
 
-  <ion-card *ngIf="pedidos.length === 0">
-    <ion-card-content>
-      <p>No hay pedidos disponibles.</p>
-    </ion-card-content>
-  </ion-card>
+  <!-- Filtros -->
+  <div class="filtros">
+    <ion-item>
+      <ion-label position="floating">Filtrar por mes</ion-label>
+      <ion-input [(ngModel)]="filtroMes" placeholder="Ej: 2025-08" (ionInput)="aplicarFiltros()"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Estado</ion-label>
+      <ion-select [(ngModel)]="filtroEstado" (ionChange)="aplicarFiltros()" placeholder="Todos">
+        <ion-select-option value="">Todos</ion-select-option>
+        <ion-select-option value="pendiente">Pendiente</ion-select-option>
+        <ion-select-option value="aceptado">Aceptado</ion-select-option>
+        <ion-select-option value="entregado">Entregado</ion-select-option>
+        <ion-select-option value="cancelado">Cancelado</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <!-- Lista de pedidos -->
+  <ion-list *ngIf="pedidosFiltrados.length > 0; else sinPedidos">
+    <ion-item *ngFor="let pedido of pedidosFiltrados" (click)="verDetalle(pedido.documentId)">
+      <ion-label>
+        <h3>📦 Pedido - {{ formatearFecha(pedido.fecha_pedido) }}</h3>
+        <p>🧑 Cliente: {{ pedido.users_permissions_user?.username }}</p>
+        <p>📅 Entrega: {{ formatearFecha(pedido.fecha_entrega) }}</p>
+        <p>💰 Total: ${{ pedido.total }}</p>
+        <p>🔖 Estado: <span [ngClass]="pedido.estado">{{ pedido.estado | titlecase }}</span></p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #sinPedidos>
+    <div class="mensaje-vacio">
+      <p>No hay pedidos que coincidan con los filtros.</p>
+    </div>
+  </ng-template>
+
 </ion-content>
