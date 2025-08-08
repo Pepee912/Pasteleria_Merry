@@ -37,7 +37,7 @@
   <div class="lista-ventas">
     <div class="tarjeta-venta" *ngFor="let venta of ventasFiltradas">
       <div class="venta-info">
-        <p><strong>📅 Fecha:</strong> {{ venta.fecha_venta | date: 'fullDate' }}</p>
+        <p><strong>📅 Fecha de venta:</strong>  {{ venta.fecha_venta | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</p>
         <p><strong>👤 Cliente:</strong> {{ venta.pedido?.users_permissions_user?.username || 'Desconocido' }}</p>
         <p><strong>💰 Total:</strong> ${{ venta.total }}</p>
         <p><strong>📦 Estado:</strong>

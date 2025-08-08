@@ -34,7 +34,7 @@
   <section class="seccion resumen">
     <h2 class="seccion-titulo">📄 Resumen de Venta</h2>
     <div class="seccion-cuerpo">
-      <p><strong>Fecha de venta:</strong> {{ venta.fecha_venta | date: 'fullDate' }}</p>
+      <p><strong>Fecha de venta:</strong>  {{ venta.fecha_venta | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</p>
       <p><strong>Total:</strong> ${{ venta.ganancias_estimadas }}</p>
     </div>
   </section>

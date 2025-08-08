@@ -12,13 +12,13 @@
   <ion-card>
     <ion-card-header>
       <ion-card-title>Información del Pedido</ion-card-title>
-      <ion-card-subtitle>{{ pedido.documentId }}</ion-card-subtitle>
+      <!-- <ion-card-subtitle>{{ pedido.documentId }}</ion-card-subtitle> -->
     </ion-card-header>
     <ion-card-content>
       <p><strong>Cliente:</strong> {{ pedido.users_permissions_user?.username }} ({{ pedido.users_permissions_user?.email }})</p>
       <p><strong>Estado:</strong> {{ pedido.estado | titlecase }}</p>
-      <p><strong>Fecha pedido:</strong> {{ formatearFecha(pedido.fecha_pedido) }}</p>
-      <p><strong>Fecha entrega:</strong> {{ formatearFecha(pedido.fecha_entrega) }}</p>
+      <h3>Pedido: {{ pedido.fecha_pedido | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</h3>
+      <p>Entrega: {{ pedido.fecha_entrega | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</p>
       <p><strong>Notas:</strong> {{ pedido.notas || 'Sin notas' }}</p>
       <p><strong>Total:</strong> ${{ pedido.total }}</p>
     </ion-card-content>

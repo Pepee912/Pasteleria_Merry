@@ -32,9 +32,9 @@
   <ion-list *ngIf="pedidosFiltrados.length > 0; else sinPedidos">
     <ion-item *ngFor="let pedido of pedidosFiltrados" (click)="verDetalle(pedido.documentId)">
       <ion-label>
-        <h3>📦 Pedido - {{ formatearFecha(pedido.fecha_pedido) }}</h3>
+        <h3>🧾 Pedido - {{ pedido.fecha_pedido | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</h3>
         <p>🧑 Cliente: {{ pedido.users_permissions_user?.username }}</p>
-        <p>📅 Entrega: {{ formatearFecha(pedido.fecha_entrega) }}</p>
+        <p>📅 Entrega: {{ pedido.fecha_entrega | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</p>
         <p>💰 Total: ${{ pedido.total }}</p>
         <p>🔖 Estado: <span [ngClass]="pedido.estado">{{ pedido.estado | titlecase }}</span></p>
       </ion-label>

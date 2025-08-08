@@ -13,8 +13,12 @@
   <div *ngIf="pedidos.length > 0; else sinPedidos">
     <div class="tarjeta-pedido" *ngFor="let pedido of pedidos">
       <div class="pedido-info">
-        <h3>🧾 Pedido - {{ formatearFecha(pedido.fecha_pedido) }}</h3>
-        <p><strong>Entrega:</strong> {{ formatearFecha(pedido.fecha_entrega) }}</p>
+        <h3>🧾 Pedido - {{ pedido.fecha_pedido | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</h3>
+
+        <p><strong>Entrega:</strong> 
+          {{ pedido.fecha_entrega | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}
+        </p>
+
         <p><strong>Total:</strong> ${{ pedido.total }}</p>
         <p><strong>Estado:</strong> 
           <span class="estado" [ngClass]="pedido.estado">{{ pedido.estado }}</span>
