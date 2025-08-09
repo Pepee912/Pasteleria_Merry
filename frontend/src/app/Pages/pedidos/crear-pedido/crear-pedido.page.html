@@ -7,81 +7,130 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <!-- Filtro por nombre -->
-  <ion-item>
-    <ion-label position="floating">Buscar producto por nombre</ion-label>
-    <ion-input
-      type="text"
-      [(ngModel)]="terminoBusqueda"
-      (ionInput)="filtrarProductos()"
-      required
-    ></ion-input>
-  </ion-item>
+<ion-content class="crear-pedido ion-padding">
 
-  <!-- Lista de productos filtrados (selección) -->
-  <div class="lista-filtrada" *ngIf="productosFiltrados.length > 0">
-    <ion-list>
-      <ion-item *ngFor="let producto of productosFiltrados">
-        <ion-thumbnail slot="start">
-          <img [src]="producto.imagenUrl || 'assets/logo.png'" />
-        </ion-thumbnail>
+  <div class="form-shell">
+    <!-- Búsqueda -->
+    <ion-item class="buscador-item" lines="none">
+      <ion-input
+        placeholder="Buscar producto por nombre"
+        [(ngModel)]="terminoBusqueda"
+        (ionInput)="filtrarProductos()"
+        enterkeyhint="search">
+      </ion-input>
+    </ion-item>
 
-        <ion-label>
-          <h3>{{ producto.nombre }}</h3>
-          <p>Precio: ${{ producto.precio }}</p>
-        </ion-label>
+    <!-- Estado: sin texto (invita a buscar) -->
+    <div class="estado-vacio" *ngIf="!(terminoBusqueda?.trim()?.length)">
+      <p>Escribe el nombre de un producto para empezar a buscar.</p>
+      <small>Ejemplos: “pastel”, “cupcake”, “chocolate”…</small>
+    </div>
 
-        <ion-input
-          type="number"
-          placeholder="Cantidad"
-          [(ngModel)]="producto.cantidad"
-          min="0"
-          (ionInput)="actualizarSeleccion(producto)"
-          required
-        ></ion-input>
+    <!-- Estado: con texto pero sin resultados -->
+    <div class="estado-vacio" *ngIf="terminoBusqueda?.trim()?.length && productosFiltrados.length === 0">
+      <p>No hay productos que coincidan con “{{ terminoBusqueda || '' }}”.</p>
+      <small>Prueba con otro nombre o revisa la ortografía.</small>
+    </div>
+
+    <!-- Lista de resultados -->
+    <div class="lista-filtrada" *ngIf="productosFiltrados.length > 0">
+      <ion-list lines="none">
+        <ion-item class="producto-item" *ngFor="let producto of productosFiltrados">
+          <ion-thumbnail slot="start" class="thumb">
+            <img [src]="producto.imagenUrl || 'assets/logo.png'" alt="Imagen de {{ producto.nombre }}" />
+          </ion-thumbnail>
+
+          <ion-label class="info">
+            <h3>{{ producto.nombre }}</h3>
+            <p class="precio">Precio: ${{ producto.precio }}</p>
+          </ion-label>
+
+          <!-- Control de cantidad -->
+          <div class="qty">
+            <ion-button fill="clear" size="small" class="btn-qty" (click)="decCantidad(producto)">−</ion-button>
+            <ion-input
+              class="input-qty"
+              type="number"
+              inputmode="numeric"
+              min="0"
+              [(ngModel)]="producto.cantidad"
+              (ionInput)="actualizarSeleccion(producto)"
+              placeholder="0">
+            </ion-input>
+            <ion-button fill="clear" size="small" class="btn-qty" (click)="incCantidad(producto)">+</ion-button>
+          </div>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <!-- Seleccionados -->
+    <div class="lista-seleccionados" *ngIf="productosSeleccionados.length > 0">
+      <h4>Productos Seleccionados</h4>
+      <ion-list lines="none">
+        <ion-item class="seleccionado-item" *ngFor="let producto of productosSeleccionados">
+          <ion-thumbnail slot="start" class="thumb">
+            <img [src]="producto.imagenUrl || 'assets/logo.png'" alt="Imagen de {{ producto.nombre }}" />
+          </ion-thumbnail>
+
+          <ion-label>
+            <h3>{{ producto.nombre }}</h3>
+            <div class="detalle-line">
+              <span>Cantidad: <b>{{ producto.cantidad }}</b></span>
+              <span>Precio: ${{ producto.precio }}</span>
+              <span>Subtotal: <b>${{ (producto.precio * producto.cantidad) || 0 }}</b></span>
+            </div>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <!-- Fecha y hora de entrega -->
+    <div class="entrega">
+      <ion-item aria-label="Fecha y hora de entrega" lines="full">
+        <ion-label>Fecha y hora de entrega</ion-label>
+        <ion-datetime
+          presentation="date-time"
+          [min]="minEntrega"
+          [minuteValues]="[0,15,30,45]"
+          (ionChange)="onFechaEntregaChange($event)"
+          [value]="fechaEntrega"
+        />
       </ion-item>
-    </ion-list>
+
+      <!-- Mensaje si hay error -->
+      <ion-note color="danger" *ngIf="errorEntrega" style="margin-top: 6px; display:block;">
+        {{ errorEntrega }}
+      </ion-note>
+
+      <div class="entrega-visual" *ngIf="fechaEntregaVisual && !errorEntrega">
+        <span class="etiqueta">Entrega programada:</span>
+        <span class="valor">{{ fechaEntregaVisual }}</span>
+      </div>
+    </div>
+
+    <!-- Notas -->
+    <ion-item lines="none">
+      <ion-label>Notas adicionales</ion-label>
+      <ion-textarea
+        [(ngModel)]="notas"
+        maxlength="200"
+        counter="true"
+        placeholder="Especifica sabores, tamaño, dedicatoria, etc.">
+      </ion-textarea>
+    </ion-item>
+
+    <div class="espacio-footer"></div>
   </div>
 
-  <!-- Productos seleccionados (solo vista, sin edición) -->
-  <div class="lista-seleccionados" *ngIf="productosSeleccionados.length > 0">
-    <h4>Productos Seleccionados</h4>
-    <ion-list>
-      <ion-item *ngFor="let producto of productosSeleccionados">
-        <ion-thumbnail slot="start">
-          <img [src]="producto.imagenUrl || 'assets/logo.png'" />
-        </ion-thumbnail>
-
-        <ion-label>
-          <h3>{{ producto.nombre }}</h3>
-          <p>Precio: ${{ producto.precio }}</p>
-          <p>Cantidad: {{ producto.cantidad }}</p>
-          <p>Subtotal: ${{ producto.precio * producto.cantidad }}</p>
-        </ion-label>
-      </ion-item>
-    </ion-list>
+  <!-- Barra fija de resumen y acción -->
+  <div class="resumen-fijo">
+    <div class="total">
+      <span>Total estimado</span>
+      <b>${{ total }}</b>
+    </div>
+    <ion-button size="large" (click)="crearPedido()" [disabled]="!puedeEnviar()" class="btn-confirmar">
+      Confirmar Pedido
+    </ion-button>
   </div>
 
-  <ion-item aria-label="Fecha y hora de entrega">
-    <ion-label>Fecha y hora de entrega</ion-label>
-    <ion-datetime
-      presentation="date-time"
-      (ionChange)="onFechaEntregaChange($event)"
-      [value]="fechaEntrega"
-    ></ion-datetime>
-  </ion-item>
-  <ion-item aria-label="Entrega programada:">
-    <ion-label>Entrega programada:</ion-label>
-    <ion-text>{{ fechaEntregaVisual }}</ion-text>
-  </ion-item>
-
-  <ion-item>
-    <ion-label position="floating">Notas adicionales</ion-label>
-    <ion-textarea [(ngModel)]="notas" required></ion-textarea>
-  </ion-item>
-
-  <ion-button expand="block" (click)="crearPedido()" [disabled]="!puedeEnviar()">
-    Confirmar Pedido
-  </ion-button>
 </ion-content>

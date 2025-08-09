@@ -49,7 +49,6 @@ export class EditarCategoriaPage implements OnInit {
     try {
       await this.api.updateCategoriaByDocumentId(this.documentId, { nombre: this.nombre });
       alert('Categoría actualizada correctamente');
-      //this.router.navigate(['/ver-categorias']);
       window.location.href = '/ver-categorias';
     } catch (error) {
       alert('Error al actualizar categoría: ' + error);
