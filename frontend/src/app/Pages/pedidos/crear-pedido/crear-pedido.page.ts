@@ -123,7 +123,7 @@ export class CrearPedidoPage implements OnInit {
       await this.api.generarPedido(pedidoData, detalles);
 
       alert('Pedido creado con éxito.');
-      this.router.navigate(['/']); 
+      window.location.href = '/mis-pedidos';
     } catch (error) {
       console.error('Error al generar el pedido:', error);
       alert('Hubo un problema al generar el pedido');
