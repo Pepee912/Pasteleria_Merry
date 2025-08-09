@@ -72,7 +72,7 @@ export const routes: Routes = [
     path: 'detalle-pedido/:id',
     loadComponent: () => import('./Pages/pedidos/detalle-pedido/detalle-pedido.page').then( m => m.DetallePedidoPage),
     canActivate: [RoleGuard],
-    data: { roles: ['Admin', 'Asistente'] }
+    data: { roles: ['Admin', 'Asistente', 'Cliente'] }
   },
   {
     path: 'crear-pedido',

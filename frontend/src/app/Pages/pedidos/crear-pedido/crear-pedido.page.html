@@ -63,19 +63,18 @@
     </ion-list>
   </div>
 
-  <ion-item>
+  <ion-item aria-label="Fecha y hora de entrega">
     <ion-label>Fecha y hora de entrega</ion-label>
     <ion-datetime
       presentation="date-time"
       (ionChange)="onFechaEntregaChange($event)"
-      [value]="fechaEntrega">
-    </ion-datetime>
+      [value]="fechaEntrega"
+    ></ion-datetime>
   </ion-item>
-  <ion-item>
+  <ion-item aria-label="Entrega programada:">
     <ion-label>Entrega programada:</ion-label>
     <ion-text>{{ fechaEntregaVisual }}</ion-text>
   </ion-item>
-
 
   <ion-item>
     <ion-label position="floating">Notas adicionales</ion-label>
