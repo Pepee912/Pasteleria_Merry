@@ -1,41 +1,127 @@
-::ng-deep ion-menu {
+.merry-menu {
+  --width: 300px;
   --background: #fff0f5;
 
-  ion-header ion-toolbar {
-    --background: #f5f5f5;
-    --color: #b76e79;
-  }
+  .menu-header {
+    padding-bottom: 8px;
 
-  ion-header ion-title {
-    font-family: 'Comic Sans MS', cursive;
-    font-weight: bold;
-    color: #b76e79;
-  }
+    ion-toolbar {
+      --background: #fff;
+      --color: #b76e79;
+      border-bottom: 1px solid #f9a8d4;
 
-  ion-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-  }
-
-  .menu-card {
-    width: 90%;
-    margin: 8px 0;
-    border-radius: 12px;
-    background: #fde2ec;
-    --background: #fde2ec;
-    --color: #b76e79;
-    box-shadow: 0 2px 6px rgba(183, 110, 121, 0.2);
-    font-family: 'Montserrat', sans-serif;
-    font-weight: bold;
-
-    ion-label {
-      font-size: 1rem;
+      ion-title {
+        font-family: 'Comic Sans MS', 'Montserrat', cursive;
+        font-weight: 800;
+      }
     }
 
-    &:hover {
-      background-color: #fdd6e6;
+    .user-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px;
+      background: linear-gradient(180deg, #fff7fb 0%, #ffe7f1 100%);
+      border-top: 1px solid #fde2ec;
+      border-bottom: 1px solid #fde2ec;
+
+      .avatar {
+        width: 42px; height: 42px;
+        border: 2px solid #ffd6e7; border-radius: 50%;
+        overflow: hidden; background: #fff;
+      }
+
+      .user-meta {
+        .hello { color: #6b4b53; font-weight: 700; line-height: 1; }
+        .role-chip {
+          display: inline-block;
+          margin-top: 4px;
+          padding: 2px 8px;
+          font-size: .75rem; font-weight: 800; letter-spacing: .2px;
+          color: #fff; background: #b76e79; border-radius: 999px;
+        }
+      }
+    }
+  }
+
+  .menu-content {
+    --padding-start: 8px; --padding-end: 8px; --padding-top: 8px;
+  }
+
+  .menu-list {
+    display: flex; flex-direction: column; gap: 8px;
+
+    .section {
+      padding: 10px 12px 4px;
+      color: #b76e79; font-weight: 800; letter-spacing: .3px;
+      text-transform: uppercase; font-size: .75rem;
+    }
+
+    .menu-item {
+      --background: #fff;
+      --color: #43353a;
+      border: 1px solid #ffe0ea;
+      border-radius: 14px;
+      box-shadow: 0 4px 10px rgba(183,110,121,.08);
+      margin: 0 8px;
+      min-height: 48px;
+
+      ion-icon {
+        font-size: 20px;
+        color: inherit;        /* mismo color que el texto */
+      }
+
+      ion-label { font-weight: 700; letter-spacing: .2px; }
+
+      /* hover/active de pointer */
+      &:hover { filter: brightness(1.01); box-shadow: 0 6px 14px rgba(183,110,121,.12); }
+      &:active { transform: translateY(1px); }
+    }
+
+    /* Ruta activa resaltada */
+    .menu-item.active {
+      --background: #b76e79;
+      --color: #fff;
+      border-color: #f5c1d6;
+      box-shadow: 0 8px 16px rgba(183,110,121,.22);
     }
   }
 }
+
+/* Fondo pastel en todo el panel del menú (evita negro) */
+.merry-menu ion-content,
+.merry-menu .menu-content {
+  --background: #fff0f5;
+  background: linear-gradient(180deg, #fff7fb 0%, #ffe7f1 100%);
+}
+
+/* Lista sin fondo sólido */
+.merry-menu .menu-list { background: transparent; }
+
+/* Placeholder de avatar (sin imagen) */
+.merry-menu .user-row .avatar {
+  width: 42px; height: 42px;
+  border-radius: 999px;
+  display: grid; place-items: center;
+  background: #ffeaf1;
+  border: 2px solid #ffd6e7;
+  color: #b76e79;
+}
+.merry-menu .user-row .avatar ion-icon { font-size: 22px; }
+
+/* Mejora contraste de las secciones sobre fondo claro */
+.merry-menu .menu-list .section {
+  color: #b76e79;
+  text-shadow: 0 1px 0 rgba(255,255,255,.6);
+}
+
+/* Ítems: elimina cualquier borde oscuro heredado del tema */
+.merry-menu .menu-item {
+  border: 1px solid #ffe0ea;
+  box-shadow: 0 4px 10px rgba(183,110,121,.08);
+}
+.merry-menu .menu-item.active {
+  border-color: #f5c1d6;
+  box-shadow: 0 8px 16px rgba(183,110,121,.22);
+}
+
+/* (Opcional) atenúa el oscurecido del contenido principal al abrir el menú */
+ion-menu::part(backdrop) { opacity: .35; } /* 0=sin oscurecer, 1=muy oscuro */

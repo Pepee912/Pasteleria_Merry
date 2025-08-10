@@ -1,40 +1,65 @@
-<ion-menu side="start" contentId="main-content" *ngIf="!mostrarBotones">
-  <ion-header>
+<ion-menu side="start" contentId="main-content" class="merry-menu" type="overlay" *ngIf="!mostrarBotones">
+  <ion-header class="menu-header">
     <ion-toolbar>
       <ion-title>Menú</ion-title>
     </ion-toolbar>
+
+    <!-- User -->
+    <div class="user-row" *ngIf="rol === 'Admin' || rol === 'Asistente'">
+      <div class="user-meta">
+        <div class="role-chip" [ngClass]="rol.toLowerCase()">{{ rol }}</div>
+      </div>
+    </div>
+
   </ion-header>
 
-  <ion-content class="custom-menu-content">
-    <ion-list lines="none">
+  <ion-content class="menu-content">
+    <ion-list class="menu-list" lines="none">
 
-      <ion-item routerLink="/detalle-usuario" *ngIf="rol" class="menu-card">
-        <ion-label>Perfil</ion-label>
-      </ion-item>
+      <div class="section">Mi cuenta</div>
+      <ion-menu-toggle auto-hide="true">
+        <ion-item routerLink="/detalle-usuario" routerLinkActive="active" detail="false" class="menu-item" *ngIf="rol">
+          <ion-label>Perfil</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
 
-      <ion-item routerLink="/ver-usuarios" *ngIf="rol === 'Admin'" class="menu-card">
-        <ion-label>Usuarios</ion-label>
-      </ion-item>
+      <div class="section" *ngIf="rol === 'Admin'">Administración</div>
+      <ion-menu-toggle auto-hide="true" *ngIf="rol === 'Admin'">
+        <ion-item routerLink="/ver-usuarios" routerLinkActive="active" detail="false" class="menu-item">
+          <ion-label>Usuarios</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
 
-      <ion-item routerLink="/ver-categorias" *ngIf="rol === 'Admin' || rol === 'Asistente'" class="menu-card">
-        <ion-label>Categorías</ion-label>
-      </ion-item> 
+      <div class="section" *ngIf="rol === 'Admin' || rol === 'Asistente'">Operación</div>
+      <ion-menu-toggle auto-hide="true" *ngIf="rol === 'Admin' || rol === 'Asistente'">
+        <ion-item routerLink="/ver-categorias" routerLinkActive="active" detail="false" class="menu-item">
+          <ion-label>Categorías</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
 
-      <ion-item routerLink="/ver-producto" *ngIf="rol === 'Admin' || rol === 'Asistente'" class="menu-card">
-        <ion-label>Productos</ion-label>
-      </ion-item>
+      <ion-menu-toggle auto-hide="true" *ngIf="rol === 'Admin' || rol === 'Asistente'">
+        <ion-item routerLink="/ver-producto" routerLinkActive="active" detail="false" class="menu-item">
+          <ion-label>Productos</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
 
-      <ion-item routerLink="/ver-pedidos" *ngIf="rol === 'Admin' || rol === 'Asistente'" class="menu-card">
-        <ion-label>Pedidos</ion-label>
-      </ion-item>
+      <ion-menu-toggle auto-hide="true" *ngIf="rol === 'Admin' || rol === 'Asistente'">
+        <ion-item routerLink="/ver-pedidos" routerLinkActive="active" detail="false" class="menu-item">
+          <ion-label>Pedidos</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
 
-      <ion-item routerLink="/ver-ventas" *ngIf="rol === 'Admin' || rol === 'Asistente'" class="menu-card">
-        <ion-label>Ventas</ion-label>
-      </ion-item>
+      <ion-menu-toggle auto-hide="true" *ngIf="rol === 'Admin' || rol === 'Asistente'">
+        <ion-item routerLink="/ver-ventas" routerLinkActive="active" detail="false" class="menu-item">
+          <ion-label>Ventas</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
 
-      <ion-item routerLink="/mis-pedidos" *ngIf="rol === 'Admin' || rol === 'Cliente'" class="menu-card">
-        <ion-label>Mis Pedidos</ion-label>
-      </ion-item>
+      <ion-menu-toggle auto-hide="true" *ngIf="rol === 'Admin' || rol === 'Cliente'">
+        <ion-item routerLink="/mis-pedidos" routerLinkActive="active" detail="false" class="menu-item">
+          <ion-label>Mis Pedidos</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
 
     </ion-list>
   </ion-content>

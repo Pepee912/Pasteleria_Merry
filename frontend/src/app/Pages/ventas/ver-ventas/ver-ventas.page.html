@@ -9,50 +9,116 @@
 
 <ion-content class="ion-padding ver-ventas-content">
 
-  <!-- Filtros combinados -->
-  <div class="filtros-combinados">
-    <!-- Filtro por fecha -->
-    <div class="filtro-fecha">
-      <ion-icon name="calendar-outline" class="icono-fecha"></ion-icon>
-      <ion-input
-        [(ngModel)]="fechaFiltro"
-        placeholder="Buscar por fecha (ej. 2025-08)"
-        (ionInput)="filtrarVentas()">
-      </ion-input>
+  <!-- Filtros -->
+  <div class="filtros">
+    <div class="filtros-head">
+      <h4>Filtros</h4>
+      <div class="resumen">
+        <span class="contador">{{ ventasFiltradas.length }} resultado(s)</span>
+        <ion-button fill="clear" size="small"
+                    (click)="limpiarFiltros()" [disabled]="!tieneFiltrosActivos()">Limpiar</ion-button>
+      </div>
     </div>
 
-    <!-- Filtro por estado -->
-    <div class="filtro-estado">
-      <ion-select [(ngModel)]="estadoFiltro" (ionChange)="filtrarVentas()" interface="popover" placeholder="Estado">
-        <ion-select-option value="">Todos</ion-select-option>
-        <ion-select-option value="pendiente">Pendiente</ion-select-option>
-        <ion-select-option value="aceptado">Aceptado</ion-select-option>
-        <ion-select-option value="entregado">Entregado</ion-select-option>
-        <ion-select-option value="cancelado">Cancelado</ion-select-option>
-      </ion-select>
+    <!-- Mes/Año + atajos -->
+    <div class="fila-fecha">
+      <ion-item lines="none">
+        <ion-label>Mes</ion-label>
+        <ion-datetime-button datetime="mesFiltro"></ion-datetime-button>
+      </ion-item>
+
+      <ion-modal [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime id="mesFiltro" presentation="month-year"
+                        (ionChange)="onMesChange($event)"></ion-datetime>
+        </ng-template>
+      </ion-modal>
+
+      <div class="rapidos">
+        <ion-chip (click)="setRango('hoy')"><ion-label>Hoy</ion-label></ion-chip>
+        <ion-chip (click)="setRango('7d')"><ion-label>Últ. 7 días</ion-label></ion-chip>
+        <ion-chip (click)="setRango('mes')"><ion-label>Este mes</ion-label></ion-chip>
+        <ion-chip (click)="setRango('30d')"><ion-label>Últ. 30 días</ion-label></ion-chip>
+      </div>
+    </div>
+
+    <!-- Orden -->
+    <ion-segment class="seg-orden"
+                 [(ngModel)]="orden" (ionChange)="aplicarFiltros()">
+      <ion-segment-button value="recientes">Recientes</ion-segment-button>
+      <ion-segment-button value="antiguos">Antiguos</ion-segment-button>
+    </ion-segment>
+
+    <!-- Chips activos -->
+    <div class="chips-activos" *ngIf="tieneFiltrosActivos()">
+      <ion-chip *ngIf="filtroMes"
+                (click)="filtroMes=''; aplicarFiltros()">
+        <ion-label>Mes: {{filtroMes}}</ion-label>
+      </ion-chip>
+
+      <ion-chip *ngIf="fechaDesde || fechaHasta"
+                (click)="borrarRango(); aplicarFiltros()">
+        <ion-label>
+          Rango:
+          <ng-container *ngIf="fechaDesde">{{ fechaDesde | date:'d MMM y' }}</ng-container>
+          <ng-container *ngIf="fechaHasta"> – {{ fechaHasta | date:'d MMM y' }}</ng-container>
+        </ion-label>
+      </ion-chip>
+
     </div>
   </div>
 
   <!-- Lista de ventas -->
-  <div class="lista-ventas">
-    <div class="tarjeta-venta" *ngFor="let venta of ventasFiltradas">
+  <div *ngIf="ventasFiltradas.length > 0; else sinVentas">
+    <div class="tarjeta-venta" *ngFor="let v of ventasFiltradas">
       <div class="venta-info">
-        <p><strong>📅 Fecha de venta:</strong>  {{ venta.fecha_venta | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</p>
-        <p><strong>👤 Cliente:</strong> {{ venta.pedido?.users_permissions_user?.username || 'Desconocido' }}</p>
-        <p><strong>💰 Total:</strong> ${{ venta.total }}</p>
-        <p><strong>📦 Estado:</strong>
-          <span [ngClass]="venta.pedido.estado">
-            {{ venta.pedido.estado | titlecase }}
-          </span>
-        </p>
+        <h3>🧾 Venta • {{ v.fecha_venta | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</h3>
 
+        <p><strong>Cliente:</strong> {{ v.pedido?.users_permissions_user?.username || 'Desconocido' }}</p>
+        <p class="estado-row">
+          <strong>Estado:</strong>
+          <span class="chip entregado">entregado</span>
+        </p>
+        <p><strong>Total:</strong> ${{ v.total }}</p>
+
+        <!-- Resumen de productos (desde el pedido) -->
+        <div class="productos-resumen" *ngIf="$any(v.pedido)?.detalles_pedidos?.length">
+          <ion-chip outline="true"
+                    *ngFor="let d of ($any(v.pedido).detalles_pedidos || []) | slice:0:3">
+            <ion-label>{{ $any(d).producto?.nombre || 'Producto' }}</ion-label>
+            <ion-badge>{{ $any(d).cantidad }}x</ion-badge>
+          </ion-chip>
+
+          <button class="link-ver-mas"
+                  *ngIf="$any(v.pedido).detalles_pedidos.length > 3"
+                  (click)="toggleVerMas(v)">
+            + {{ $any(v.pedido).detalles_pedidos.length - 3 }} más
+          </button>
+        </div>
+
+        <!-- Lista completa -->
+        <ul class="productos-lista" *ngIf="v._verMas">
+          <li *ngFor="let d of ($any(v.pedido).detalles_pedidos || [])">
+            <span class="qty">{{ $any(d).cantidad }}x</span>
+            <span class="name">{{ $any(d).producto?.nombre }}</span>
+            <span class="sub">{{ $any(d).subtotal | currency:'MXN':'symbol-narrow' }}</span>
+          </li>
+        </ul>
       </div>
+
       <div class="venta-acciones">
-        <ion-button size="small" (click)="irADetalle(venta)">
+        <ion-button class="btn-detalle" size="small" (click)="irADetalle(v)">
           Ver detalles
         </ion-button>
       </div>
     </div>
   </div>
 
+  <ng-template #sinVentas>
+    <div class="mensaje-vacio">
+      <ion-text color="medium">
+        <p class="ion-text-center">No hay ventas con los filtros seleccionados.</p>
+      </ion-text>
+    </div>
+  </ng-template>
 </ion-content>

@@ -23,4 +23,5 @@ export class AppComponent {
       this.rol = this.session.obtenerRol();
     }
   }
+  
 }

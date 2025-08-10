@@ -1,12 +1,15 @@
 :host {
   --ion-background-color: #fff0f5;
+  --merry-primary: #b76e79;
+  --merry-border: #f9a8d4;
+  --merry-soft: #fff7fb;
 }
 
 ion-header {
   ion-toolbar {
     --background: #fff;
-    --color: #b76e79;
-    border-bottom: 1px solid #f9a8d4;
+    --color: var(--merry-primary);
+    border-bottom: 1px solid var(--merry-border);
 
     ion-title {
       font-family: 'Comic Sans MS', 'Montserrat', cursive;
@@ -18,133 +21,116 @@ ion-header {
 .ver-ventas-content {
   background: #fff0f5;
 
-  .lista-ventas {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+  /* ===== FILTROS ===== */
+  .filtros {
+    background: #fff;
+    border: 2px solid var(--merry-border);
+    border-radius: 16px;
+    padding: 10px;
+    margin-bottom: 14px;
+    box-shadow: 0 6px 14px rgba(183,110,121,.10);
+    color: #43353a;
 
-    .tarjeta-venta {
-      background: #fff;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 4px 10px rgba(183, 110, 121, 0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-
-      .venta-info {
-        flex: 1;
-        min-width: 220px;
-
-        p {
-          margin: 6px 0;
-          font-size: 0.95rem;
-          color: #444;
-
-          strong {
-            color: #b76e79;
-          }
-        }
-      }
-
-      .venta-acciones {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 10px;
-
-        ion-button {
-          --border-radius: 10px;
-          font-weight: bold;
-          --background: #f9a8d4;
-          --color: white;
-          box-shadow: 0 2px 4px rgba(183, 110, 121, 0.2);
-        }
-      }
+    .filtros-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 6px;
+      h4 { margin: 0; color: var(--merry-primary); font-weight: 800; }
+      .resumen { display: flex; align-items: center; gap: 6px; .contador { color: #6b4b53; font-weight: 700; } }
     }
-  }
-}
 
-.pendiente {
-  color: orange;
-  font-weight: bold;
-}
-
-.aceptado {
-  color: green;
-  font-weight: bold;
-}
-
-.entregado {
-  color: #1e90ff;
-  font-weight: bold;
-}
-
-.cancelado {
-  color: red;
-  font-weight: bold;
-}
-
-.filtros-combinados {
-  display: flex;
-  gap: 12px;
-  padding: 12px;
-  flex-wrap: wrap;
-
-  .filtro-fecha {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-
-    ion-input {
+    .seg-orden {
+      padding: 4px;
+      border: 1px dashed #ffd6e7;
+      border-radius: 12px;
       --background: #fff;
-      --color: #b76e79;
-      --placeholder-color: #b76e79;
-      --border-radius: 12px;
-      border: 1px solid #f9a8d4;
-      padding: 10px 12px;
-      box-shadow: 0 2px 6px rgba(183, 110, 121, 0.1);
-      font-weight: bold;
-      width: 100%;
+      margin-top: 6px;
+    }
+    .seg-orden ion-segment-button {
+      margin: 4px; border-radius: 10px; min-height: 36px;
+      font-weight: 800; letter-spacing: .2px;
+      --background: transparent; --color: #6b4b53;
+      --background-checked: var(--merry-primary); --color-checked: #fff;
+      box-shadow: 0 0 0 1px #ffd6e7 inset;
+    }
+    .seg-orden ion-segment-button.segment-button-checked {
+      background: var(--merry-primary) !important; color: #fff !important;
+      box-shadow: 0 6px 12px rgba(183,110,121,.18); transform: translateY(-1px);
     }
 
-    ion-icon.icono-fecha {
-      font-size: 22px;
-      color: #b76e79;
+    .fila-fecha {
+      display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 8px;
+      ion-item { --background: #fff; --color: #6b4b53; border: 1px dashed #ffd6e7; border-radius: 12px; }
+      ion-datetime-button { --background: var(--merry-soft); --color: #6b4b53; border-radius: 10px; }
+      ion-datetime-button::part(text) { color: #6b4b53; font-weight: 700; }
+      .rapidos { display: flex; flex-wrap: wrap; gap: 6px;
+        ion-chip { --background: #fff; --color: #43353a; border: 1px solid #ffe0ea; border-radius: 12px; font-weight: 700; }
+      }
+    }
+
+    .chips-activos {
+      margin-top: 8px;
+      ion-chip { --color: #6b4b53; --background: #ffeef5; border: 1px solid #ffd6e7; border-radius: 12px; }
+    }
+  }
+
+  /* ===== TARJETAS ===== */
+  .tarjeta-venta {
+    background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 16px;
+    box-shadow: 0 6px 14px rgba(183,110,121,.14);
+    border: 1px solid #ffe0ea;
+
+    display: grid; grid-template-columns: 1fr auto; gap: 12px;
+
+    .venta-info {
+      h3 { font-size: 1.05rem; font-weight: 800; color: var(--merry-primary); margin: 0 0 8px 0; }
+      p  { font-size: 0.95rem; margin: 6px 0; color: #43353a; }
+      .estado-row { display: flex; align-items: center; gap: 8px; }
+
+      .chip {
+        padding: 4px 10px; border-radius: 10px; font-weight: 700; text-transform: capitalize;
+        font-size: 0.85rem; display: inline-block; letter-spacing: .2px;
+        &.entregado { background-color: #e0f2fe; color: #075985; }
+      }
+    }
+
+    .venta-acciones {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 136px;
+      .btn-detalle {
+        --border-radius: 12px; --background: var(--merry-primary); --color: #fff;
+        border: 1px solid #f5c1d6; font-weight: 800; letter-spacing: .2px;
+        box-shadow: 0 6px 12px rgba(183,110,121,.25);
+      }
+    }
+
+    @media (min-width: 560px) {
+      .venta-info { padding-right: 12px; border-right: 1px dashed #ffd6e7; }
+      .venta-acciones { padding-left: 6px; }
+    }
+    @media (max-width: 420px) {
+      grid-template-columns: 1fr; .venta-acciones { align-items: stretch; min-width: 0; }
     }
   }
 
-  .filtro-estado {
-    width: 160px;
-
-    ion-select {
-      --background: #fff;
-      --color: #b76e79;
-      --placeholder-color: #b76e79;
-      --border-radius: 12px;
-      border: 1px solid #f9a8d4;
-      padding: 6px 12px;
-      font-weight: bold;
-      width: 100%;
-      box-shadow: 0 2px 6px rgba(183, 110, 121, 0.1);
-    }
-
-    ion-select::part(icon) {
-      color: #b76e79;
+  /* Productos en tarjeta (igual que pedidos) */
+  .productos-resumen {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
+    ion-chip { --background: #fff; --color: #43353a; border: 1px solid #ffe0ea; border-radius: 12px;
+      ion-badge { margin-left: 6px; } }
+    .link-ver-mas { background: transparent; border: none; color: var(--merry-primary);
+      font-weight: 700; cursor: pointer; padding: 2px 6px; border-radius: 8px; }
+  }
+  .productos-lista {
+    list-style: none; padding: 6px 8px; margin: 0;
+    border: 1px dashed #ffd6e7; border-radius: 12px; background: #fff;
+    li { display: grid; grid-template-columns: 48px 1fr auto; gap: 8px;
+      padding: 6px 0; border-bottom: 1px dashed #ffe5ef;
+      &:last-child { border-bottom: none; }
+      .qty { font-weight: 800; color: #6b4b53; text-align: center; }
+      .name { color: #43353a; }
+      .sub { color: var(--merry-primary); font-weight: 800; }
     }
   }
-}
 
-ion-select {
-  --color: #b76e79 !important;
-  color: #b76e79 !important;
-}
-
-ion-select::part(text) {
-  color: #b76e79 !important;
-}
-
-ion-alert {
-  --color: #b76e79 !important;
+  .mensaje-vacio { text-align: center; padding-top: 30px;
+    p { font-size: 1rem; color: #999; font-weight: bold; } }
 }

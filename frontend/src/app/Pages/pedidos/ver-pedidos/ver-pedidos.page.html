@@ -9,44 +9,96 @@
 
 <ion-content class="ion-padding pedidos-content">
 
-  <!-- Filtros combinados -->
-  <div class="filtros-combinados">
-    <!-- Filtro por mes -->
-    <div class="filtro-fecha">
-      <ion-icon name="calendar-outline" class="icono-fecha"></ion-icon>
-      <ion-input
-        [(ngModel)]="filtroMes"
-        placeholder="Ej: 2025-08"
-        (ionInput)="aplicarFiltros()">
-      </ion-input>
+  <!-- Filtros -->
+  <div class="filtros">
+    <div class="filtros-head">
+      <h4>Filtros</h4>
+      <div class="resumen">
+        <span class="contador">{{ pedidosFiltrados.length }} resultado(s)</span>
+        <ion-button fill="clear" size="small"
+                    (click)="limpiarFiltros()" [disabled]="!tieneFiltrosActivos()">Limpiar</ion-button>
+      </div>
     </div>
 
-    <!-- Filtro por estado -->
-    <div class="filtro-estado">
-      <ion-select [(ngModel)]="filtroEstado" (ionChange)="aplicarFiltros()" interface="popover" placeholder="Estado">
-        <ion-select-option value="">Todos</ion-select-option>
-        <ion-select-option value="pendiente">Pendiente</ion-select-option>
-        <ion-select-option value="aceptado">Aceptado</ion-select-option>
-        <ion-select-option value="entregado">Entregado</ion-select-option>
-        <ion-select-option value="cancelado">Cancelado</ion-select-option>
-      </ion-select>
+    <!-- Estado -->
+    <ion-segment class="seg-estados"
+                 [(ngModel)]="filtroEstado" (ionChange)="aplicarFiltros()">
+      <ion-segment-button value="">Todos</ion-segment-button>
+      <ion-segment-button value="pendiente">Pendiente</ion-segment-button>
+      <ion-segment-button value="aceptado">Aceptado</ion-segment-button>
+      <ion-segment-button value="rechazado">Rechazado</ion-segment-button>
+      <ion-segment-button value="entregado">Entregado</ion-segment-button>
+    </ion-segment>
+
+    <!-- Mes/Año + Atajos -->
+    <div class="fila-fecha">
+      <ion-item lines="none">
+        <ion-label>Mes</ion-label>
+        <ion-datetime-button datetime="mesFiltro"></ion-datetime-button>
+      </ion-item>
+
+      <ion-modal [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime id="mesFiltro" presentation="month-year"
+                        (ionChange)="onMesChange($event)"></ion-datetime>
+        </ng-template>
+      </ion-modal>
+
+      <div class="rapidos">
+        <ion-chip (click)="setRango('hoy')"><ion-label>Hoy</ion-label></ion-chip>
+        <ion-chip (click)="setRango('7d')"><ion-label>Últ. 7 días</ion-label></ion-chip>
+        <ion-chip (click)="setRango('mes')"><ion-label>Este mes</ion-label></ion-chip>
+        <ion-chip (click)="setRango('30d')"><ion-label>Últ. 30 días</ion-label></ion-chip>
+      </div>
+    </div>
+
+    <!-- Orden -->
+    <ion-segment class="seg-orden"
+                 [(ngModel)]="orden" (ionChange)="aplicarFiltros()">
+      <ion-segment-button value="recientes">Recientes</ion-segment-button>
+      <ion-segment-button value="antiguos">Antiguos</ion-segment-button>
+    </ion-segment>
+
+    <!-- Chips activos -->
+    <div class="chips-activos" *ngIf="tieneFiltrosActivos()">
+      <ion-chip *ngIf="filtroEstado"
+                (click)="filtroEstado=''; aplicarFiltros()">
+        <ion-label>Estado: {{filtroEstado}}</ion-label>
+      </ion-chip>
+
+      <ion-chip *ngIf="filtroMes"
+                (click)="filtroMes=''; aplicarFiltros()">
+        <ion-label>Mes: {{filtroMes}}</ion-label>
+      </ion-chip>
+
+      <ion-chip *ngIf="fechaDesde || fechaHasta"
+                (click)="borrarRango(); aplicarFiltros()">
+        <ion-label>
+          Rango:
+          <ng-container *ngIf="fechaDesde">{{ fechaDesde | date:'d MMM y' }}</ng-container>
+          <ng-container *ngIf="fechaHasta"> – {{ fechaHasta | date:'d MMM y' }}</ng-container>
+        </ion-label>
+      </ion-chip>
     </div>
   </div>
 
-  <!-- Lista de pedidos -->
+  <!-- Lista -->
   <div class="lista-pedidos" *ngIf="pedidosFiltrados.length > 0; else sinPedidos">
     <div class="tarjeta-pedido" *ngFor="let pedido of pedidosFiltrados">
       <div class="pedido-info">
-        <p><strong>🧾 Pedido:</strong> {{ pedido.fecha_pedido | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</p>
-        <p><strong>🧑 Cliente:</strong> {{ pedido.users_permissions_user?.username }}</p>
-        <p><strong>📅 Entrega:</strong> {{ pedido.fecha_entrega | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</p>
-        <p><strong>💰 Total:</strong> ${{ pedido.total }}</p>
-        <p><strong>🔖 Estado: </strong>
-          <span [ngClass]="pedido.estado">{{ pedido.estado | titlecase }}</span>
+        <h3>🧾 Pedido • {{ pedido.fecha_pedido | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</h3>
+
+        <p><strong>Cliente:</strong> {{ pedido.users_permissions_user?.username }}</p>
+        <p><strong>Entrega:</strong> {{ pedido.fecha_entrega | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</p>
+        <p class="estado-row">
+          <strong>Estado:</strong>
+          <span class="chip" [ngClass]="pedido.estado">{{ pedido.estado }}</span>
         </p>
+        <p><strong>Total:</strong> ${{ pedido.total }}</p>
       </div>
+
       <div class="pedido-acciones">
-        <ion-button size="small" (click)="verDetalle(pedido.documentId)">
+        <ion-button class="btn-detalle" size="small" (click)="verDetalle(pedido.documentId)">
           Ver detalles
         </ion-button>
       </div>
@@ -55,8 +107,9 @@
 
   <ng-template #sinPedidos>
     <div class="mensaje-vacio">
-      <p>No hay pedidos que coincidan con los filtros.</p>
+      <ion-text color="medium">
+        <p class="ion-text-center">No hay pedidos que coincidan con los filtros.</p>
+      </ion-text>
     </div>
   </ng-template>
-
 </ion-content>

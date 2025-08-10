@@ -5,9 +5,6 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 
-import { calendarOutline } from 'ionicons/icons';
-import { addIcons } from 'ionicons';
-
 @Component({
   selector: 'app-ver-ventas',
   standalone: true,
@@ -18,40 +15,110 @@ import { addIcons } from 'ionicons';
 export class VerVentasPage implements OnInit {
   ventas: any[] = [];
   ventasFiltradas: any[] = [];
-  fechaFiltro: string = '';
-  estadoFiltro: string = '';
 
-  constructor(private api: ApiService, private router: Router) {
-    addIcons({
-      'calendar-outline': calendarOutline
-    });
-  }
+  filtroMes: string = '';                 
+  fechaDesde?: string;                   
+  fechaHasta?: string;                   
+  orden: 'recientes' | 'antiguos' = 'recientes';
 
   async ngOnInit() {
     try {
-      this.ventas = await this.api.getVentas();
-      this.ventasFiltradas = [...this.ventas];
+      const data = await this.api.getVentas();
+      this.ventas = (data || []).map((v: any) => ({ ...v, _verMas: false }));
+      this.aplicarFiltros();
     } catch (error) {
       alert('Error al cargar ventas: ' + error);
     }
   }
 
-  filtrarVentas() {
-    const fecha = this.fechaFiltro?.toLowerCase() || '';
-    const estado = this.estadoFiltro?.toLowerCase() || '';
+  onMesChange(ev: CustomEvent) {
+    const val = (ev.detail as any).value as string | null;
+    this.filtroMes = val ? val.slice(0, 7) : '';
+    this.fechaDesde = undefined;
+    this.fechaHasta = undefined;
+    this.aplicarFiltros();
+  }
 
-    this.ventasFiltradas = this.ventas.filter(venta => {
-      const fechaVenta = new Date(venta.fecha_venta).toISOString().split('T')[0];
-      const estadoPedido = venta.pedido?.estado?.toLowerCase() || '';
+  setRango(tipo: 'hoy'|'7d'|'mes'|'30d') {
+    const now = new Date();
+    let desde = new Date();
+    let hasta = new Date();
 
-      const coincideFecha = fecha ? fechaVenta.includes(fecha) : true;
-      const coincideEstado = estado ? estadoPedido === estado : true;
+    if (tipo === 'hoy') {
+      desde = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      hasta = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+    }
+    if (tipo === '7d') {
+      hasta = now;
+      desde = new Date(now);
+      desde.setDate(now.getDate() - 6);
+      desde.setHours(0,0,0,0);
+    }
+    if (tipo === 'mes') {
+      desde = new Date(now.getFullYear(), now.getMonth(), 1);
+      hasta = new Date(now.getFullYear(), now.getMonth()+1, 0, 23, 59, 59);
+    }
+    if (tipo === '30d') {
+      hasta = now;
+      desde = new Date(now);
+      desde.setDate(now.getDate() - 29);
+      desde.setHours(0,0,0,0);
+    }
 
-      return coincideFecha && coincideEstado;
+    this.fechaDesde = desde.toISOString();
+    this.fechaHasta =  hasta.toISOString();
+    this.filtroMes = '';
+    this.aplicarFiltros();
+  }
+
+  borrarRango() {
+    this.fechaDesde = undefined;
+    this.fechaHasta = undefined;
+  }
+
+  tieneFiltrosActivos(): boolean {
+    return !!(this.filtroMes || this.fechaDesde || this.fechaHasta || this.orden === 'antiguos');
+  }
+
+  private dentroDeRango(fechaIso: string): boolean {
+    if (!this.fechaDesde && !this.fechaHasta) return true;
+    const t = new Date(fechaIso).getTime();
+    const d = this.fechaDesde ? new Date(this.fechaDesde).getTime() : -Infinity;
+    const h = this.fechaHasta  ? new Date(this.fechaHasta).getTime()  :  Infinity;
+    return t >= d && t <= h;
+  }
+
+  aplicarFiltros() {
+    const mes = this.filtroMes;
+
+    let lista = this.ventas.filter(v => {
+      const coincideMes = mes ? (v.fecha_venta || '').slice(0, 7) === mes : true;
+      const coincideRango = this.dentroDeRango(v.fecha_venta);
+      return coincideMes && coincideRango;
     });
+
+    // ordenar por fecha_venta
+    lista.sort((a, b) => new Date(a.fecha_venta).getTime() - new Date(b.fecha_venta).getTime());
+    if (this.orden === 'recientes') lista = lista.reverse();
+
+    this.ventasFiltradas = [...lista];
+  }
+
+  limpiarFiltros() {
+    this.filtroMes = '';
+    this.fechaDesde = undefined;
+    this.fechaHasta = undefined;
+    this.orden = 'recientes';
+    this.aplicarFiltros();
+  }
+
+  toggleVerMas(v: any) {
+    v._verMas = !v._verMas;
   }
 
   irADetalle(venta: any) {
     this.router.navigate(['/detalle-venta'], { queryParams: { id: venta.documentId } });
   }
+
+  constructor(private api: ApiService, private router: Router) {}
 }
