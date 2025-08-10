@@ -9,46 +9,159 @@
 
 <ion-content class="ion-padding pedidos-content">
 
-  <!-- Lista de pedidos -->
-  <div *ngIf="pedidos.length > 0; else sinPedidos">
-    <div class="tarjeta-pedido" *ngFor="let pedido of pedidos">
-      <div class="pedido-info">
-        <h3>🧾 Pedido - {{ pedido.fecha_pedido | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</h3>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
-        <p><strong>Entrega:</strong> 
+  <!-- Filtros -->
+  <div class="filtros">
+    <div class="filtros-head">
+      <h4>Filtros</h4>
+      <div class="resumen">
+        <span class="contador">{{ pedidosFiltrados.length }} resultado(s)</span>
+        <ion-button fill="clear" size="small" (click)="limpiarFiltros()" [disabled]="!tieneFiltrosActivos()">
+          Limpiar
+        </ion-button>
+      </div>
+    </div>
+
+    <ion-item class="buscador" lines="none">
+      <ion-input
+        placeholder="Buscar por código o producto"
+        [(ngModel)]="textoBusqueda"
+        (ionInput)="aplicarFiltros()">
+      </ion-input>
+    </ion-item>
+
+    <ion-segment [(ngModel)]="estadoSeleccionado" (ionChange)="aplicarFiltros()">
+      <ion-segment-button value="todos">Todos</ion-segment-button>
+      <ion-segment-button value="pendiente">Pendiente</ion-segment-button>
+      <ion-segment-button value="aceptado">Aceptado</ion-segment-button>
+      <ion-segment-button value="rechazado">Rechazado</ion-segment-button>
+      <ion-segment-button value="entregado">Entregado</ion-segment-button>
+    </ion-segment>
+
+    <div class="rangos">
+      <ion-item lines="none">
+        <ion-label>Desde</ion-label>
+        <ion-datetime-button datetime="desde"></ion-datetime-button>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Hasta</ion-label>
+        <ion-datetime-button datetime="hasta"></ion-datetime-button>
+      </ion-item>
+
+      <ion-modal [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime id="desde" presentation="date"
+                        [(ngModel)]="fechaDesde"
+                        (ionChange)="aplicarFiltros()"></ion-datetime>
+        </ng-template>
+      </ion-modal>
+      <ion-modal [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime id="hasta" presentation="date"
+                        [(ngModel)]="fechaHasta"
+                        (ionChange)="aplicarFiltros()"></ion-datetime>
+        </ng-template>
+      </ion-modal>
+
+      <ion-segment class="orden" [(ngModel)]="orden" (ionChange)="aplicarFiltros()">
+        <ion-segment-button value="recientes">Recientes</ion-segment-button>
+        <ion-segment-button value="antiguos">Antiguos</ion-segment-button>
+      </ion-segment>
+    </div>
+
+    <!-- Chips de filtros activos -->
+    <div class="chips-activos" *ngIf="tieneFiltrosActivos()">
+      <ion-chip *ngIf="estadoSeleccionado !== 'todos'" (click)="estadoSeleccionado='todos'; aplicarFiltros()">
+        <ion-label>Estado: {{estadoSeleccionado}}</ion-label>
+        <ion-icon name="close"></ion-icon>
+      </ion-chip>
+      <ion-chip *ngIf="fechaDesde" (click)="fechaDesde = undefined; aplicarFiltros()">
+        <ion-label>Desde: {{ fechaDesde | date:'d MMM y' }}</ion-label>
+        <ion-icon name="close"></ion-icon>
+      </ion-chip>
+      <ion-chip *ngIf="fechaHasta" (click)="fechaHasta = undefined; aplicarFiltros()">
+        <ion-label>Hasta: {{ fechaHasta | date:'d MMM y' }}</ion-label>
+        <ion-icon name="close"></ion-icon>
+      </ion-chip>
+      <ion-chip *ngIf="textoBusqueda" (click)="textoBusqueda=''; aplicarFiltros()">
+        <ion-label>Busca: "{{textoBusqueda}}"</ion-label>
+        <ion-icon name="close"></ion-icon>
+      </ion-chip>
+    </div>
+  </div>
+
+  <!-- Lista -->
+  <div *ngIf="pedidosFiltrados.length > 0; else sinPedidos">
+    <div class="tarjeta-pedido" *ngFor="let pedido of pedidosFiltrados">
+
+      <div class="pedido-info">
+        <h3>🧾 Pedido • {{ pedido.fecha_pedido | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}</h3>
+
+        <p><strong>Entrega:</strong>
           {{ pedido.fecha_entrega | date:'EEE d MMM y, HH:mm':'America/Mexico_City' }}
         </p>
 
         <p><strong>Total:</strong> ${{ pedido.total }}</p>
-        <p><strong>Estado:</strong> 
-          <span class="estado" [ngClass]="pedido.estado">{{ pedido.estado }}</span>
+
+        <p class="estado-row">
+          <strong>Estado:</strong>
+          <span class="chip" [ngClass]="pedido.estado">{{ pedido.estado }}</span>
         </p>
 
         <ion-note color="warning" *ngIf="pedido.estado === 'aceptado'">
-          Tu pedido ha sido aceptado. Por favor, mantente atento a las indicaciones de entrega o recogida.
+          Tu pedido ha sido aceptado. Recuerda mostrar tu ticket el día de la entrega.
         </ion-note>
+
+        <!-- Resumen de productos (con $any) -->
+        <div class="productos-resumen" *ngIf="$any(pedido).detalles_pedidos?.length">
+          <ion-chip outline="true"
+                    *ngFor="let d of ($any(pedido).detalles_pedidos || []) | slice:0:3">
+            <ion-label>{{ $any(d).producto?.nombre || 'Producto' }}</ion-label>
+            <ion-badge>{{ $any(d).cantidad }}x</ion-badge>
+          </ion-chip>
+
+          <button class="link-ver-mas"
+                  *ngIf="$any(pedido).detalles_pedidos.length > 3"
+                  (click)="toggleVerMas(pedido)">
+            + {{ $any(pedido).detalles_pedidos.length - 3 }} más
+          </button>
+        </div>
+
+        <!-- Lista completa (con $any) -->
+        <ul class="productos-lista" *ngIf="pedido._verMas">
+          <li *ngFor="let d of ($any(pedido).detalles_pedidos || [])">
+            <span class="qty">{{ $any(d).cantidad }}x</span>
+            <span class="name">{{ $any(d).producto?.nombre }}</span>
+            <span class="sub">{{ $any(d).subtotal | currency:'MXN':'symbol-narrow' }}</span>
+          </li>
+        </ul>
       </div>
 
-      <!-- Acciones -->
-      <div class="pedido-acciones" *ngIf="pedido.estado === 'pendiente'">
-        <ion-button
-          color="danger"
-          fill="outline"
-          size="small"
-          (click)="cancelarPedido(pedido.documentId)">
+      <div class="pedido-acciones">
+        <ion-button class="btn-ticket" size="small"
+                    *ngIf="pedido.estado === 'aceptado'"
+                    [routerLink]="['/ticket-pedido', pedido.documentId]">
+          Ver ticket
+        </ion-button>
+
+        <ion-button class="btn-cancelar" fill="outline" color="danger" size="small"
+                    *ngIf="pedido.estado === 'pendiente'"
+                    (click)="cancelarPedido(pedido.documentId)">
           Cancelar
         </ion-button>
       </div>
+
     </div>
   </div>
 
-  <!-- Mensaje si no hay pedidos -->
   <ng-template #sinPedidos>
     <div class="mensaje-vacio">
       <ion-text color="medium">
-        <p class="ion-text-center">Aún no has realizado pedidos.</p>
+        <p class="ion-text-center">No hay pedidos con los filtros seleccionados.</p>
       </ion-text>
     </div>
   </ng-template>
-
 </ion-content>

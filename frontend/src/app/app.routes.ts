@@ -129,6 +129,11 @@ export const routes: Routes = [
     loadComponent: () => import('./Pages/pedidos/mis-pedidos/mis-pedidos.page').then( m => m.MisPedidosPage),
     canActivate: [RoleGuard],
     data: { roles: ['Admin', 'Cliente'] }
+  },
+  {
+    path: 'ticket-pedido/:id',
+    loadComponent: () => import('./Pages/pedidos/ticket-pedido/ticket-pedido.page').then( m => m.TicketPedidoPage)
   }
+
 
 ];
