@@ -1,111 +1,193 @@
-.header-registro {
+:host {
+  --bg: #fff7fb;
+  --brand: #b76e79;
+  --accent: #f9a8d4;
+  --text: #553d47;
+  --muted: #7a6470;
+  --radius: 16px;
+  --page-max: 1280px;
+}
+
+.registro-page { --background: var(--bg); }
+
+.header-blend {
+  --background: #ffffffea;
+  --color: var(--brand);
+  backdrop-filter: saturate(180%) blur(8px);
+  border-bottom: 1px solid var(--accent);
+}
+.brand { display:flex; align-items:center; gap:10px;
+  .brand-text { font-family: 'Montserrat', system-ui, sans-serif; font-weight: 800; letter-spacing: .2px; }
+}
+
+/* Hero sutil */
+.hero.compact{
+  background:
+    radial-gradient(1200px 380px at 20% -10%, #ffe3ef 12%, transparent 60%),
+    radial-gradient(1200px 380px at 80% -10%, #ffeaf3 12%, transparent 60%);
+  padding: 24px 16px 4px;
+}
+.hero-content{ max-width:var(--page-max); margin:0 auto; text-align:center;
+  h1{ color:var(--brand); font-family:'Montserrat',system-ui,sans-serif; font-weight:900; margin:6px 0 2px; }
+  .sub{ color:var(--muted); margin:0 0 12px; font-size:.98rem; }
+}
+
+/* Contenedor y tarjeta pulidos */
+.wrap{ max-width:520px; margin:10px auto 28px; padding:0 16px; }
+.card{
+  background:#fff; border-radius:var(--radius);
+  box-shadow: 0 8px 24px rgba(183,110,121,.10);
+  padding: 6px 4px;
+}
+
+/* Inputs con borde fino y foco accesible (menos “plastilina”) */
+.input-item{
+  --background:#fff;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  border: 1px solid #f5d0e6;           
+  box-shadow: none;                     
+  --padding-start: 14px;
+
+  ion-label{ color: var(--brand) !important; }
+  ion-input{
+    color: var(--text) !important;
+    --placeholder-color: #9c8e95;
+  }
+
+  &:focus-within{
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(249,168,212,.22); /* anillo de foco */
+  }
+}
+
+/* Botón principal, más sobrio */
+.btn-primary{
+  --background: var(--brand);
+  --color: #fff;
+  --border-radius: 999px;
+  font-weight: 700;
+  margin-top: 12px;
+  box-shadow: 0 8px 18px rgba(183,110,121,.16);
+}
+
+/* CTA a login */
+.login-cta{
+  margin-top: 12px;
+  display:flex; gap:6px; align-items:center; justify-content:center;
+  color: var(--muted);
+  .link{ --color: var(--brand); font-weight:700; text-decoration: underline; padding-inline:6px; height:28px; }
+}
+
+/* Toast gris profesional */
+.neutral-toast{
+  --background:#f4f4f4; --color:#333;
+  --border-radius:16px; --box-shadow:0 10px 20px rgba(0,0,0,.10);
+}
+
+@media (max-width:600px){
+  .brand .brand-text{ font-size:1rem; }
+}
+
+.header-login {
+  /* evita que el tema oscuro lo ponga negro */
   ion-toolbar {
-    --background: #ffffff;
-    --color: #b76e79;
+    --background: #ffffffea !important;
+    --color: #b76e79 !important;
+    border-bottom: 1px solid #f9a8d4;
+    backdrop-filter: saturate(180%) blur(8px);
     box-shadow: none;
   }
 
   ion-title {
-    font-family: 'Comic Sans MS', 'Montserrat', cursive;
-    font-weight: bold;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: .2px;
+  }
+
+  ion-back-button {
+    --color: #b76e79;
     font-size: 1.2rem;
   }
+}
 
-  .btn-back {
-    color: #b76e79;
-    font-size: 1.4rem;
-    --color: #b76e79;
+/* Si el dispositivo está en dark mode, mantenemos el header claro */
+@media (prefers-color-scheme: dark) {
+  .header-login ion-toolbar {
+    --background: #ffffffea !important;
+    --color: #b76e79 !important;
   }
 }
 
-.registro-page {
-  --background: #fff0f5;
+/* ===== Responsive tuning ===== */
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  .registro-container {
-    width: 100%;
-    max-width: 400px;
-    margin: auto;
-    padding: 20px;
-    text-align: center;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 80vh;
-    box-sizing: border-box;
-  }
-
-  .titulo {
-    font-size: 1.8rem;
-    color: #b76e79;
-    font-family: 'Comic Sans MS', 'Montserrat', cursive;
-    margin-bottom: 5px;
-  }
-
-  .subtitulo {
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 30px;
-  }
-
-  .input-item {
-    --background: #fff;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    --padding-start: 16px;
-    width: 100%;
-
-    ion-input {
-      color: #333 !important;
-    }
-
-    ion-label {
-      color: #b76e79 !important;
-    }
-  }
-
-  .btn-registrar {
-    --background: #f9a8d4;
-    --background-hover: #f472b6;
-    --border-radius: 20px;
-    margin-top: 20px;
-    font-weight: bold;
-    width: 100%;
-  }
-
-  /* Custom Alert Styles */
-  ion-alert.custom-alert {
-    --backdrop-opacity: 0.7;
-    --width: 350px; /* Larger alert */
-    --max-width: 90%; /* Responsive on smaller screens */
-    --background: #f9e6ff; /* Light purple background */
-    --font-family: 'Comic Sans MS', 'Montserrat', cursive; /* Match app font */
-  }
-
-  .custom-alert .alert-button-group {
-    padding: 8px;
-  }
-
-  button.alert-button.alert-button-confirm {
-    background-color: var(--ion-color-success, #2dd36f);
-    color: var(--ion-color-success-contrast, #ffffff);
-    border-radius: 4px;
-  }
-
-  .md button.alert-button.alert-button-confirm {
-    border-radius: 4px;
-  }
-
-  .ios .custom-alert button.alert-button {
-  border: 0.55px solid rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.2);
-  border-radius: 13px;
-  background-color: #f9a8d4;
-  color: #ffffff;
+/* Contenedor fluido */
+.wrap{
+  width: min(92vw, 520px);
+  margin: clamp(8px, 2vh, 16px) auto 28px;
+  padding: 0 clamp(12px, 3vw, 16px);
 }
+
+/* Tipografía fluida del hero */
+.hero-content h1{
+  font-size: clamp(1.25rem, 1rem + 1.4vw, 2rem);
 }
+.hero-content .sub{
+  font-size: clamp(.92rem, .85rem + .4vw, 1rem);
+}
+
+/* Tarjeta con padding adaptable */
+.card{
+  padding: clamp(4px, 1vw, 12px) clamp(4px, 1.2vw, 12px);
+}
+
+/* Inputs cómodos para tacto y con mejor legibilidad */
+.input-item{
+  margin-bottom: clamp(10px, 2.5vw, 16px);
+  border-radius: clamp(10px, 3vw, 14px);
+
+  ion-input{
+    min-height: 52px; /* tamaño táctil mínimo */
+    font-size: clamp(.95rem, .9rem + .2vw, 1rem);
+  }
+  ion-label{
+    font-size: clamp(.9rem, .85rem + .2vw, 1rem);
+  }
+}
+
+/* CTA que no se rompe en pantallas estrechas */
+.login-cta{
+  flex-wrap: wrap;
+  row-gap: 4px;
+  font-size: clamp(.92rem, .88rem + .2vw, 1rem);
+}
+
+/* Padding seguro cuando hay notch o barra inferior */
+.registro-page{
+  --padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+/* ===== Breakpoints móviles ===== */
+@media (max-width: 480px){
+  .hero.compact{ padding: 16px 12px 0; }
+  .btn-primary{ margin-top: 10px; box-shadow: 0 6px 14px rgba(183,110,121,.14); }
+}
+
+/* Extra pequeño (teléfonos ≤360px) */
+@media (max-width: 360px){
+  .brand .brand-text{ font-size: .96rem; }
+  .wrap{ width: 94vw; }
+  .input-item{ --padding-start: 12px; }
+}
+
+/* Tablets y + (más aire sin cambiar layout a 2 columnas) */
+@media (min-width: 768px){
+  .hero.compact{ padding: 28px 16px 6px; }
+  .wrap{ margin-top: 14px; }
+}
+
+/* Modo paisaje con poca altura: compactar */
+@media (max-height: 700px){
+  .hero.compact{ padding: 12px 12px 0; }
+}
+

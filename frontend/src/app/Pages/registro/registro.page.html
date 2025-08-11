@@ -1,41 +1,54 @@
-<ion-header class="header-registro">
+<ion-header class="header-login">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/" class="btn-back"></ion-back-button>
+      <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-    <ion-title>Registro</ion-title>
+    <ion-title>Pastelería Merry</ion-title>
+    <ion-progress-bar *ngIf="cargando" type="indeterminate"></ion-progress-bar>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding registro-page">
-  <div class="registro-container">
-    <h1 class="titulo">Crear cuenta</h1>
-    <p class="subtitulo">Ingresa tus datos para comenzar a ordenar</p>
+<ion-content class="registro-page" fullscreen>
+  <section class="hero compact">
+    <div class="hero-content">
+      <h1>Crear cuenta</h1>
+      <p class="sub">Ingresa tus datos para comenzar a ordenar</p>
+    </div>
+  </section>
 
-    <ion-item class="input-item">
-      <ion-label position="floating">Nombre de usuario</ion-label>
-      <ion-input [(ngModel)]="nombre" type="text"></ion-input>
-    </ion-item>
+  <div class="wrap">
+    <ion-card class="card">
+      <ion-card-content>
+        <form (ngSubmit)="registrar()">
+          <ion-item class="input-item" lines="none">
+            <ion-label position="floating">Nombre de usuario</ion-label>
+            <ion-input [(ngModel)]="nombre" name="nombre" type="text" autocomplete="username" required></ion-input>
+          </ion-item>
 
-    <ion-item class="input-item">
-      <ion-label position="floating">Correo electrónico</ion-label>
-      <ion-input [(ngModel)]="email" type="email"></ion-input>
-    </ion-item>
+          <ion-item class="input-item" lines="none">
+            <ion-label position="floating">Correo electrónico</ion-label>
+            <ion-input [(ngModel)]="email" name="email" type="email" autocomplete="email" required></ion-input>
+          </ion-item>
 
-    <ion-item class="input-item">
-      <ion-label position="floating">Contraseña</ion-label>
-      <ion-input [(ngModel)]="password" type="password"></ion-input>
-    </ion-item>
+          <ion-item class="input-item" lines="none">
+            <ion-label position="floating">Contraseña</ion-label>
+            <ion-input [(ngModel)]="password" name="password" type="password" autocomplete="new-password" required></ion-input>
+          </ion-item>
 
-    <ion-button expand="block" class="btn-registrar" id="present-alert">Registrarse</ion-button>
-    <ion-alert
-      trigger="present-alert"
-      class="custom-alert"
-      header="Registro Exitoso"
-      subHeader="¡Bienvenido!"
-      message="Tu cuenta ha sido creada con éxito."
-      [buttons]="alertButtons"
-      (didDismiss)="onAlertDismiss($event)"
-    ></ion-alert>
+          <ion-button
+            type="submit"
+            expand="block"
+            class="btn-primary"
+            [disabled]="cargando || !nombre.trim() || !email.trim() || !password.trim()">
+            {{ cargando ? 'Creando cuenta...' : 'Registrarse' }}
+          </ion-button>
+
+          <div class="login-cta">
+            <span>¿Ya tienes cuenta?</span>
+            <ion-button fill="clear" size="small" class="link" (click)="irLogin()">Inicia sesión</ion-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
   </div>
 </ion-content>

@@ -121,7 +121,7 @@ export class MainHomePage implements OnInit {
     this.usuario = null;
     this.rol = null;
     this.router.navigate(['/']);
-    setTimeout(() => location.reload(), 100);
+    //setTimeout(() => location.reload(), 100);
   }
 
   verDetalle(documentId: string) {
