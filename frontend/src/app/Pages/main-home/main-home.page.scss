@@ -1,186 +1,182 @@
+/* Paleta y tokens */
 :host {
-  --ion-background-color: #fff0f5;
-}
+  --bg: #fff7fb;
+  --brand: #b76e79;
+  --accent: #f9a8d4;
+  --text: #553d47;
+  --muted: #7a6470;
 
-ion-header {
-  ion-toolbar {
-    --background: #fff;
-    --color: #b76e79;
-    border-bottom: 1px solid #f9a8d4;
-
-    ion-title {
-      font-family: 'Comic Sans MS', 'Montserrat', cursive;
-      font-weight: bold;
-    }
-
-    ion-button {
-      --color: #b76e79;
-      font-weight: bold;
-    }
-  }
+  --radius: 16px;
+  --page-max: 1280px; 
 }
 
 ion-content {
-  background: #fff0f5;
+  --background: var(--bg);
+}
 
-  h2 {
-    color: #b76e79;
-    font-family: 'Comic Sans MS', 'Montserrat', cursive;
-    text-align: center;
-    margin-bottom: 0.5rem;
+/* Header */
+.header-blend {
+  --background: #ffffffea;
+  --color: var(--brand);
+  backdrop-filter: saturate(180%) blur(8px);
+  border-bottom: 1px solid var(--accent);
+}
+
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  .brand-logo {
+    width: 28px; height: 28px; object-fit: contain; border-radius: 6px;
   }
-
-  p {
-    text-align: center;
-    color: #555;
-    margin-bottom: 1rem;
-  }
-
-  .card-col {
-    display: flex;
-  }
-
-  .product-card {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 10px rgba(183, 110, 121, 0.1);
-    overflow: hidden;
-    transition: transform 0.2s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-
-    &:hover {
-      transform: scale(1.02);
-    }
-
-    img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-bottom: 1px solid #f9a8d4;
-    }
-
-    ion-card-header {
-      padding: 10px;
-
-      ion-card-title {
-        font-size: 1.1rem;
-        color: #b76e79;
-        font-family: 'Comic Sans MS', 'Montserrat', cursive;
-      }
-    }
-
-    ion-card-content {
-      padding: 10px;
-      font-size: 0.95rem;
-      color: #444;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      flex-grow: 1;
-
-      .descripcion {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        font-size: 0.9rem;
-        line-height: 1.4;
-        max-height: 4.2em;
-        white-space: normal;
-        margin-bottom: 10px;
-      }
-
-      strong {
-        display: block;
-        color: #b76e79;
-        font-weight: bold;
-        margin-top: auto;
-      }
-    }
-  }
-
-  ion-grid {
-    padding: 0 10px;
+  .brand-text {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: .2px;
   }
 }
 
-.empty-state {
+/* Botones header */
+.btn-primary {
+  --background: var(--brand);
+  --color: #fff;
+  --border-radius: 999px;
+  font-weight: 700;
+}
+.btn-ghost {
+  --color: var(--brand);
+  font-weight: 600;
+}
+
+/* Hero minimalista */
+.hero.compact {
+  background: radial-gradient(1200px 400px at 20% -10%, #ffe3ef 10%, transparent 60%),
+              radial-gradient(1200px 400px at 80% -10%, #ffeaf3 10%, transparent 60%);
+  padding: 20px 16px 8px;
+}
+.hero-content {
+  max-width: var(--page-max); margin: 0 auto; text-align: center;
+  h1 {
+    color: var(--brand);
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-weight: 900;
+    margin: 6px 0 2px;
+  }
+  .sub {
+    color: var(--muted);
+    margin: 0 0 12px;
+    font-size: 0.98rem;
+  }
+
+}
+
+/* Contenedores anchos y responsive */
+.filters,
+.grid,
+.state {
+  max-width: var(--page-max);
+  margin: 8px auto 0;
+  padding: 0 16px;
+}
+
+/* Searchbar + chips */
+ion-searchbar {
+  --background: #fff;
+  --border-radius: 14px;
+  --box-shadow: 0 4px 12px rgba(183,110,121,.12);
+  width: 100%;
+}
+.chips {
+  display: flex; gap: 8px; overflow-x: auto; padding: 8px 2px 0;
+}
+.chip {
+  --color: var(--brand);
+  --background: #fff;
+  --border-color: var(--accent);
+  --border-radius: 999px;
+  font-weight: 700;
+}
+
+/* Estados */
+.state {
   text-align: center;
-  margin-top: 40px;
-  padding: 20px;
-  color: #b76e79;
-
-  p {
-    font-size: 1rem;
-    font-style: italic;
-    color: #b76e79;
-  }
+  &.info { color: #a94442; }
+  &.muted { color: var(--muted); }
 }
 
-/* FILTRO + BOTÓN */
-.barra-pedido-filtro {
-  display: flex;
-  justify-content: flex-end; // Filtro siempre a la derecha
-  align-items: center;
-  margin: 10px 10px 20px 10px;
-  gap: 12px;
+/* Grid y columnas */
+.grid { margin: 8px auto 24px; }
+.card-col { display: flex; }
 
-  .crear-pedido-btn {
-    order: 1;
-    --background: #b76e79;
-    --color: white;
-    --border-radius: 20px;
-    --box-shadow: 0 4px 10px rgba(183, 110, 121, 0.2);
-    font-weight: bold;
-    padding: 0 20px;
-    height: 42px;
-    transition: transform 0.2s ease-in-out;
+/* Tarjeta de producto */
+.product-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 24px rgba(183,110,121,.12);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: transform .18s ease, box-shadow .18s ease;
+  cursor: pointer;
 
-    &:hover {
-      transform: scale(1.03);
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px rgba(183,110,121,.18);
+  }
+
+  .image-wrap {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: #fff;
+    img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .badge {
+      position: absolute; left: 10px; top: 10px;
+      background: #fff; color: var(--brand);
+      border: 1px solid var(--accent);
+      padding: 4px 10px; border-radius: 999px;
+      font-size: .75rem; font-weight: 700;
+      box-shadow: 0 6px 12px rgba(0,0,0,.06);
     }
   }
 
-  .categoria-select {
-    order: 2;
-    --padding-start: 10px;
-    --border-radius: 12px;
-    --background: #fff;
-    --placeholder-color: #b76e79;
-    --placeholder-opacity: 0.8;
-    --border-color: #f9a8d4;
-    --highlight-color-focused: #f9a8d4;
-    --highlight-color-invalid: #f9a8d4;
-    --icon-color: #b76e79;
-    border: 1px solid #f9a8d4;
-    min-width: 160px;
-    max-width: 220px;
-    box-shadow: 0 2px 6px rgba(183, 110, 121, 0.1);
-    font-weight: bold;
+  ion-card-header {
+    padding: 10px 12px 0;
+    .title {
+      color: var(--text);
+      font-family: 'Montserrat', system-ui, sans-serif;
+      font-weight: 800;
+      font-size: 1rem; line-height: 1.2;
+      min-height: 2.2em;
+    }
   }
 
-  ion-select::part(text) {
-    color: #b76e79;
-    font-weight: bold;
-    font-family: 'Comic Sans MS', 'Montserrat', cursive;
-  }
+  ion-card-content {
+    padding: 8px 12px 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
 
+    .price {
+      color: var(--brand);
+      font-weight: 900;
+      font-size: 1.05rem;
+      letter-spacing: .2px;
+    }
+    .ver-btn {
+      --color: var(--brand);
+      font-weight: 700;
+      text-decoration: underline;
+    }
+  }
 }
 
+/* (Opcional) FAB para móvil */
+.fab-order ion-fab-button {
+  --background: var(--brand);
+  --color: #fff;
+  box-shadow: 0 10px 22px rgba(183,110,121,.28);
+}
+
+/* Responsivo fino (puedes ajustar breakpoints si quieres) */
 @media (max-width: 600px) {
-  .barra-pedido-filtro {
-    flex-direction: column;
-    align-items: stretch;
-
-    .crear-pedido-btn {
-      align-self: flex-start;
-    }
-
-    .categoria-select {
-      align-self: flex-end;
-    }
-  }
+  .hero.compact { padding-top: 12px; }
+  .brand .brand-text { font-size: 1rem; }
 }

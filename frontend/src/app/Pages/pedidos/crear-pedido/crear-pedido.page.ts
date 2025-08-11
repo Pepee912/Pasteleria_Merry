@@ -24,11 +24,16 @@ export class CrearPedidoPage implements OnInit, OnDestroy {
   hoy: string = new Date().toISOString().split('T')[0];
   productosSeleccionados: any[] = [];
 
-  // Validación de entrega 
-  readonly MIN_HOURS_NOTICE = 24;   
-  minEntrega: string = '';          
-  errorEntrega: string = '';        
-  private _tick?: any;             
+  // Validación de entrega
+  readonly MIN_HOURS_NOTICE = 24;
+  minEntrega: string = '';
+  errorEntrega: string = '';
+  private _tick?: any;
+
+  // Recomendados / paginación
+  pageSize = 12;           // cuántos mostrar por “página” de recomendados
+  pageIndex = 0;           // índice de página
+  mostrandoDefault = true; // indica si estamos mostrando lista por defecto
 
   constructor(
     private api: ApiService,
@@ -48,12 +53,16 @@ export class CrearPedidoPage implements OnInit, OnDestroy {
 
     await this.cargarCategorias();
     await this.cargarProductos();
+
+    // Prefill desde detalle-producto (agrega 1 unidad del producto elegido)
+    await this.prefillDesdeDetalle();
   }
 
   ngOnDestroy(): void {
     if (this._tick) clearInterval(this._tick);
   }
 
+  // ========= Toasts =========
   private async mostrarToast(
     message: string,
     tipo: 'success' | 'danger' | 'info' = 'info',
@@ -74,6 +83,7 @@ export class CrearPedidoPage implements OnInit, OnDestroy {
     await t.present();
   }
 
+  // ========= Entrega (mínimo y validación) =========
   private computeMinEntregaIso(hoursAhead: number): string {
     const t = new Date(Date.now() + hoursAhead * 60 * 60 * 1000);
     return t.toISOString();
@@ -91,7 +101,7 @@ export class CrearPedidoPage implements OnInit, OnDestroy {
     return '';
   }
 
-  // ===== Totales =====
+  // ========= Totales =========
   get total(): number {
     return (this.productosSeleccionados || []).reduce(
       (sum: number, p: any) => sum + (Number(p.precio) * Number(p.cantidad || 0)),
@@ -99,7 +109,7 @@ export class CrearPedidoPage implements OnInit, OnDestroy {
     );
   }
 
-  // ===== Carga de datos =====
+  // ========= Carga de datos =========
   async cargarCategorias() {
     try {
       this.categorias = await this.api.getCategorias();
@@ -111,6 +121,7 @@ export class CrearPedidoPage implements OnInit, OnDestroy {
   async cargarProductos() {
     try {
       const data = await this.api.getProductos();
+      // Normaliza imagen y añade campo cantidad
       this.productos = data.map((p: any) => ({
         ...p,
         imagenUrl: p.imagen_url?.[0]?.url
@@ -118,36 +129,79 @@ export class CrearPedidoPage implements OnInit, OnDestroy {
           : 'assets/logo.png',
         cantidad: 0
       }));
-      this.productosFiltrados = [];
+      // Recomendados por defecto
+      this.aplicarPaginacionDefault(true);
     } catch (error) {
       await this.mostrarToast('Error al cargar productos', 'danger');
     }
   }
 
-  // ===== Búsqueda =====
-  filtrarProductos() {
-    const termino = (this.terminoBusqueda || '').toLowerCase().trim();
+  // ========= Prefill desde Detalle de Producto =========
+  private async prefillDesdeDetalle() {
+    const docId = sessionStorage.getItem('preAddProductDocId');
+    const qtyStr = sessionStorage.getItem('preAddProductQty') || '1';
+    const nombre = sessionStorage.getItem('preAddProductName') || 'Producto';
 
-    if (!termino) {
-      this.productosFiltrados = [];
+    if (!docId) return;
+
+    // Evita repetir en futuras visitas
+    sessionStorage.removeItem('preAddProductDocId');
+    sessionStorage.removeItem('preAddProductQty');
+    sessionStorage.removeItem('preAddProductName');
+
+    // Busca el producto por documentId (o id como fallback)
+    const prod = this.productos.find(p => p.documentId === docId || String(p.id) === String(docId));
+    if (!prod) return;
+
+    // Ajusta cantidad y actualiza selección
+    const qty = Math.max(1, Number(qtyStr) || 1);
+    prod.cantidad = Number(prod.cantidad || 0) + qty;
+    this.actualizarSeleccion(prod);
+
+    await this.mostrarToast(`Se agregó “${nombre}” al pedido.`, 'success', 1500);
+  }
+
+  // ========= Búsqueda y filtros =========
+  filtrarProductos() {
+    const term = (this.terminoBusqueda || '').toLowerCase().trim();
+    const hasTerm = term.length > 0;
+    const hasCat = !!this.categoriaSeleccionada;
+
+    if (!hasTerm && !hasCat) {
+      // sin filtros: mostrar recomendados
+      this.aplicarPaginacionDefault(true);
       return;
     }
 
-    this.productosFiltrados = this.productos.filter(p =>
-      (p.nombre || '').toLowerCase().includes(termino)
-    );
+    this.mostrandoDefault = false;
 
-    if (termino && this.productosFiltrados.length === 0) {
-      this.mostrarToast('No encontramos productos con ese nombre.', 'info', 1800);
+    let lista = [...this.productos];
+    if (hasCat) {
+      lista = lista.filter(p => p.categoria?.id === this.categoriaSeleccionada);
     }
+    if (hasTerm) {
+      lista = lista.filter(p => (p.nombre || '').toLowerCase().includes(term));
+    }
+
+    this.productosFiltrados = lista;
   }
 
-  // ===== Validación de envío =====
+  seleccionarCategoria(catId: number | null) {
+    this.categoriaSeleccionada = catId;
+    this.filtrarProductos();
+  }
+
+  limpiarBusqueda() {
+    this.terminoBusqueda = '';
+    this.filtrarProductos();
+  }
+
+  // ========= Validación de envío =========
   puedeEnviar(): boolean {
     return !!this.fechaEntrega && this.productosSeleccionados.length > 0 && !this.errorEntrega;
   }
 
-  // ===== Manejo de cantidades =====
+  // ========= Manejo de cantidades / selección =========
   actualizarSeleccion(producto: any) {
     const index = this.productosSeleccionados.findIndex(p => p.documentId === producto.documentId);
     const qty = Number(producto.cantidad) || 0;
@@ -174,7 +228,7 @@ export class CrearPedidoPage implements OnInit, OnDestroy {
     this.actualizarSeleccion(producto);
   }
 
-  // ===== Fecha de entrega =====
+  // ========= Fecha de entrega =========
   onFechaEntregaChange(event: any) {
     this.fechaEntrega = event?.detail?.value || '';
     this.errorEntrega = this.validarVentanaEntrega(this.fechaEntrega);
@@ -200,7 +254,7 @@ export class CrearPedidoPage implements OnInit, OnDestroy {
     this.fechaEntregaVisual = `${fechaStr} ${horaStr}`;
   }
 
-  // ===== Envío =====
+  // ========= Envío =========
   async crearPedido() {
     this.errorEntrega = this.validarVentanaEntrega(this.fechaEntrega);
     if (this.errorEntrega) {
@@ -234,5 +288,22 @@ export class CrearPedidoPage implements OnInit, OnDestroy {
       console.error('Error al generar el pedido:', error);
       await this.mostrarToast('Hubo un problema al generar el pedido', 'danger');
     }
+  }
+
+  // ========= Recomendados / paginación =========
+  private aplicarPaginacionDefault(reset = false) {
+    if (reset) this.pageIndex = 0;
+    const end = (this.pageIndex + 1) * this.pageSize;
+    this.productosFiltrados = this.productos.slice(0, end);
+    this.mostrandoDefault = true;
+  }
+
+  verMasDefault() {
+    this.pageIndex++;
+    this.aplicarPaginacionDefault(false);
+  }
+
+  get hayMasDefault(): boolean {
+    return this.mostrandoDefault && this.productosFiltrados.length < this.productos.length;
   }
 }

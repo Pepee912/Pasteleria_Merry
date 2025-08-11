@@ -1,76 +1,134 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="header-blend">
 
-    <!-- Menú hamburguesa solo si hay sesión -->
     <ion-buttons slot="start" *ngIf="!mostrarBotones">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
 
-    <ion-title>Pastelería Merry</ion-title>
+    <ion-title class="brand">
+      <span class="brand-text">Pastelería Merry</span>
+    </ion-title>
 
-    <!-- Botones de sesión -->
+    <!-- SIN sesión: login/registro -->
     <ion-buttons slot="end" *ngIf="mostrarBotones">
-      <ion-button (click)="login()">Iniciar sesión</ion-button>
-      <ion-button (click)="registro()">Registrarse</ion-button>
+      <ion-button fill="clear" (click)="login()">Iniciar sesión</ion-button>
+      <ion-button class="btn-primary" (click)="registro()">Registrarse</ion-button>
     </ion-buttons>
 
-    <ion-buttons slot="end" *ngIf="!mostrarBotones">
-      <ion-button (click)="logout()">Cerrar sesión</ion-button>
+    <!-- CON sesión: botón Realizar pedido (ya NO va Cerrar sesión aquí) -->
+    <ion-buttons slot="end" *ngIf="!mostrarBotones && (rol === 'Admin' || rol === 'Cliente')">
+      <ion-button class="btn-primary" (click)="crearPedido()">Realizar pedido</ion-button>
     </ion-buttons>
 
   </ion-toolbar>
 </ion-header>
 
+<ion-content fullscreen>
 
-<ion-content class="ion-padding">
+  <!-- Hero minimalista enfocado al CTA -->
+  <section class="hero compact">
+    <div class="hero-content">
+      <h1>Sabores que enamoran</h1>
+      <p class="sub">Hechos a pedido, frescos y listos para tu ocasión.</p>
+    </div>
+  </section>
 
-  <!-- Filtro por categoría + Botón Crear Pedido -->
-  <div class="barra-pedido-filtro">
-    <ion-button class="crear-pedido-btn" (click)="crearPedido()" *ngIf="usuario && (rol === 'Admin' || rol === 'Cliente')">
-      Realizar pedido
-    </ion-button>
+  <!-- Filtros (buscador + chips de categorías) -->
+  <div class="filters">
+    <ion-searchbar
+      placeholder="Busca un producto (ej. chocolate, fresa)"
+      [(ngModel)]="termino"
+      (ionInput)="onBuscarInput()"
+      animated="true">
+    </ion-searchbar>
 
-    <ion-select
-      class="categoria-select"
-      [(ngModel)]="categoriaSeleccionada"
-      (ionChange)="filtrarPorCategoria()"
-      interface="popover"
-      placeholder="Categoría"
-    >
-      <ion-select-option [value]="null">Todas</ion-select-option>
-      <ion-select-option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</ion-select-option>
-    </ion-select>
+    <div class="chips" *ngIf="categorias?.length">
+      <ion-chip
+        [outline]="!(categoriaSeleccionada === 'all')"
+        class="chip"
+        (click)="seleccionarCategoria('all')">
+        <ion-label>Todas</ion-label>
+      </ion-chip>
+
+      <ion-chip
+        class="chip"
+        *ngFor="let cat of categorias"
+        [outline]="!(categoriaSeleccionada === cat.id)"
+        (click)="seleccionarCategoria(cat.id)">
+        <ion-label>{{ cat.nombre }}</ion-label>
+      </ion-chip>
+    </div>
   </div>
 
-  <!-- 
-  <div *ngIf="usuario">
-    <h2>¡Hola {{ usuario.username }}!</h2>
-    <p>Tu rol es: <strong>{{ rol }}</strong></p>
-  </div>
-  -->
-
-  <div class="empty-state" *ngIf="productos.length === 0">
-    <p>No hay productos disponibles por el momento.</p>
+  <!-- Mensajes de estado -->
+  <div class="state info" *ngIf="errorMsg">
+    {{ errorMsg }}
   </div>
 
-  <div class="empty-state" *ngIf="categoriaSeleccionada && productosFiltrados.length === 0">
-    <p>No hay productos disponibles para esta categoría.</p>
+  <div class="state muted" *ngIf="!isLoading && productos.length === 0 && !errorMsg">
+    No hay productos disponibles por el momento.
   </div>
 
-  <ion-grid>
+  <div class="state muted" *ngIf="!isLoading && productos.length > 0 && productosFiltrados.length === 0">
+    No encontramos resultados para tu búsqueda o filtros.
+  </div>
+
+  <!-- Grid de productos -->
+  <ion-grid class="grid">
     <ion-row>
-      <ion-col size="12" size-sm="6" size-md="4" *ngFor="let prod of productosFiltrados">
-        <ion-card class="product-card" (click)="verDetalle(prod.documentId)">
-          <img [src]="prod.imagenUrl || 'assets/logo.png'" />
-          <ion-card-header>
-            <ion-card-title>{{ prod.nombre }}</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <strong>${{ prod.precio }}</strong>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
+
+      <!-- Skeletons mientras carga -->
+      <ng-container *ngIf="isLoading; else productosList">
+        <ion-col
+          size="12" size-sm="6" size-md="4" size-lg="3"
+          class="card-col"
+          *ngFor="let _ of skeletons">
+          <ion-card class="product-card">
+            <ion-skeleton-text animated style="width: 100%; height: 180px;"></ion-skeleton-text>
+            <ion-card-header>
+              <ion-skeleton-text animated style="width: 60%; height: 18px;"></ion-skeleton-text>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-skeleton-text animated style="width: 40%; height: 14px;"></ion-skeleton-text>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ng-container>
+
+      <!-- Lista real de productos -->
+      <ng-template #productosList>
+        <ion-col
+          size="12" size-sm="6" size-md="4" size-lg="3"
+          class="card-col"
+          *ngFor="let prod of productosFiltrados; trackBy: trackByProd">
+          <ion-card class="product-card" (click)="verDetalle(prod.documentId)">
+            <div class="image-wrap">
+              <img [src]="prod.imagenUrl || 'assets/logo.png'" alt="{{ prod.nombre }}" loading="lazy" />
+              <div class="badge" *ngIf="prod.categoria?.nombre">{{ prod.categoria.nombre }}</div>
+            </div>
+            <ion-card-header>
+              <ion-card-title class="title">{{ prod.nombre }}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <div class="price">{{ formatPrecio(prod.precio) }}</div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ng-template>
+
     </ion-row>
   </ion-grid>
 
+  <!-- Pull to refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="cargarDatos(); $event.target.complete()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- (Opcional) FAB en móvil para pedido
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed"
+           class="fab-order"
+           *ngIf="usuario && (rol === 'Admin' || rol === 'Cliente')">
+    <ion-fab-button (click)="crearPedido()">Realizar pedido</ion-fab-button>
+  </ion-fab>
+  -->
 </ion-content>

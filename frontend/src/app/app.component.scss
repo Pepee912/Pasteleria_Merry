@@ -125,3 +125,27 @@
 
 /* (Opcional) atenúa el oscurecido del contenido principal al abrir el menú */
 ion-menu::part(backdrop) { opacity: .35; } /* 0=sin oscurecer, 1=muy oscuro */
+
+/* deja espacio al final para que la lista no quede tapada por el footer */
+.merry-menu .menu-content {
+  --padding-bottom: 84px; /* alto aprox del footer */
+}
+
+/* footer fijo con fondo claro */
+.merry-menu .menu-footer {
+  --background: #fff0f5;
+  background: linear-gradient(180deg, #ffe9ef 0%, #ffe0ea 100%);
+  border-top: 1px solid #f5c1d6;
+  padding: 12px 14px calc(12px + var(--ion-safe-area-bottom));
+}
+
+.merry-menu .menu-footer .logout-btn {
+  --background: #e75a67;         /* rojo rosado */
+  --background-hover: #d44c59;
+  --background-activated: #c84450;
+  --color: #fff;
+  --border-radius: 999px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  box-shadow: 0 8px 18px rgba(231, 90, 103, .28);
+}

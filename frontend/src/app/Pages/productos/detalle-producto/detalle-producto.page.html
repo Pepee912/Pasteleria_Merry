@@ -1,30 +1,89 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="header-blend">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ producto?.nombre || 'Detalle de Producto' }}</ion-title>
+    <ion-title class="brand-min">{{ producto?.nombre || 'Detalle de Producto' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <ng-container *ngIf="producto; else cargando">
-    <ion-card class="detalle-card">
-      <img *ngIf="producto?.imagenUrl" [src]="producto.imagenUrl" alt="Imagen del producto" />
-      <ion-card-header>
-        <ion-card-title>{{ producto.nombre }}</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p class="descripcion" [innerHTML]="producto.descripcion"></p>
-        <p class="precio"><strong>Precio:</strong> ${{ producto.precio }}</p>
-      </ion-card-content>
-    </ion-card>
+<ion-content fullscreen>
+
+  <!-- Estados -->
+  <div class="state info" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+  <!-- Skeleton mientras carga -->
+  <ng-container *ngIf="isLoading">
+    <div class="wrap">
+      <div class="col media">
+        <ion-skeleton-text animated style="width:100%; height: 360px; border-radius:16px;"></ion-skeleton-text>
+        <div class="thumbs">
+          <ion-skeleton-text animated style="width:72px; height:72px; border-radius:12px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width:72px; height:72px; border-radius:12px;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width:72px; height:72px; border-radius:12px;"></ion-skeleton-text>
+        </div>
+      </div>
+      <div class="col info">
+        <ion-skeleton-text animated style="width:60%; height:24px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width:40%; height:20px; margin-top:8px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width:100%; height:120px; margin-top:16px;"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width:30%; height:28px; margin-top:16px;"></ion-skeleton-text>
+      </div>
+    </div>
   </ng-container>
 
-  <ng-template #cargando>
-    <div class="cargando-container">
-      <ion-spinner name="dots"></ion-spinner>
-      <p>Cargando producto...</p>
+  <!-- Contenido real -->
+  <ng-container *ngIf="!isLoading && producto">
+
+    <div class="wrap">
+      <!-- Columna izquierda: Galería -->
+      <div class="col media">
+        <div class="media-card">
+          <img
+            [src]="imagenPrincipal || 'assets/logo.png'"
+            [alt]="producto?.nombre"
+            loading="lazy"
+          />
+          <div class="badge" *ngIf="producto?.categoria?.nombre">
+            {{ producto.categoria.nombre }}
+          </div>
+        </div>
+
+        <div class="thumbs" *ngIf="imagenes.length > 1">
+          <button
+            class="thumb"
+            *ngFor="let img of imagenes"
+            (click)="setImagenPrincipal(img)"
+            [class.active]="img === imagenPrincipal">
+            <img [src]="img" [alt]="producto?.nombre" loading="lazy" />
+          </button>
+        </div>
+      </div>
+
+      <!-- Columna derecha: Info -->
+      <div class="col info">
+        <h1 class="title">{{ producto?.nombre }}</h1>
+
+        <div class="meta">
+          <ion-chip class="chip" *ngIf="producto?.categoria?.nombre">
+            <ion-label>{{ producto.categoria.nombre }}</ion-label>
+          </ion-chip>
+        </div>
+
+        <div class="price">{{ formatPrecio(producto?.precio) }}</div>
+
+        <div class="desc" [innerHTML]="producto?.descripcion"></div>
+
+        <div class="actions">
+          <ion-button
+            class="cta"
+            (click)="crearPedido()"
+            *ngIf="rol === 'Admin' || rol === 'Cliente'">
+            Realizar pedido
+          </ion-button>
+        </div>
+      </div>
     </div>
-  </ng-template>
+
+  </ng-container>
 </ion-content>
