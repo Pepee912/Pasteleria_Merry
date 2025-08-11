@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, NavController, ToastController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
@@ -21,7 +21,8 @@ export class LoginPage {
     private auth: AuthService,
     private session: SessionService,
     private navCtrl: NavController,
-    private toast: ToastController
+    private toast: ToastController,
+    private ngZone: NgZone        // 👈 añadido
   ) {}
 
   private async showToast(message: string) {
@@ -45,13 +46,12 @@ export class LoginPage {
     this.cargando = true;
     try {
       const res = await this.auth.login(this.email.trim(), this.password);
-      this.session.guardarToken(res.jwt);
-
+      this.session.guardarToken(res.jwt);  // 👈 disparará el estado de auth
       const perfil = await this.auth.getPerfil(res.jwt);
       this.session.guardarUsuario(perfil);
 
-      //await this.showToast('¡Bienvenido!');
-      this.navCtrl.navigateRoot('/');     
+      await this.showToast('¡Bienvenido!');
+      window.location.replace('/')
     } catch (err: any) {
       await this.showToast(typeof err === 'string' ? err : 'No se pudo iniciar sesión.');
     } finally {
