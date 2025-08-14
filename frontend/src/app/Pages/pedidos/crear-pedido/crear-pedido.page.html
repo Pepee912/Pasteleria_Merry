@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="crear-pedido">
+<ion-content [fullscreen]="true" class="crear-pedido">
 
   <div class="wrap">
     <!-- Columna izquierda: Buscar y agregar -->
@@ -126,19 +126,67 @@
         </div>
       </ng-template>
 
-      <!-- Fecha de entrega -->
+      <!-- Fecha y HORARIO con slots -->
       <div class="entrega">
-        <ion-item aria-label="Fecha y hora de entrega" lines="full">
-          <ion-label>Fecha y hora de entrega</ion-label>
-          <ion-datetime
-            presentation="date-time"
-            [min]="minEntrega"
-            [minuteValues]="[0,15,30,45]"
-            (ionChange)="onFechaEntregaChange($event)"
-            [value]="fechaEntrega">
-          </ion-datetime>
-        </ion-item>
+        <!-- 1) Selección de DÍA (modal compacto) -->
+        <div class="fecha-row">
+          <div class="fecha-label">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>Fecha de entrega</span>
+          </div>
 
+          <!-- Botón que abre el datetime en un modal -->
+          <ion-datetime-button datetime="fechaEntrega" class="fecha-btn"></ion-datetime-button>
+
+          <!-- Modal con el calendario -->
+          <ion-modal keepContentsMounted="true">
+            <ng-template>
+              <ion-datetime
+                id="fechaEntrega"
+                presentation="date"
+                (ionChange)="onDateChange($event)"
+                [isDateEnabled]="isDayEnabled"
+              ></ion-datetime>
+            </ng-template>
+          </ion-modal>
+        </div>
+
+        <!-- 2) Slots disponibles para el día seleccionado -->
+        <div class="slots" *ngIf="selectedDate">
+          <div class="slots-head sticky">
+            <h4>Horarios disponibles</h4>
+            <ion-note color="medium" class="slots-hint">
+              08:00–20:00, cada 30 min • mínimo 24 h de anticipación
+            </ion-note>
+          </div>
+
+          <div class="slots-grid">
+            <button
+              class="slot-pill"
+              *ngFor="let s of timeSlots"
+              [class.selected]="selectedTime === s.value"
+              [class.disabled]="s.disabled"
+              [disabled]="s.disabled"
+              (click)="onPickSlot(s)"
+              type="button"
+            >
+              <ion-icon *ngIf="selectedTime === s.value" name="checkmark-circle-outline"></ion-icon>
+              <span>{{ s.label }}</span>
+            </button>
+          </div>
+
+          <div class="slots-legend">
+            <span class="legend-item"><i class="dot available"></i> Disponible</span>
+            <span class="legend-item"><i class="dot selected"></i> Seleccionado</span>
+            <span class="legend-item"><i class="dot disabled"></i> Ocupado</span>
+          </div>
+
+          <ion-note color="warning" *ngIf="allSlotsDisabled()" class="msg-alerta">
+            No hay horarios disponibles para esta fecha. Prueba con otro día.
+          </ion-note>
+        </div>
+
+        <!-- Mensajes y resumen -->
         <ion-note color="danger" *ngIf="errorEntrega" class="msg-error">
           {{ errorEntrega }}
         </ion-note>

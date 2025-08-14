@@ -133,7 +133,7 @@ ion-back-button {
 
 /* Resultados (lista de productos) */
 .lista-filtrada {
-  max-height: 320px;
+  max-height: 500px;
   overflow-y: auto;
   margin-top: 10px;
 
@@ -349,3 +349,231 @@ ion-back-button {
 
   @media (min-width: 960px) { display: none; } /* se oculta en desktop */
 }
+
+/* —— FECHA & HORARIOS —————————————————————————————— */
+.entrega {
+  margin-top: 6px;
+
+  /* Fila compacta: etiqueta + botón de fecha */
+  .fecha-row {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid #f9a8d4;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(183,110,121,.08);
+    padding: 10px 12px;
+
+    .fecha-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--brand);
+      font-weight: 800;
+
+      ion-icon {
+        font-size: 18px;
+        color: var(--brand);
+      }
+    }
+
+    .fecha-btn {
+      --background: #fff;
+      --border-radius: 10px;
+      --border-color: #f3c2cc;
+      --color: #7f4b56;
+      border: 1px solid #f3c2cc;
+      padding: 6px 10px;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(183,110,121,.06);
+    }
+
+    /* Estilo del modal/datetime */
+    ion-modal {
+      --height: 420px;
+      --width: 92vw;
+      --max-width: 420px;
+      --border-radius: 16px;
+      --box-shadow: 0 10px 30px rgba(183,110,121,.20);
+    }
+
+    ion-datetime {
+      --background: #fff;
+      --wheel-highlight-background: #fce8ee;
+      --wheel-fade-background-rgb: 255,240,245;
+      &::part(calendar-day) { color: #6b4550; }
+      &::part(today) { border-color: var(--brand); }
+      &::part(indicator) { background: var(--brand); }
+      &::part(title) { color: #7f4b56; }
+    }
+  }
+
+  /* Cabecera y grid de slots */
+  .slots {
+    margin-top: 10px;
+    background: #fff;
+    border: 1px solid #f9a8d4;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(183,110,121,.08);
+    padding: 10px 12px;
+
+    .slots-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+
+      &.sticky {
+        position: sticky;
+        top: 8px;
+        z-index: 1;
+        background: linear-gradient(180deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.85) 100%);
+        border-radius: 10px;
+        padding: 6px 8px;
+        border: 1px solid #f3c2cc;
+      }
+
+      h4 {
+        margin: 0;
+        color: #7f4b56;
+        font-weight: 900;
+        font-family: 'Montserrat', system-ui, sans-serif;
+        font-size: 1rem;
+      }
+
+      .slots-hint {
+        margin: 0;
+        font-size: .85rem;
+        color: #6b5a61; /* mejora contraste sobre blanco */
+        opacity: .9;
+      }
+    }
+
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+      gap: 8px;
+      max-height: 260px;
+      overflow: auto;
+      padding-right: 4px;
+
+      /* scrollbar suave */
+      &::-webkit-scrollbar { width: 8px; height: 8px; }
+      &::-webkit-scrollbar-thumb { background: #f3c2cc; border-radius: 10px; }
+    }
+
+    .slot-pill {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      height: 36px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid #f3c2cc;
+      background: #fff;
+      color: #7f4b56;
+      font-weight: 800;
+      box-shadow: 0 2px 6px rgba(183,110,121,.08);
+      cursor: pointer;
+      transition: transform .06s ease, box-shadow .12s ease;
+
+      &:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(183,110,121,.12); }
+
+      &.selected {
+        background: var(--brand);
+        color: #fff;
+        border-color: var(--brand);
+      }
+
+      &.disabled {
+        background: #faf5f7;
+        color: #a08893;
+        border-style: dashed;
+        cursor: not-allowed;
+        box-shadow: none;
+        filter: grayscale(.1);
+        opacity: .85;
+      }
+
+      ion-icon { font-size: 18px; }
+    }
+
+    .slots-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+      font-size: .85rem;
+      color: #6b5a61;
+
+      .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+      .dot {
+        display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+        &.available { background: #f3c2cc; }
+        &.selected  { background: #b76e79; }
+        &.disabled  { background: #d8c8ce; }
+      }
+    }
+
+    .msg-alerta {
+      display: block;
+      margin-top: 8px;
+      color: #9d5f69; /* warning más legible con tu paleta */
+      font-weight: 700;
+    }
+  }
+
+  /* Mensajes generales debajo de slots */
+  .msg-error {
+    display: block;
+    margin-top: 8px;
+    background: #ffeef2;
+    border: 1px solid #f3c2cc;
+    color: #7d3f4a;
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-weight: 700;
+  }
+
+  .entrega-visual {
+    margin: 8px 2px 0;
+    display: flex; gap: 8px; align-items: baseline;
+    .etiqueta { color: #7f4b56; font-weight: 800; }
+    .valor { color: #3f2a32; }
+  }
+}
+
+/* Quitar flechas del input numérico de cantidad (solo afecta a qty) */
+.lista-filtrada .input-qty::-webkit-outer-spin-button,
+.lista-filtrada .input-qty::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.lista-filtrada .input-qty { -moz-appearance: textfield; }
+
+ion-datetime {
+  --background: #fff; /* fondo blanco */
+  --color: #6b4550; /* texto oscuro de tu paleta */
+  --wheel-highlight-background: #fce8ee; /* highlight pastel */
+  --wheel-fade-background-rgb: 255,240,245;
+
+  &::part(title) {
+    color: #7f4b56;
+    font-weight: 800;
+  }
+
+  &::part(calendar-day) {
+    color: #6b4550;
+  }
+
+  &::part(today) {
+    border-color: var(--brand);
+  }
+
+  &::part(indicator) {
+    background: var(--brand);
+  }
+}
+
