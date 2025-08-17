@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController, AlertController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from 'src/app/servicios/api.service';
 
+type Estado = 'pendiente' | 'aceptado' | 'entregado' | 'cancelado';
 type OpcionEstado = { value: 'aceptado'|'entregado'|'cancelado', label: string };
 
-const TRANSICIONES: Record<string, OpcionEstado[]> = {
+const TRANSICIONES: Record<Estado, OpcionEstado[]> = {
   pendiente: [
     { value: 'aceptado', label: 'Aceptar' },
     { value: 'cancelado', label: 'Cancelar' },
@@ -29,13 +30,29 @@ const TRANSICIONES: Record<string, OpcionEstado[]> = {
 })
 export class DetallePedidoPage implements OnInit {
   pedido: any;
-  nuevoEstado = ''; 
+  nuevoEstado = ''; // seleccionado en el UI
+  cargando = false;
+  actualizando = false;
 
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
-    private router: Router
+    private router: Router,
+      private toast: ToastController,
+      private alertCtrl: AlertController
   ) {}
+
+  // --- helpers UI ---
+  private async showToast(message: string, opts: Partial<Parameters<ToastController['create']>[0]> = {}) {
+    const t = await this.toast.create({
+      message,
+      duration: 2000,
+      position: 'top',
+      cssClass: 'toast-clarito',
+      ...opts
+    });
+    await t.present();
+  }
 
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -43,7 +60,7 @@ export class DetallePedidoPage implements OnInit {
   }
 
   get opcionesEstado(): OpcionEstado[] {
-    const estado = this.pedido?.estado ?? '';
+    const estado: Estado = (this.pedido?.estado ?? 'pendiente') as Estado;
     return TRANSICIONES[estado] ?? [];
   }
 
@@ -53,11 +70,16 @@ export class DetallePedidoPage implements OnInit {
 
   async cargarPedido(documentId: string) {
     try {
+      this.cargando = true;
       const response = await this.api.getPedidoCompleto(documentId);
       this.pedido = response;
-      this.nuevoEstado = ''; 
+      this.nuevoEstado = '';
     } catch (error) {
       console.error('Error al cargar pedido:', error);
+      await this.showToast('No se pudo cargar el pedido');
+      this.router.navigate(['/ver-pedidos']);
+    } finally {
+      this.cargando = false;
     }
   }
 
@@ -69,30 +91,53 @@ export class DetallePedidoPage implements OnInit {
     if (ultimo.estado !== this.pedido.estado) {
       this.pedido = ultimo;
       this.nuevoEstado = '';
-      alert(`El pedido cambió a "${ultimo.estado}". Vuelve a seleccionar la acción.`);
+      await this.showToast(`El pedido cambió a "${ultimo.estado}". Vuelve a seleccionar la acción.`);
       return;
     }
 
     // 2) Validar que la transición seleccionada es permitida
     const permitidos = this.opcionesEstado.map(o => o.value);
     if (!this.nuevoEstado || !permitidos.includes(this.nuevoEstado as any)) {
-      alert('Selecciona una opción válida para el estado actual.');
+      await this.showToast('Selecciona una opción válida para el estado actual');
       return;
     }
 
-    try {
-      // 3) Actualizar
-      await this.api.actualizarEstadoPedido(this.pedido.documentId, this.nuevoEstado);
+    // 3) Confirmación con Ion Alert (pastel)
+    const verb = this.opcionesEstado.find(o => o.value === this.nuevoEstado)?.label ?? 'Continuar';
+    const alert = await this.alertCtrl.create({
+      header: 'Confirmar',
+      message: `¿Deseas "${verb}" este pedido?`,
+      cssClass: 'alert-pastel',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: verb,
+          role: this.nuevoEstado === 'cancelado' ? 'destructive' : 'confirm',
+          handler: async () => { await this._aplicarTransicion(); }
+        }
+      ]
+    });
+    await alert.present();
+  }
 
-      // 4) Lógica de venta: solo al pasar a ENTREGADO (desde aceptado)
+  private async _aplicarTransicion() {
+    try {
+      this.actualizando = true;
+
+      // 4) Actualizar
+      await this.api.actualizarEstadoPedido(this.pedido.documentId, this.nuevoEstado as any);
+
+      // 5) Lógica de venta: solo al pasar a ENTREGADO
       if (this.nuevoEstado === 'entregado') {
         await this.api.registrarVentaDesdePedido(this.pedido.documentId);
       }
 
-      alert('Estado actualizado correctamente.');
-      window.location.href = '/ver-pedidos';
+      await this.showToast('Estado actualizado');
+      this.router.navigate(['/ver-pedidos']);
     } catch (error) {
-      alert('Error al actualizar el estado: ' + error);
+      await this.showToast('Error al actualizar el estado');
+    } finally {
+      this.actualizando = false;
     }
   }
 

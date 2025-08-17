@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from 'src/app/servicios/api.service';
@@ -14,22 +14,40 @@ import { ApiService } from 'src/app/servicios/api.service';
 })
 export class CrearCategoriaPage {
   nombre = '';
+  creando = false;
 
-  constructor(private api: ApiService, private router: Router) {}
+  constructor(
+    private api: ApiService,
+    private router: Router,
+    private toast: ToastController
+  ) {}
+
+  private async showToast(message: string, opts: Partial<Parameters<ToastController['create']>[0]> = {}) {
+    const t = await this.toast.create({
+      message,
+      duration: 2000,
+      position: 'top',
+      cssClass: 'toast-clarito',
+      ...opts
+    });
+    await t.present();
+  }
 
   async crearCategoria() {
     if (!this.nombre.trim()) {
-      alert('Por favor ingresa un nombre válido');
+      await this.showToast('Ingresa un nombre válido');
       return;
     }
 
     try {
-      await this.api.createCategoria({ nombre: this.nombre });
-      alert('Categoría creada exitosamente');
-      //this.router.navigate(['/ver-categorias']);
-      window.location.href = '/ver-categorias';
+      this.creando = true;
+      await this.api.createCategoria({ nombre: this.nombre.trim() });
+      await this.showToast('Categoría creada');
+      this.router.navigate(['/ver-categorias']);
     } catch (error) {
-      alert('Error al crear categoría: ' + error);
+      await this.showToast('Error al crear categoría');
+    } finally {
+      this.creando = false;
     }
   }
 }

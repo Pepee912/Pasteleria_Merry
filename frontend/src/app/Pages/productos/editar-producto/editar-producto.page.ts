@@ -1,11 +1,11 @@
-// editar-producto.page.ts
+// src/app/pages/productos/editar-producto/editar-producto.page.ts
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule} from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from 'src/app/servicios/api.service';
 import { SessionService } from 'src/app/servicios/session.service';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-editar-producto',
@@ -26,21 +26,39 @@ export class EditarProductoPage implements OnInit {
   imagen: File | null = null;
   imagenUrl: string | null = null;
 
+  cargando = false;
+  guardando = false;
+
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
     private session: SessionService,
-    private router: Router
+    private router: Router,
+    private toast: ToastController
   ) {}
 
-  async ngOnInit() {
-    //this.documentId = this.route.snapshot.queryParamMap.get('documentId') || '';
-    this.documentId = this.route.snapshot.paramMap.get('id') || '';
-    if (!this.documentId) return alert('Falta documentId');
+  private async showToast(message: string, opts: Partial<Parameters<ToastController['create']>[0]> = {}) {
+    const t = await this.toast.create({
+      message,
+      duration: 2000,
+      position: 'top',
+      cssClass: 'toast-clarito',
+      ...opts
+    });
+    await t.present();
+  }
 
-    this.categorias = await this.api.getCategorias();
+  async ngOnInit() {
+    this.documentId = this.route.snapshot.paramMap.get('id') || '';
+    if (!this.documentId) {
+      await this.showToast('Falta documentId');
+      this.router.navigate(['/ver-producto']);
+      return;
+    }
 
     try {
+      this.cargando = true;
+      this.categorias = await this.api.getCategorias();
       const producto = await this.api.getProductoByDocumentId(this.documentId);
       this.productoId = producto.id;
       this.nombre = producto.nombre;
@@ -49,42 +67,30 @@ export class EditarProductoPage implements OnInit {
       this.categoriaId = producto.categoria?.id ?? null;
       this.imagenUrl = producto.imagenUrl ?? null;
     } catch (err) {
-      alert('Error al cargar producto');
+      await this.showToast('Error al cargar producto');
+      this.router.navigate(['/ver-producto']);
+    } finally {
+      this.cargando = false;
     }
   }
 
   onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.imagen = file;
-    }
+    const file = event.target.files?.[0];
+    if (file) this.imagen = file;
   }
 
   async actualizarProducto() {
-    //console.log('productoId:', this.productoId);
-    //console.log('nombre:', this.nombre);
-    //console.log('descripcion:', this.descripcion);
-    //console.log('precio:', this.precio);
-    //console.log('categoriaId:', this.categoriaId);
-
-    if (
-      !this.productoId ||
-      this.nombre.trim() === '' ||
-      this.descripcion.trim() === '' ||
-      this.precio === null ||
-      this.categoriaId === null
-    ) {
-      alert('Todos los campos son obligatorios');
+    if (!this.productoId || !this.nombre.trim() || !this.descripcion.trim() || this.precio === null || this.categoriaId === null) {
+      await this.showToast('Todos los campos son obligatorios');
       return;
     }
 
     const token = this.session.obtenerToken();
-    let imagenId = null;
+    let imagenId: number | null = null;
 
     if (this.imagen) {
       const formData = new FormData();
       formData.append('files', this.imagen);
-
       try {
         const res = await fetch('http://localhost:1337/api/upload', {
           method: 'POST',
@@ -92,28 +98,30 @@ export class EditarProductoPage implements OnInit {
           body: formData
         });
         const uploadData = await res.json();
-        imagenId = uploadData[0].id;
-      } catch (error) {
-        alert('Error al subir imagen');
+        imagenId = uploadData?.[0]?.id ?? null;
+      } catch {
+        await this.showToast('Error al subir imagen');
         return;
       }
     }
 
-    const datos = {
-      nombre: this.nombre,
-      descripcion: this.descripcion,
+    const datos: any = {
+      nombre: this.nombre.trim(),
+      descripcion: this.descripcion.trim(),
       precio: this.precio,
-      categoria: this.categoriaId,
-      ...(imagenId ? { imagen_url: [imagenId] } : {})
+      categoria: this.categoriaId
     };
+    if (imagenId) datos.imagen_url = [imagenId];
 
     try {
+      this.guardando = true;
       await this.api.updateProductoByDocumentId(this.documentId, datos);
-      alert('Producto actualizado');
-      //this.router.navigate(['/ver-producto']);
-      window.location.href = '/ver-producto';
-    } catch (error) {
-      alert('Error al actualizar producto: ' + error);
+      await this.showToast('Producto actualizado');
+      this.router.navigate(['/ver-producto']);
+    } catch (error: any) {
+      await this.showToast('Error al actualizar producto');
+    } finally {
+      this.guardando = false;
     }
   }
 }

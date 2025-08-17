@@ -35,31 +35,31 @@ export class ApiService {
  async getProductoByDocumentId(documentId: string): Promise<any> {
   const url = `${this.baseUrl}/productos?filters[documentId][$eq]=${documentId}&populate=*`;
 
-  try {
-    const response = await axios.get(url);
-    const productoRaw = response.data.data[0];
+    try {
+      const response = await axios.get(url);
+      const productoRaw = response.data.data[0];
 
-    if (!productoRaw) throw new Error('Producto no encontrado');
+      if (!productoRaw) throw new Error('Producto no encontrado');
 
-    const producto = {
-      id: productoRaw.id,
-      documentId: productoRaw.documentId,
-      nombre: productoRaw.nombre,
-      descripcion: productoRaw.descripcion,
-      precio: productoRaw.precio,
-      //stock: productoRaw.stock || 0,
-      imagenUrl: productoRaw.imagen_url?.[0]?.url
-        ? `${this.baseUrl.replace('/api', '')}${productoRaw.imagen_url[0].url}`
-        : null,
-      categoria: productoRaw.categoria
-    };
+      const producto = {
+        id: productoRaw.id,
+        documentId: productoRaw.documentId,
+        nombre: productoRaw.nombre,
+        descripcion: productoRaw.descripcion,
+        precio: productoRaw.precio,
+        //stock: productoRaw.stock || 0,
+        imagenUrl: productoRaw.imagen_url?.[0]?.url
+          ? `${this.baseUrl.replace('/api', '')}${productoRaw.imagen_url[0].url}`
+          : null,
+        categoria: productoRaw.categoria
+      };
 
-    return producto;
-  } catch (error) {
-    console.error('Error en getProductoByDocumentId:', error);
-    throw 'Error al cargar producto';
+      return producto;
+    } catch (error) {
+      console.error('Error en getProductoByDocumentId:', error);
+      throw 'Error al cargar producto';
+    }
   }
-}
 
   async createProducto(data: any): Promise<any> {
     const token = this.session.obtenerToken();
@@ -480,6 +480,66 @@ export class ApiService {
       throw 'No se pudo registrar la venta';
     }
   }
+
+  // -------------- SELF SERVICE (perfil propio)----------------------------
+
+  /** Devuelve el usuario autenticado (incluye rol) */
+  async getMe(): Promise<any> {
+    const token = this.session.obtenerToken();
+    if (!token) throw 'No autenticado';
+
+    try {
+      const res = await axios.get(`${this.baseUrl}/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { populate: 'role' }
+      });
+      return res.data;
+    } catch (error: any) {
+      console.error('getMe:', error.response?.data || error);
+      throw error.response?.data?.error?.message || 'No se pudo obtener tu perfil';
+    }
+  }
+
+  /** Actualiza el usuario autenticado. 
+   *  Strapi no expone PUT /users/me por defecto, así que:
+   *   1) obtenemos /users/me para conocer el id
+   *   2) hacemos PUT /users/:id
+   */
+  async updateMe(data: { username?: string; email?: string }): Promise<any> {
+    const token = this.session.obtenerToken();
+    if (!token) throw 'No autenticado';
+
+    try {
+      const me = await this.getMe();
+      const res = await axios.put(`${this.baseUrl}/users/${me.id}`, data, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return res.data; 
+    } catch (error: any) {
+      console.error('updateMe:', error.response?.data || error);
+      throw error.response?.data?.error?.message || 'No se pudo actualizar tu perfil';
+    }
+  }
+
+  /** Cambiar contraseña del usuario autenticado */
+  async changeMyPassword(body: {
+    currentPassword: string;
+    password: string;
+    passwordConfirmation: string;
+  }): Promise<void> {
+    const token = this.session.obtenerToken();
+    if (!token) throw 'No autenticado';
+
+    try {
+      await axios.post(`${this.baseUrl}/auth/change-password`, body, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error: any) {
+      console.error('changeMyPassword:', error.response?.data || error);
+      throw error.response?.data?.error?.message || 'No se pudo cambiar la contraseña';
+    }
+  }
+
 
 
 }

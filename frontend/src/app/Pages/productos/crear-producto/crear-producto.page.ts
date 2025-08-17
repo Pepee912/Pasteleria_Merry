@@ -1,10 +1,11 @@
+// src/app/pages/productos/crear-producto/crear-producto.page.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from 'src/app/servicios/api.service';
 import { SessionService } from 'src/app/servicios/session.service';
-import { Router, RouterModule} from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { Router, RouterModule } from '@angular/router';
+import { IonicModule, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-crear-producto',
@@ -13,7 +14,6 @@ import { IonicModule } from '@ionic/angular';
   standalone: true,
   imports: [CommonModule, IonicModule, RouterModule, FormsModule]
 })
-
 export class CrearProductoPage implements OnInit {
   nombre = '';
   descripcion = '';
@@ -21,77 +21,88 @@ export class CrearProductoPage implements OnInit {
   categoriaId: number | null = null;
   categorias: any[] = [];
 
-  constructor(private api: ApiService, private router: Router, private session: SessionService) {}
+  imagen: File | null = null;
+  creando = false;
+
+  constructor(
+    private api: ApiService,
+    private router: Router,
+    private session: SessionService,
+    private toast: ToastController
+  ) {}
+
+  private async showToast(message: string, opts: Partial<Parameters<ToastController['create']>[0]> = {}) {
+    const t = await this.toast.create({
+      message,
+      duration: 2000,
+      position: 'top',
+      cssClass: 'toast-clarito',
+      ...opts
+    });
+    await t.present();
+  }
 
   async ngOnInit() {
     try {
       this.categorias = await this.api.getCategorias();
     } catch (error) {
-      alert('Error al cargar categorías: ' + error);
+      await this.showToast('Error al cargar categorías');
     }
   }
 
-  imagen: File | null = null;
-
   onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.imagen = file;
-    }
+    const file = event.target.files?.[0];
+    if (file) this.imagen = file;
   }
 
   async crearProducto() {
-    if (!this.nombre || !this.precio || !this.categoriaId) {
-      alert('Por favor, completa todos los campos requeridos');
+    if (!this.nombre.trim() || !this.precio || !this.categoriaId) {
+      await this.showToast('Completa los campos requeridos');
       return;
     }
 
     const token = this.session.obtenerToken();
-    let imagenId = null;
+    let imagenId: number | null = null;
 
-    // 1. Subir imagen si fue seleccionada
+    // 1) Subir imagen (opcional)
     if (this.imagen) {
       const formData = new FormData();
       formData.append('files', this.imagen);
-
       try {
         const response = await fetch('http://localhost:1337/api/upload', {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
+          headers: { Authorization: `Bearer ${token}` },
           body: formData
         });
-
         const uploadData = await response.json();
-        imagenId = uploadData[0].id;
+        imagenId = uploadData?.[0]?.id ?? null;
       } catch (error) {
-        alert('Error al subir imagen');
         console.error(error);
+        await this.showToast('Error al subir imagen');
         return;
       }
     }
 
-    // 2. Crear el producto
-    const nuevoProducto = {
-      nombre: this.nombre,
-      descripcion: this.descripcion,
+    // 2) Crear producto
+    const nuevoProducto: any = {
+      nombre: this.nombre.trim(),
+      descripcion: this.descripcion.trim(),
       precio: this.precio,
       categoria: this.categoriaId,
       imagen_url: imagenId ? [imagenId] : []
     };
 
     try {
-      const respuesta = await this.api.createProducto(nuevoProducto);
-      const productoId = respuesta.data.id;
-
-      alert('Producto creado exitosamente');
-
+      this.creando = true;
+      await this.api.createProducto(nuevoProducto);
+      await this.showToast('Producto creado');
+      //this.router.navigate(['/ver-producto']);
       window.location.href = '/ver-producto';
-    } catch (error) {
-      alert('Error al crear producto e inventario: ' + error);
+    } catch (error: any) {
+      console.error(error);
+      await this.showToast('Error al crear producto');
+    } finally {
+      this.creando = false;
     }
   }
-
-
 }

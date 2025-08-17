@@ -1,31 +1,200 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="header-blend">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-    <ion-title>Mi Perfil</ion-title>
+    <ion-title class="brand">Mi Perfil</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding perfil-page">
-  <div class="perfil-container">
-    <div class="avatar">
-      {{ obtenerIniciales(usuario?.username) }}
-    </div>
+<ion-content fullscreen class="perfil-page">
 
-    <h2 class="nombre">{{ usuario?.username }}</h2>
-    <p class="rol">{{ usuario?.role?.name }}</p>
+  <!-- Pull to refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
-    <div class="info-group">
-      <span>{{ usuario?.email }}</span>
-    </div>
+  <div class="state info" *ngIf="errorMsg">{{ errorMsg }}</div>
 
-    <div class="info-group">
-      <span>Confirmado: {{ usuario?.confirmed ? 'Sí' : 'No' }}</span>
-    </div>
-
-    <div class="info-group">
-      <span>Bloqueado: {{ usuario?.blocked ? 'Sí' : 'No' }}</span>
-    </div>
+  <!-- Skeleton -->
+  <div class="perfil-wrap" *ngIf="isLoading">
+    <ion-card class="perfil-card">
+      <div class="perfil-head">
+        <ion-skeleton-text animated style="width:110px;height:110px;border-radius:50%"></ion-skeleton-text>
+        <div class="head-info">
+          <ion-skeleton-text animated style="width:160px;height:20px"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width:120px;height:14px;margin-top:6px"></ion-skeleton-text>
+        </div>
+      </div>
+      <ion-list lines="none">
+        <ion-item>
+          <ion-skeleton-text animated style="width:220px;height:16px"></ion-skeleton-text>
+        </ion-item>
+      </ion-list>
+      <div class="acciones">
+        <ion-skeleton-text animated style="width:160px;height:40px;border-radius:12px"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width:200px;height:40px;border-radius:12px"></ion-skeleton-text>
+      </div>
+    </ion-card>
   </div>
+
+  <!-- Contenido -->
+  <div class="perfil-wrap" *ngIf="!isLoading && usuario">
+    <ion-card class="perfil-card">
+      <div class="perfil-head">
+        <div class="avatar">{{ obtenerIniciales(usuario.username || '') }}</div>
+        <div class="head-info">
+          <h2 class="nombre">{{ usuario.username }}</h2>
+          <p class="rol-sub">{{ usuario.role?.name || 'Usuario' }}</p>
+          <div class="chips">
+            <ion-chip class="chip soft" [ngClass]="rolClase" aria-label="Rol">
+              <ion-label>{{ usuario.role?.name || 'Rol' }}</ion-label>
+            </ion-chip>
+            <ion-chip class="chip" [color]="usuario.confirmed ? 'success' : 'warning'">
+              <ion-label>{{ usuario.confirmed ? 'Confirmado' : 'Sin confirmar' }}</ion-label>
+            </ion-chip>
+            <ion-chip class="chip" [color]="usuario.blocked ? 'danger' : 'medium'">
+              <ion-label>{{ usuario.blocked ? 'Bloqueado' : 'Activo' }}</ion-label>
+            </ion-chip>
+          </div>
+        </div>
+      </div>
+
+      <ion-list lines="none" class="info-list">
+        <ion-item>
+          <ion-label>
+            <h3>Correo</h3>
+            <p>{{ usuario.email }}</p>
+          </ion-label>
+          <ion-button fill="clear" size="small" (click)="copiar(usuario.email)" aria-label="Copiar correo">
+          </ion-button>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>
+            <h3>Usuario</h3>
+            <p>{{ usuario.username }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item *ngIf="usuario?.role?.name">
+          <ion-label>
+            <h3>Rol</h3>
+            <p>{{ usuario.role.name }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>
+            <h3>Miembro desde</h3>
+            <p>{{ formatFecha(usuario.createdAt) }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+
+      <!-- Acciones (sin logout) -->
+      <div class="acciones">
+        <ion-button class="btn-primary" (click)="abrirEditarPerfil()">
+          Editar perfil
+        </ion-button>
+        <ion-button class="btn-ghost" (click)="abrirCambiarPassword()">
+          Cambiar contraseña
+        </ion-button>
+      </div>
+    </ion-card>
+  </div>
+
+  <div class="state muted" *ngIf="!isLoading && !usuario && !errorMsg">
+    No hay información de usuario. Inicia sesión.
+  </div>
+
+  <!-- MODAL: Editar perfil -->
+  <ion-modal
+    [isOpen]="modalEditarAbierto"
+    (didDismiss)="cerrarEditarPerfil()"
+    [breakpoints]="[0, 0.5, 0.9]"
+    [initialBreakpoint]="0.5"
+  >
+    <ng-template>
+      <ion-header>
+        <ion-toolbar class="header-blend">
+          <ion-title>Editar perfil</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarEditarPerfil()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form (ngSubmit)="guardarPerfil()" #formEditar="ngForm" class="form-grid">
+          <ion-item>
+            <ion-label position="stacked">Usuario</ion-label>
+            <ion-input [(ngModel)]="formEdit.username" name="username" required></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Correo</ion-label>
+            <ion-input [(ngModel)]="formEdit.email" name="email" type="email" required></ion-input>
+          </ion-item>
+          <div class="form-actions">
+            <ion-button type="submit" [disabled]="formEditar.invalid || saving" class="btn-primary">
+              <ion-spinner *ngIf="saving" slot="start"></ion-spinner>
+              Guardar cambios
+            </ion-button>
+            <ion-button fill="outline" (click)="cerrarEditarPerfil()">Cancelar</ion-button>
+          </div>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- MODAL: Cambiar contraseña -->
+  <ion-modal
+    [isOpen]="modalPwdAbierto"
+    (didDismiss)="cerrarCambiarPassword()"
+    [breakpoints]="[0, 0.6]"
+    [initialBreakpoint]="0.6"
+  >
+    <ng-template>
+      <ion-header>
+        <ion-toolbar class="header-blend">
+          <ion-title>Cambiar contraseña</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarCambiarPassword()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form (ngSubmit)="guardarPassword()" #formPwd="ngForm" class="form-grid">
+          <ion-item>
+            <ion-label position="stacked">Contraseña actual</ion-label>
+            <ion-input [(ngModel)]="formPwdData.currentPassword" name="currentPassword" type="password" required></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Nueva contraseña</ion-label>
+            <ion-input [(ngModel)]="formPwdData.password" name="password" type="password" minlength="8" required></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Confirmar contraseña</ion-label>
+            <ion-input [(ngModel)]="formPwdData.passwordConfirmation" name="passwordConfirmation" type="password" minlength="8" required></ion-input>
+          </ion-item>
+
+          <ion-note color="warning"
+                    *ngIf="formPwdData.password && formPwdData.passwordConfirmation && formPwdData.password !== formPwdData.passwordConfirmation">
+            Las contraseñas no coinciden.
+          </ion-note>
+
+          <div class="form-actions">
+            <ion-button type="submit"
+                        [disabled]="formPwd.invalid || saving || formPwdData.password !== formPwdData.passwordConfirmation"
+                        class="btn-primary">
+              <ion-spinner *ngIf="saving" slot="start"></ion-spinner>
+              Guardar contraseña
+            </ion-button>
+            <ion-button fill="outline" (click)="cerrarCambiarPassword()">Cancelar</ion-button>
+          </div>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+
 </ion-content>

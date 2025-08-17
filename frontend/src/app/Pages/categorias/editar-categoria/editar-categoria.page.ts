@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { ApiService } from 'src/app/servicios/api.service';
 
 @Component({
@@ -15,43 +15,62 @@ import { ApiService } from 'src/app/servicios/api.service';
 export class EditarCategoriaPage implements OnInit {
   documentId: string = '';
   nombre: string = '';
+  cargando = false;
+  guardando = false;
 
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    private toast: ToastController
   ) {}
+
+  private async showToast(message: string, opts: Partial<Parameters<ToastController['create']>[0]> = {}) {
+    const t = await this.toast.create({
+      message,
+      duration: 2000,
+      position: 'top',
+      cssClass: 'toast-clarito',
+      ...opts
+    });
+    await t.present();
+  }
 
   async ngOnInit() {
     this.documentId = this.route.snapshot.paramMap.get('id') || '';
     if (!this.documentId) {
-      alert('ID no válido');
+      await this.showToast('ID no válido');
       this.router.navigate(['/ver-categorias']);
       return;
     }
 
     try {
+      this.cargando = true;
       const categoria = await this.api.getCategoriaByDocumentId(this.documentId);
-      //console.log('Categoría recibida:', categoria);
-
       this.nombre = categoria?.nombre || '';
     } catch (error) {
-      alert('Error al cargar categoría: ' + error);
+      await this.showToast('Error al cargar categoría');
+      this.router.navigate(['/ver-categorias']);
+    } finally {
+      this.cargando = false;
     }
   }
 
   async actualizarCategoria() {
     if (!this.nombre.trim()) {
-      alert('El nombre no puede estar vacío');
+      await this.showToast('El nombre no puede estar vacío');
       return;
     }
 
     try {
-      await this.api.updateCategoriaByDocumentId(this.documentId, { nombre: this.nombre });
-      alert('Categoría actualizada correctamente');
-      window.location.href = '/ver-categorias';
+      this.guardando = true;
+      await this.api.updateCategoriaByDocumentId(this.documentId, { nombre: this.nombre.trim() });
+      await this.showToast('Categoría actualizada');
+      this.router.navigate(['/ver-categorias']);
     } catch (error) {
-      alert('Error al actualizar categoría: ' + error);
+      await this.showToast('Error al actualizar categoría');
+    } finally {
+      this.guardando = false;
     }
   }
 }

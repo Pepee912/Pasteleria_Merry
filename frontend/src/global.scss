@@ -36,4 +36,73 @@
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
 
+.toast-clarito{
+  --background:#f1f1f4; --color:#2c2c34;
+  --border-radius:14px; --box-shadow:0 12px 30px rgba(0,0,0,.18);
+  --button-color:#2c2c34; text-align:center;
+}
+
+/* ====== ALERTA PASTEL (coherente con la app) ====== */
+ion-alert.alert-pastel {
+  /* fondo y caja */
+  --background: #ffffff;
+  --backdrop-opacity: 0.18;
+  --box-shadow: 0 30px 70px rgba(0,0,0,.20);
+  --border-radius: 16px;
+  --width: 420px;    /* se adapta en móviles abajo */
+  --max-width: 95vw; /* para pantallas pequeñas */
+  --color: #2a2230;  /* color de texto base */
+
+  /* opcional: fuerza esquema claro solo en la alerta */
+  color-scheme: light;
+}
+
+/* encabezado y mensaje */
+.alert-pastel .alert-head .alert-title {
+  color: #b76e79;      /* brand */
+  font-weight: 800;
+}
+.alert-pastel .alert-message {
+  color: #6b5a64;      /* muted */
+  line-height: 1.4;
+}
+
+/* botones (grupo) */
+.alert-pastel .alert-button-group {
+  gap: 6px;
+  padding: 10px 14px 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* botón base */
+.alert-pastel .alert-button {
+  --color: #b76e79;        /* brand */
+  color: #b76e79;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 10px 14px;
+  text-transform: uppercase;
+  letter-spacing: .2px;
+}
+
+/* botón cancelar (outline suave) */
+.alert-pastel .alert-button[aria-label="Cancelar"],
+.alert-pastel .alert-button.alert-button-role-cancel {
+  background: #fff;
+  border: 1px solid #f0d1de; /* accent muy suave */
+}
+
+/* botón destructivo (eliminar) */
+.alert-pastel .alert-button.alert-button-role-destructive {
+  background: #fff3f8;  /* soft */
+  border: 1px solid #f4c2d6;
+  color: #a23c5b;       /* un rojo-rosa */
+}
+
+/* responsive: en móviles ocupa casi todo el ancho */
+@media (max-width: 520px) {
+  ion-alert.alert-pastel { --width: 96vw; }
+}
+
 

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/servicios/api.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController, AlertController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -14,37 +14,53 @@ import { FormsModule } from '@angular/forms';
 })
 export class VerUsuariosPage implements OnInit {
 
-  constructor(private api: ApiService, private router: Router) {}
-
   terminoBusqueda: string = '';
   usuarios: any[] = [];
   usuariosFiltrados: any[] = [];
+  cargando = false;
+
+  constructor(
+    private api: ApiService,
+    private router: Router,
+    private toast: ToastController,
+    private alertCtrl: AlertController
+  ) {}
 
   async ngOnInit() {
     await this.cargarUsuarios();
   }
 
+  private async showToast(message: string, opts: Partial<Parameters<ToastController['create']>[0]> = {}) {
+    const t = await this.toast.create({
+      message,
+      duration: 2000,
+      position: 'top',
+      cssClass: 'toast-clarito',
+      ...opts
+    });
+    await t.present();
+  }
+
   async cargarUsuarios() {
     try {
+      this.cargando = true;
       const lista = await this.api.getUsuarios();
       this.usuarios = lista;
       this.filtrarUsuarios();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al cargar usuarios:', error);
+      await this.showToast('No se pudieron cargar los usuarios');
+    } finally {
+      this.cargando = false;
     }
   }
 
   filtrarUsuarios() {
     const termino = this.terminoBusqueda.trim().toLowerCase();
-
-    if (!termino) {
-      this.usuariosFiltrados = [...this.usuarios];
-      return;
-    }
-
+    if (!termino) { this.usuariosFiltrados = [...this.usuarios]; return; }
     this.usuariosFiltrados = this.usuarios.filter(u =>
-      u.username.toLowerCase().includes(termino) ||
-      u.email.toLowerCase().includes(termino)
+      (u.username || '').toLowerCase().includes(termino) ||
+      (u.email || '').toLowerCase().includes(termino)
     );
   }
 
@@ -53,41 +69,58 @@ export class VerUsuariosPage implements OnInit {
   }
 
   irAEditar(id: number) {
-    this.router.navigate(['/editar-usuario'], {
-      queryParams: { id }
-    });
+    this.router.navigate(['/editar-usuario'], { queryParams: { id } });
   }
 
   async bloquearUsuario(id: number, bloqueado: boolean) {
     const accion = bloqueado ? 'desbloquear' : 'bloquear';
-    const confirmar = confirm(`¿Deseas ${accion} a este usuario?`);
-    if (!confirmar) return;
-
-    try {
-      await this.api.actualizarUsuario(id, { blocked: !bloqueado });
-      alert(`Usuario ${accion}ado correctamente.`);
-      await this.cargarUsuarios(); 
-    } catch (error) {
-      console.error('Error al bloquear/desbloquear usuario:', error);
-      alert('Error al actualizar estado del usuario: ' + error);
-    }
+    const alert = await this.alertCtrl.create({
+    header: 'Confirmar',
+    message: `¿Deseas ${accion} este usuario?`,
+    cssClass: 'alert-pastel', 
+    buttons: [
+      { text: 'Cancelar', role: 'cancel' },
+      {
+        text: 'Sí, continuar',
+        role: 'confirm',
+        handler: async () => {
+          try {
+            await this.api.actualizarUsuario(id, { blocked: !bloqueado });
+            await this.showToast(`Usuario ${accion}ado correctamente`);
+            await this.cargarUsuarios();
+          } catch (error: any) {
+            await this.showToast('Error al actualizar el estado del usuario');
+          }
+        }
+      }
+    ]
+  });
+  await alert.present();
   }
 
   async eliminarUsuario(id: number) {
-    const confirmar = confirm('¿Estás seguro de que deseas eliminar este usuario? Esta acción es permanente.');
-    if (!confirmar) return;
+    const alert = await this.alertCtrl.create({
+    header: 'Eliminar usuario',
+    message: '¿Seguro? Esta acción es permanente.',
+    cssClass: 'alert-pastel',
+    buttons: [
+      { text: 'Cancelar', role: 'cancel' },
+      {
+        text: 'Eliminar',
+        role: 'destructive',  
+        handler: async () => {
+          try {
+            await this.api.eliminarUsuario(id);
+            await this.showToast('Usuario eliminado');
+            await this.cargarUsuarios();
+          } catch (error: any) {
+            await this.showToast('Error al eliminar usuario');
+          }
+        }
+      }
+    ]
+  });
+  await alert.present();
 
-    try {
-      await this.api.eliminarUsuario(id);
-      alert('Usuario eliminado correctamente.');
-      await this.cargarUsuarios(); 
-    } catch (error) {
-      console.error('Error al eliminar usuario:', error);
-      alert('Error al eliminar usuario: ' + error);
-    }
   }
-
-
-
-
 }

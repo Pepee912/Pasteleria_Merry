@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController, AlertController } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { ApiService } from 'src/app/servicios/api.service';
 
@@ -13,14 +13,34 @@ import { ApiService } from 'src/app/servicios/api.service';
 })
 export class VerCategoriasPage implements OnInit {
   categorias: any[] = [];
+  cargando = false;
 
-  constructor(private api: ApiService, private router: Router) {}
+  constructor(
+    private api: ApiService,
+    private router: Router,
+    private toast: ToastController,
+    private alertCtrl: AlertController
+  ) {}
+
+  private async showToast(message: string, opts: Partial<Parameters<ToastController['create']>[0]> = {}) {
+    const t = await this.toast.create({
+      message,
+      duration: 2000,
+      position: 'top',
+      cssClass: 'toast-clarito',
+      ...opts
+    });
+    await t.present();
+  }
 
   async ngOnInit() {
     try {
+      this.cargando = true;
       this.categorias = await this.api.getCategorias();
     } catch (error) {
-      alert('Error al obtener categorías');
+      await this.showToast('Error al obtener categorías');
+    } finally {
+      this.cargando = false;
     }
   }
 
@@ -33,16 +53,27 @@ export class VerCategoriasPage implements OnInit {
   }
 
   async eliminarCategoria(documentId: string) {
-    const confirmar = confirm('¿Deseas eliminar esta categoría?, si tiene algún producto relacionado este quedará sin categoría');
-    if (!confirmar) return;
-
-    try {
-      await this.api.deleteCategoriaByDocumentId(documentId);
-      this.categorias = this.categorias.filter(cat => cat.documentId !== documentId);
-      alert('Categoría eliminada correctamente');
-    } catch (error) {
-      alert('Error al eliminar categoría: ' + error);
-    }
+    const alert = await this.alertCtrl.create({
+      header: 'Eliminar categoría',
+      message: '¿Deseas eliminar esta categoría? Si tiene productos relacionados, estos quedarán sin categoría.',
+      cssClass: 'alert-pastel',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: async () => {
+            try {
+              await this.api.deleteCategoriaByDocumentId(documentId);
+              this.categorias = this.categorias.filter(cat => cat.documentId !== documentId);
+              await this.showToast('Categoría eliminada');
+            } catch (error) {
+              await this.showToast('Error al eliminar categoría');
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
-
 }

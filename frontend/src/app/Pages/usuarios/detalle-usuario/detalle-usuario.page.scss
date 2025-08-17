@@ -1,79 +1,244 @@
+/* detalle-usuario.page.scss */
+
+/* ============ Tokens del tema de la página ============ */
 :host {
-  --ion-background-color: #fff0f5;
+  /* 🔧 NUEVO: fuerza esquema claro en esta vista */
+  color-scheme: light;
+
+  /* Paleta */
+  --bg: #fff7fb;
+  --brand: #b76e79;
+  --accent: #f9a8d4;
+  --text: #553d47;
+  --muted: #7a6470;
+
+  --radius: 16px;
+  --page-max: 960px;
+
+  /* 🔧 NUEVO: variables de Ionic para vencer el dark mode aquí */
+  --ion-background-color: var(--bg);
+  --ion-text-color: var(--text);
+  --ion-toolbar-background: #ffffffea;
+  --ion-toolbar-color: var(--brand);
+  --ion-card-background: #ffffff;
+  --ion-item-background: #ffffff;
+  --ion-color-step-550: var(--muted); /* textos secundarios */
 }
 
-ion-header {
-  ion-toolbar {
-    --background: #fff;
-    --color: #b76e79;
-    border-bottom: 1px solid #f9a8d4;
+ion-content.perfil-page {
+  --background: var(--bg);
+}
 
-    ion-title {
-      font-family: 'Comic Sans MS', 'Montserrat', cursive;
-      font-weight: bold;
-    }
+/* Header, idéntico a main-home */
+.header-blend {
+  --background: #ffffffea;
+  --color: var(--brand);
+  backdrop-filter: saturate(180%) blur(8px);
+  border-bottom: 1px solid var(--accent);
+}
 
-    ion-button {
-      --color: #b76e79;
-      font-weight: bold;
-    }
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  .brand-logo {
+    width: 28px; height: 28px; object-fit: contain; border-radius: 6px;
+  }
+  .brand-text {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: .2px;
   }
 }
 
-.perfil-page {
-  background-color: #fff0f5;
+/* Estados */
+.state {
+  text-align: center;
+  max-width: var(--page-max);
+  margin: 16px auto;
+  color: var(--muted);
+  &.info { color: #a94442; }
+  &.muted { color: var(--muted); }
+}
 
-  .perfil-container {
-    max-width: 400px;
-    margin: 0 auto;
-    text-align: center;
-    padding: 20px;
+/* Layout principal */
+.perfil-page {
+  .perfil-wrap {
+    max-width: var(--page-max);
+    margin: 16px auto;
+    padding: 0 16px;
+  }
+
+  .perfil-card {
     background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(183, 110, 121, 0.1);
+    border-radius: var(--radius);
+    box-shadow: 0 10px 24px rgba(183,110,121,.12);
+    padding: 18px;
+  }
+
+  .perfil-head {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 8px;
+
+    @media (max-width: 520px) {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      text-align: center;
+    }
   }
 
   .avatar {
-    width: 110px;
-    height: 110px;
+    width: 110px; height: 110px;
     border-radius: 50%;
-    background-color: #f9a8d4;
-    color: white;
-    font-size: 2.5rem;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 15px auto;
-    box-shadow: 0 4px 10px rgba(183, 110, 121, 0.2);
+    background: var(--accent);
+    color: #fff;
+    font-size: 2.4rem;
+    font-weight: 800;
+    display: grid; place-items: center;
+    box-shadow: 0 8px 20px rgba(183,110,121,.22);
+    user-select: none;
   }
 
-  .nombre {
-    font-size: 1.6rem;
-    color: #b76e79;
-    font-family: 'Comic Sans MS', 'Montserrat', cursive;
-    margin-bottom: 4px;
-  }
+  .head-info {
+    .nombre {
+      color: var(--text);
+      font-family: 'Montserrat', system-ui, sans-serif;
+      font-weight: 900;
+      margin: 0 0 2px;
+    }
+    .rol-sub {
+      color: var(--muted);
+      margin: 0 0 8px;
+      font-size: .98rem;
+    }
 
-  .rol {
-    font-size: 1rem;
-    font-style: italic;
-    color: #888;
-    margin-bottom: 20px;
-  }
-
-  .info-group {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-size: 1rem;
-    color: #444;
-    margin-bottom: 12px;
-
-    ion-icon {
-      color: #b76e79;
-      font-size: 1.2rem;
+    .chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      @media (max-width: 520px) { justify-content: center; }
     }
   }
+
+  /* Chips elegantes */
+  .chip {
+    --background: #fff;
+    --color: var(--brand);
+    --border-color: var(--accent);
+    --border-radius: 999px;
+    font-weight: 700;
+    &.soft {
+      --background: #fff3f8;
+    }
+  }
+
+  /* Color por rol */
+  .rol-admin { --color: #7a3e86; }
+  .rol-asistente { --color: #b76e79; }
+  .rol-cliente { --color: #3b7a57; }
+
+  /* Lista de info */
+  .info-list {
+    margin-top: 6px;
+
+    ion-item {
+      --background: transparent;
+      --color: var(--text);
+      padding: 8px 0;
+
+      h3 {
+        margin: 0; font-size: .8rem; color: var(--muted);
+      }
+      p {
+        margin: 2px 0 0; color: var(--text); font-weight: 600;
+      }
+    }
+  }
+
+  /* Acciones */
+  .acciones {
+    margin-top: 14px;
+    display: flex; flex-wrap: wrap; gap: 10px;
+    @media (max-width: 520px) {
+      flex-direction: column;
+    }
+  }
+
+  /* Botones coherentes */
+  .btn-primary {
+    --background: var(--brand);
+    --color: #fff;
+    --border-radius: 12px;
+    font-weight: 800;
+    box-shadow: 0 10px 22px rgba(183,110,121,.28);
+  }
+  .btn-ghost {
+    --color: var(--brand);
+    --border-color: var(--accent);
+    --border-radius: 12px;
+    font-weight: 800;
+  }
+}
+
+/* ============ MODALES ============ */
+/* 🔧 NUEVO: estiliza el contenedor del modal y el backdrop */
+ion-modal::part(backdrop) {
+  background: rgba(0,0,0,.18);
+}
+ion-modal::part(content) {
+  border-radius: 20px;
+  box-shadow: 0 30px 70px rgba(0,0,0,.20);
+  overflow: hidden;
+}
+
+/* 🔧 NUEVO: asegúrate de que dentro del modal todo sea claro */
+ion-modal ion-content {
+  --background: #ffffff;
+  --color: #2a2230;
+}
+
+ion-modal .header-blend {
+  --background: #ffffff;
+  --color: var(--brand);
+  border-bottom: 1px solid #f0d1de;
+}
+
+/* 🔧 NUEVO: inputs visibles en modo claro */
+ion-modal ion-item {
+  --background: #ffffff;
+  --color: var(--text);
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 8px;
+  border: 1px solid #f0e6ea;
+  border-radius: 12px;
+}
+ion-modal ion-label {
+  color: var(--muted) !important;
+}
+ion-modal ion-input, 
+ion-modal ion-textarea {
+  --color: var(--text);
+}
+
+/* 🔧 NUEVO: grid del formulario dentro del modal */
+.form-grid {
+  display: grid;
+  gap: 12px;
+}
+.form-actions {
+  margin-top: 6px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ============ TOAST gris claro ============ */
+/* 🔧 NUEVO: clase para todos tus toasts “neutros” */
+.toast-clarito {
+  --background: #f1f1f4;
+  --color: #2c2c34;
+  --border-radius: 14px;
+  --box-shadow: 0 12px 30px rgba(0,0,0,.18);
+  --button-color: #2c2c34;
+  text-align: center;
 }

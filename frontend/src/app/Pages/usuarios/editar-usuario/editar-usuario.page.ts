@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from 'src/app/servicios/api.service';
 
@@ -19,12 +19,26 @@ export class EditarUsuarioPage implements OnInit {
   password = '';
   rolSeleccionado: number | null = null;
   roles: any[] = [];
+  cargando = false;
+  guardando = false;
 
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    private toast: ToastController
   ) {}
+
+  private async showToast(message: string, opts: Partial<Parameters<ToastController['create']>[0]> = {}) {
+    const t = await this.toast.create({
+      message,
+      duration: 2000,
+      position: 'top',
+      cssClass: 'toast-clarito',
+      ...opts
+    });
+    await t.present();
+  }
 
   async ngOnInit() {
     this.route.queryParams.subscribe(async params => {
@@ -38,16 +52,19 @@ export class EditarUsuarioPage implements OnInit {
 
   async cargarUsuario() {
     try {
+      this.cargando = true;
       const usuarios = await this.api.getUsuarios();
-      const usuario = usuarios.find(u => u.id === this.idUsuario);
-      if (!usuario) throw 'Usuario no encontrado';
-
+      const usuario = usuarios.find((u: any) => u.id === this.idUsuario);
+      if (!usuario) throw new Error('Usuario no encontrado');
       this.username = usuario.username;
       this.email = usuario.email;
       this.rolSeleccionado = usuario.role?.id || null;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al cargar usuario:', error);
-      alert('Error al cargar usuario');
+      await this.showToast('No se pudo cargar el usuario');
+      this.router.navigate(['/ver-usuarios']);
+    } finally {
+      this.cargando = false;
     }
   }
 
@@ -57,37 +74,40 @@ export class EditarUsuarioPage implements OnInit {
       this.roles = rolesRaw.filter((rol: any) => rol.type !== 'authenticated');
     } catch (error) {
       console.error('Error al cargar roles:', error);
+      await this.showToast('No se pudieron cargar los roles');
     }
   }
 
   async guardarCambios() {
     if (!this.username || !this.email || !this.rolSeleccionado) {
-      alert('Todos los campos son obligatorios.');
+      await this.showToast('Todos los campos son obligatorios');
       return;
     }
 
-    try {
-      const data: any = {
-        username: this.username,
-        email: this.email,
-        role: this.rolSeleccionado
-      };
+    const data: any = {
+      username: this.username,
+      email: this.email,
+      role: this.rolSeleccionado
+    };
 
-      // Solo incluir contraseña si se ingresó una nueva
-      if (this.password) {
-        if (this.password.length < 8) {
-          alert('La contraseña debe tener al menos 8 caracteres.');
-          return;
-        }
-        data.password = this.password;
+    if (this.password) {
+      if (this.password.length < 8) {
+        await this.showToast('La contraseña debe tener al menos 8 caracteres');
+        return;
       }
+      data.password = this.password;
+    }
 
+    try {
+      this.guardando = true;
       await this.api.updateUsuario(this.idUsuario, data);
-      alert('Usuario actualizado correctamente');
-      //this.router.navigate(['/ver-usuarios']);
-      window.location.href = '/ver-usuarios';
+      await this.showToast('Usuario actualizado');
+      this.router.navigate(['/ver-usuarios']);
     } catch (error: any) {
-      alert('Error al actualizar usuario: ' + error);
+      console.error('Error al actualizar usuario:', error);
+      await this.showToast('Error al actualizar usuario');
+    } finally {
+      this.guardando = false;
     }
   }
 }
