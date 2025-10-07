@@ -117,7 +117,8 @@ export class EditarProductoPage implements OnInit {
       this.guardando = true;
       await this.api.updateProductoByDocumentId(this.documentId, datos);
       await this.showToast('Producto actualizado');
-      this.router.navigate(['/ver-producto']);
+      //this.router.navigate(['/ver-producto']);
+      window.location.href = '/ver-producto';
     } catch (error: any) {
       await this.showToast('Error al actualizar producto');
     } finally {
