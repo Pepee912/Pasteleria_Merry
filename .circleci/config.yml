@@ -3,25 +3,27 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/node:20.6.0
+      - image: cimg/node:20.6.0-browsers
     steps:
       - checkout
       - restore_cache:
           keys:
-            - node-mods-{{ checksum "package-lock.json" }}
+            - node-mods-{{ checksum "package.json" }}
             - node-mods-
       - run:
-          name: Install dependencies
-          command: npm ci
+          name: Install dependencies (use npm ci if lockfile exists, otherwise npm install)
+          command: |
+            if [ -f package-lock.json ]; then
+              echo "package-lock.json found -> using npm ci"
+              npm ci
+            else
+              echo "No package-lock.json -> using npm install"
+              npm install --no-audit --no-fund
+            fi
       - save_cache:
           paths:
             - node_modules
-          key: node-mods-{{ checksum "package-lock.json" }}
-      - run:
-          name: Install chromium (for headless browser tests)
-          command: |
-            sudo apt-get update -y
-            sudo apt-get install -y chromium
+          key: node-mods-{{ checksum "package.json" }}
       - run:
           name: Run tests (if present)
           command: |
@@ -33,14 +35,10 @@ jobs:
             fi
       - run:
           name: Build project
-          command: |
-            echo "Running build..."
-            npm run build
+          command: npm run build
       - run:
-          name: Show build output (for debugging)
-          command: |
-            echo "Build output (dist/*):"
-            ls -la dist || echo "No dist directory found"
+          name: Show build output
+          command: ls -la dist || echo "No dist directory found"
       - store_artifacts:
           path: dist
           destination: build-output
